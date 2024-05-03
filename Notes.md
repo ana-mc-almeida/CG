@@ -3,9 +3,9 @@
 ## TODO
 
 - Requesitos do enunciado:
-  - [ ] Tarefa 1 (0.50) - cena e câmara
-  - [ ] Tarefa 2 (0.75) - grua
-  - [ ] Tarefa 3 (0.50) - cargas
+  - [ ] Tarefa 1 (0.50) - cena e câmara -> Alice
+  - [ ] Tarefa 2 (0.75) - grua -> Mafalda
+  - [ ] Tarefa 3 (0.50) - cargas -> Ana
   - [ ] Tarefa 4 (0.75) - teclas
     - **acho** que só pode ser feito depois da grua
   - [ ] Tarefa 5 (0.25) - alterar arames/sólido #facil
