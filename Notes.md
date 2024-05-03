@@ -12,3 +12,4 @@
   - [ ] Tarefa 6 (0.75) - colisões
     - nem percebi bem mas acho que só pode ser depois da grua e das cargas
   - [ ] Tarefa 7 (0.50) - Heads-Up Display
+- [ ] Identificar limites min e max
