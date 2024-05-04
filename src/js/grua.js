@@ -4,7 +4,7 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var materialBase, materialParedes, materialCube, materialTorus, materialDodecaedro, materialTorusKnot;
+var materialBase, materialParedes, materialCube, materialTorus, materialDodecaedro, materialTorusKnot, materialIsocahedron;
 
 var container;
 
@@ -104,10 +104,24 @@ function createDodecahedron(x,y,z){
 
     var raio = 5
 
-    var dodecahedronGeometry = new THREE.DodecahedronGeometry(5);
+    var dodecahedronGeometry = new THREE.DodecahedronGeometry(raio);
     var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecaedro);
     dodecahedron.position.set(x,y,z);
     scene.add(dodecahedron);
+}
+
+function createIsocahedron(x,y,z){
+    'use strict';
+
+    materialIsocahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    var raio = 5
+
+    var isocahedronGeometry = new THREE.IcosahedronGeometry(raio);
+    var isocahedron = new THREE.Mesh(isocahedronGeometry, materialIsocahedron);
+    isocahedron.position.set(x,y,z);
+    scene.add(isocahedron);
+
 }
 
 
@@ -139,7 +153,8 @@ function createScene() {
     // createCube(0,0,0);
     // createTorus(0,0,0);
     // createTorusKnot(0,0,0);
-    createDodecahedron(0,0,0);
+    // createDodecahedron(0,0,0);
+    createIsocahedron(0,0,0);
     // TODO
 }
 
