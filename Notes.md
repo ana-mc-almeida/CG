@@ -13,3 +13,8 @@
     - nem percebi bem mas acho que só pode ser depois da grua e das cargas
   - [ ] Tarefa 7 (0.50) - Heads-Up Display
 - [ ] Identificar limites min e max
+
+## Teacher notes
+
+- Use `clock` from js to frames
+  - Para ficar uniforme para todos os PCs
