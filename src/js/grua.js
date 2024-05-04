@@ -4,6 +4,59 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
+var materialBase, materialParedes;
+
+var container;
+
+function createContainer(x,y,z){
+    'use strict';
+
+    container = new THREE.Object3D();
+
+    var larguraContainer = 10;
+    var alturaContainer = 10;
+    var comprimentoContainer = 20;
+
+    materialBase = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+    materialParedes = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
+
+    // Base
+    var baseGeometry = new THREE.BoxGeometry(comprimentoContainer, 1, larguraContainer);
+    var base = new THREE.Mesh(baseGeometry, materialBase);
+    container.add(base);
+
+    // Paredes
+    // Parede fundo
+    var wallGeometry1 = new THREE.BoxGeometry(comprimentoContainer, alturaContainer, 1);
+    var wall1 = new THREE.Mesh(wallGeometry1, materialParedes);
+    wall1.position.z = -(larguraContainer/2);
+    wall1.position.y = alturaContainer/2;
+    container.add(wall1);
+    // Parede frente
+    var wallGeometry2 = new THREE.BoxGeometry(comprimentoContainer, alturaContainer, 1);
+    var wall2 = new THREE.Mesh(wallGeometry2, materialParedes);
+    wall2.position.z = larguraContainer/2;
+    wall2.position.y = alturaContainer/2;
+    container.add(wall2);
+    // Parede esquerda
+    var wallGeometry3 = new THREE.BoxGeometry(1, alturaContainer, larguraContainer);
+    var wall3 = new THREE.Mesh(wallGeometry3, materialParedes);
+    wall3.position.x = -(comprimentoContainer/2);
+    wall3.position.y = alturaContainer/2;
+    container.add(wall3);
+    // Parede direita
+    var wallGeometry4 = new THREE.BoxGeometry(1, alturaContainer, larguraContainer);
+    var wall4 = new THREE.Mesh(wallGeometry4, materialParedes);
+    wall4.position.x = (comprimentoContainer/2);
+    wall4.position.y = alturaContainer/2;
+    container.add(wall4);
+
+    container.position.set(x,y,z);
+    scene.add(container);
+}
+
+
+
 function render() {
     'use strict';
     renderer.render(scene, camera);
@@ -27,10 +80,10 @@ function createScene() {
     scene = new THREE.Scene();
 
     scene.add(new THREE.AxesHelper(10));
+
+    createContainer(0,0,0);
     // TODO
 }
-
-
 
 function createCamera() {
     'use strict';
