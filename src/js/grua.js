@@ -4,7 +4,7 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var materialBase, materialParedes, materialCube, materialTorus, materialDodecaedro, materialTorusKnot, materialIsocahedron;
+var materialBase, materialParedes, materialCube, materialTorus, materialDodecaedro, materialTorusKnot, materialIsocahedron, materialParallelpiped;
 
 var container;
 
@@ -124,6 +124,20 @@ function createIsocahedron(x,y,z){
 
 }
 
+function createParallelpiped(x,y,z){
+    'use strict';
+
+    materialParallelpiped = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    var larguraParallelpiped = 2;
+    var alturaParallelpiped = 5;
+    var comprimentoParallelpiped = 2;
+
+    var parallelpipedGeometry = new THREE.BoxGeometry(larguraParallelpiped,alturaParallelpiped,comprimentoParallelpiped);
+    var parallelpiped = new THREE.Mesh(parallelpipedGeometry, materialParallelpiped);
+    parallelpiped.position.set(x,y,z);
+    scene.add(parallelpiped);
+}
 
 function render() {
     'use strict';
@@ -154,7 +168,8 @@ function createScene() {
     // createTorus(0,0,0);
     // createTorusKnot(0,0,0);
     // createDodecahedron(0,0,0);
-    createIsocahedron(0,0,0);
+    // createIsocahedron(0,0,0);
+    createParallelpiped(0,0,0);
     // TODO
 }
 
