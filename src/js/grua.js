@@ -4,7 +4,7 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var materialBase, materialParedes;
+var materialBase, materialParedes, materialCube;
 
 var container;
 
@@ -55,6 +55,16 @@ function createContainer(x,y,z){
     scene.add(container);
 }
 
+function createCube(x,y,z){
+    'use strict';
+
+    materialCube = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    var cubeGeometry = new THREE.BoxGeometry(2,2,2);
+    var cube = new THREE.Mesh(cubeGeometry, materialCube);
+    cube.position.set(x,y,z);
+    scene.add(cube);
+}
 
 
 function render() {
@@ -81,7 +91,8 @@ function createScene() {
 
     scene.add(new THREE.AxesHelper(10));
 
-    createContainer(0,0,0);
+    // createContainer(0,0,0);
+    createCube(0,0,0);
     // TODO
 }
 
