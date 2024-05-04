@@ -4,7 +4,7 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var materialBase, materialParedes, materialCube, materialTorus;
+var materialBase, materialParedes, materialCube, materialTorus, materialDodecaedro, materialTorusKnot;
 
 var container;
 
@@ -85,16 +85,29 @@ function createTorus(x,y,z){
 function createTorusKnot(x,y,z){
     'use strict';
 
-    materialTorus = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+    materialTorusKnot = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
     var raioTorus = 15;
     var raioTubo = 5;
 
     var torusGeometry = new THREE.TorusKnotGeometry(raioTorus, raioTubo);
-    var torus = new THREE.Mesh(torusGeometry, materialTorus);
+    var torus = new THREE.Mesh(torusGeometry, materialTorusKnot);
     torus.position.set(x,y,z);
     torus.rotation.x = Math.PI/2;
     scene.add(torus);
+}
+
+function createDodecahedron(x,y,z){
+    'use strict';
+
+    materialDodecaedro = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    var raio = 5
+
+    var dodecahedronGeometry = new THREE.DodecahedronGeometry(5);
+    var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecaedro);
+    dodecahedron.position.set(x,y,z);
+    scene.add(dodecahedron);
 }
 
 
@@ -125,7 +138,8 @@ function createScene() {
     // createContainer(0,0,0);
     // createCube(0,0,0);
     // createTorus(0,0,0);
-    createTorusKnot(0,0,0);
+    // createTorusKnot(0,0,0);
+    createDodecahedron(0,0,0);
     // TODO
 }
 
