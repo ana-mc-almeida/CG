@@ -4,7 +4,7 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var materialBase, materialParedes, materialCube;
+var materialBase, materialParedes, materialCube, materialTorus;
 
 var container;
 
@@ -66,6 +66,22 @@ function createCube(x,y,z){
     scene.add(cube);
 }
 
+function createTorus(x,y,z){
+    'use strict';
+
+    materialTorus = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+
+    var raioTorus = 3;
+    var raioTubo = 1;
+
+    var torusGeometry = new THREE.TorusGeometry(raioTorus, raioTubo);
+    var torus = new THREE.Mesh(torusGeometry, materialTorus);
+    torus.position.set(x,y,z);
+    torus.rotation.x = Math.PI/2;
+    scene.add(torus);
+
+}
+
 
 function render() {
     'use strict';
@@ -92,7 +108,8 @@ function createScene() {
     scene.add(new THREE.AxesHelper(10));
 
     // createContainer(0,0,0);
-    createCube(0,0,0);
+    // createCube(0,0,0);
+    createTorus(0,0,0);
     // TODO
 }
 
