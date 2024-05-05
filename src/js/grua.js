@@ -101,7 +101,7 @@ function createTorusKnot(x, y, z) {
   var torusGeometry = new THREE.TorusKnotGeometry(torusRadius, tubeRadius);
   var torus = new THREE.Mesh(torusGeometry, materialTorusKnot);
   torus.rotation.x = Math.PI / 2;
-  torus.position.set(x, y + torusRadius / 2, z);
+  torus.position.set(x, y + torusRadius, z);
   scene.add(torus);
 }
 
@@ -112,7 +112,7 @@ function createDodecahedron(x, y, z) {
 
   var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
   var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
-  dodecahedron.position.set(x, y + radius / 2, z);
+  dodecahedron.position.set(x, y + radius, z);
   scene.add(dodecahedron);
 }
 
@@ -123,7 +123,7 @@ function createIcosahedron(x, y, z) {
 
   var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
   var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
-  icosahedron.position.set(x, y + radius / 2, z);
+  icosahedron.position.set(x, y + radius, z);
   scene.add(icosahedron);
 
 }
@@ -142,9 +142,11 @@ function createParallelpiped(x, y, z) {
 function createLoads() {
   let i = 0;
   while (i < 6) {
-    let x = Math.random() * 100 - 50;
+    let x = Math.random() * 58 - 29;
     let y = 0;
-    let z = Math.random() * 100 - 50;
+    let z = Math.random() * 58 - 29;
+
+    console.log(x, y, z);
 
     switch (i) {
       case 0:
