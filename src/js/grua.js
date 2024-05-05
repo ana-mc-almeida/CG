@@ -4,24 +4,25 @@ var camera, scene, renderer;
 
 var geometry, material, mesh;
 
-var materialBase, materialParedes, materialCube, materialTorus, materialDodecaedro, materialTorusKnot, materialIsocahedron, materialParallelpiped;
+var materialBase, materialWalls;
+var materialCube, materialTorus, materialDodecahedron, materialTorusKnot, materialIcosahedron, materialParallelpiped;
 
 var container;
 
-var larguraContainer = 10;
-var alturaContainer = 10;
-var comprimentoContainer = 20;
+var containerWidth = 10;
+var containerHeight = 10;
+var containerLength = 20;
 
-var ladoCubo = 2;
+var cubeSide = 2;
 
-var larguraParallelpiped = 2;
-var alturaParallelpiped = 5;
-var comprimentoParallelpiped = 2;
+var parallelpipedWidth = 2;
+var parallelpipedHeight = 5;
+var parallelpipedLength = 2;
 
-var raioTorus = 3;
-var raioTubo = 1;
+var torusRadius = 3;
+var tubeRadius = 1;
 
-var raio = 5
+var radius = 5
 
 function createContainer(x, y, z) {
     'use strict';
@@ -29,37 +30,37 @@ function createContainer(x, y, z) {
     container = new THREE.Object3D();
 
     materialBase = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
-    materialParedes = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
+    materialWalls = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
 
     // Base
-    var baseGeometry = new THREE.BoxGeometry(comprimentoContainer, 1, larguraContainer);
+    var baseGeometry = new THREE.BoxGeometry(containerLength, 1, containerWidth);
     var base = new THREE.Mesh(baseGeometry, materialBase);
     container.add(base);
 
-    // Paredes
-    // Parede fundo
-    var wallGeometry1 = new THREE.BoxGeometry(comprimentoContainer, alturaContainer, 1);
-    var wall1 = new THREE.Mesh(wallGeometry1, materialParedes);
-    wall1.position.z = -(larguraContainer / 2);
-    wall1.position.y = alturaContainer / 2;
+    // Walls
+    // Back wall
+    var wallGeometry1 = new THREE.BoxGeometry(containerLength, containerHeight, 1);
+    var wall1 = new THREE.Mesh(wallGeometry1, materialWalls);
+    wall1.position.z = -(containerWidth / 2);
+    wall1.position.y = containerHeight / 2;
     container.add(wall1);
-    // Parede frente
-    var wallGeometry2 = new THREE.BoxGeometry(comprimentoContainer, alturaContainer, 1);
-    var wall2 = new THREE.Mesh(wallGeometry2, materialParedes);
-    wall2.position.z = larguraContainer / 2;
-    wall2.position.y = alturaContainer / 2;
+    // Front wall
+    var wallGeometry2 = new THREE.BoxGeometry(containerLength, containerHeight, 1);
+    var wall2 = new THREE.Mesh(wallGeometry2, materialWalls);
+    wall2.position.z = containerWidth / 2;
+    wall2.position.y = containerHeight / 2;
     container.add(wall2);
-    // Parede esquerda
-    var wallGeometry3 = new THREE.BoxGeometry(1, alturaContainer, larguraContainer);
-    var wall3 = new THREE.Mesh(wallGeometry3, materialParedes);
-    wall3.position.x = -(comprimentoContainer / 2);
-    wall3.position.y = alturaContainer / 2;
+    // Left wall
+    var wallGeometry3 = new THREE.BoxGeometry(1, containerHeight, containerWidth);
+    var wall3 = new THREE.Mesh(wallGeometry3, materialWalls);
+    wall3.position.x = -(containerLength / 2);
+    wall3.position.y = containerHeight / 2;
     container.add(wall3);
-    // Parede direita
-    var wallGeometry4 = new THREE.BoxGeometry(1, alturaContainer, larguraContainer);
-    var wall4 = new THREE.Mesh(wallGeometry4, materialParedes);
-    wall4.position.x = (comprimentoContainer / 2);
-    wall4.position.y = alturaContainer / 2;
+    // Right wall
+    var wallGeometry4 = new THREE.BoxGeometry(1, containerHeight, containerWidth);
+    var wall4 = new THREE.Mesh(wallGeometry4, materialWalls);
+    wall4.position.x = (containerLength / 2);
+    wall4.position.y = containerHeight / 2;
     container.add(wall4);
 
     container.position.set(x, y, z);
@@ -71,7 +72,7 @@ function createCube(x, y, z) {
 
     materialCube = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
-    var cubeGeometry = new THREE.BoxGeometry(ladoCubo, ladoCubo, ladoCubo);
+    var cubeGeometry = new THREE.BoxGeometry(cubeSide, cubeSide, cubeSide);
     var cube = new THREE.Mesh(cubeGeometry, materialCube);
     cube.position.set(x, y, z);
     scene.add(cube);
@@ -82,7 +83,7 @@ function createTorus(x, y, z) {
 
     materialTorus = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
-    var torusGeometry = new THREE.TorusGeometry(raioTorus, raioTubo);
+    var torusGeometry = new THREE.TorusGeometry(torusRadius, tubeRadius);
     var torus = new THREE.Mesh(torusGeometry, materialTorus);
     torus.position.set(x, y, z);
     torus.rotation.x = Math.PI / 2;
@@ -95,7 +96,7 @@ function createTorusKnot(x, y, z) {
 
     materialTorusKnot = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
-    var torusGeometry = new THREE.TorusKnotGeometry(raioTorus, raioTubo);
+    var torusGeometry = new THREE.TorusKnotGeometry(torusRadius, tubeRadius);
     var torus = new THREE.Mesh(torusGeometry, materialTorusKnot);
     torus.position.set(x, y, z);
     torus.rotation.x = Math.PI / 2;
@@ -105,23 +106,23 @@ function createTorusKnot(x, y, z) {
 function createDodecahedron(x, y, z) {
     'use strict';
 
-    materialDodecaedro = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+    materialDodecahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
-    var dodecahedronGeometry = new THREE.DodecahedronGeometry(raio);
-    var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecaedro);
+    var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
+    var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
     dodecahedron.position.set(x, y, z);
     scene.add(dodecahedron);
 }
 
-function createIsocahedron(x, y, z) {
+function createIcosahedron(x, y, z) {
     'use strict';
 
-    materialIsocahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+    materialIcosahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
-    var isocahedronGeometry = new THREE.IcosahedronGeometry(raio);
-    var isocahedron = new THREE.Mesh(isocahedronGeometry, materialIsocahedron);
-    isocahedron.position.set(x, y, z);
-    scene.add(isocahedron);
+    var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
+    var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
+    icosahedron.position.set(x, y, z);
+    scene.add(icosahedron);
 
 }
 
@@ -130,7 +131,7 @@ function createParallelpiped(x, y, z) {
 
     materialParallelpiped = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
-    var parallelpipedGeometry = new THREE.BoxGeometry(larguraParallelpiped, alturaParallelpiped, comprimentoParallelpiped);
+    var parallelpipedGeometry = new THREE.BoxGeometry(parallelpipedWidth, parallelpipedHeight, parallelpipedLength);
     var parallelpiped = new THREE.Mesh(parallelpipedGeometry, materialParallelpiped);
     parallelpiped.position.set(x, y, z);
     scene.add(parallelpiped);
@@ -145,57 +146,57 @@ function createLoads() {
 
         switch (i) {
             case 0:
-                if (!verificarColisao(x, y, z, ladoCubo, ladoCubo, ladoCubo)) {
+                if (!checkCollision(x, y, z, cubeSide, cubeSide, cubeSide)) {
                     createCube(x, y, z);
                     i++;
                 }
                 break;
             case 1:
-                if (!verificarColisao(x, y, z, raioTorus, raioTubo, raioTorus)) {
+                if (!checkCollision(x, y, z, torusRadius, tubeRadius, torusRadius)) {
                     createTorus(x, y, z);
                     i++;
                 }
                 break;
             case 2:
-                if (!verificarColisao(x, y, z, raioTorus, raioTubo, raioTorus)) {
+                if (!checkCollision(x, y, z, torusRadius, tubeRadius, torusRadius)) {
                     createTorusKnot(x, y, z);
                     i++;
                 }
                 break;
             case 3:
-                if (!verificarColisao(x, y, z, raio, raio, raio)) {
+                if (!checkCollision(x, y, z, radius, radius, radius)) {
                     createDodecahedron(x, y, z);
                     i++;
                 }
                 break;
             case 4:
-                if (!verificarColisao(x, y, z, raio, raio, raio)) {
-                    createIsocahedron(x, y, z);
+                if (!checkCollision(x, y, z, radius, radius, radius)) {
+                    createIcosahedron(x, y, z);
                     i++;
                 }
                 break;
             case 5:
-                if (!verificarColisao(x, y, z, larguraParallelpiped, alturaParallelpiped, comprimentoParallelpiped)) {
+                if (!checkCollision(x, y, z, parallelpipedWidth, parallelpipedHeight, parallelpipedLength)) {
                     createParallelpiped(x, y, z);
                     i++;
                 }
                 break;
             default:
-                console.log("Erro");
+                console.log("Error");
         }
     }
 }
 
-function verificarColisao(x, y, z, largura, altura, comprimento) {
+function checkCollision(x, y, z, width, height, length) {
 
-    let novaBoundingBox = new THREE.Box3(
-        new THREE.Vector3(x - largura, y - altura, z - comprimento),
-        new THREE.Vector3(x + largura, y + altura, z + comprimento)
+    let newBoundingBox = new THREE.Box3(
+        new THREE.Vector3(x - width, y - height, z - length),
+        new THREE.Vector3(x + width, y + height, z + length)
     );
 
-    for (let objeto of scene.children) {
-        let boundingBox = new THREE.Box3().setFromObject(objeto, true);
-        if (novaBoundingBox.intersectsBox(boundingBox)) {
+    for (let object of scene.children) {
+        let boundingBox = new THREE.Box3().setFromObject(object);
+        if (newBoundingBox.intersectsBox(boundingBox)) {
             return true;
         }
     }
