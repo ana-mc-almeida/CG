@@ -13,6 +13,7 @@ var container;
 
 var containerWidth = 10;
 var containerHeight = 10;
+var containerBaseHeight = 1;
 var containerLength = 20;
 
 var cubeSide = 2;
@@ -37,6 +38,7 @@ function createContainer(x, y, z) {
   // Base
   var baseGeometry = new THREE.BoxGeometry(containerLength, 1, containerWidth);
   var base = new THREE.Mesh(baseGeometry, materialBase);
+  base.position.y = containerBaseHeight / 2;
   container.add(base);
 
   // Walls
