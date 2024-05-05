@@ -74,7 +74,7 @@ function createCube(x, y, z) {
 
     var cubeGeometry = new THREE.BoxGeometry(cubeSide, cubeSide, cubeSide);
     var cube = new THREE.Mesh(cubeGeometry, materialCube);
-    cube.position.set(x, y, z);
+    cube.position.set(x, y + cubeSide / 2, z);
     scene.add(cube);
 }
 
@@ -85,7 +85,7 @@ function createTorus(x, y, z) {
 
     var torusGeometry = new THREE.TorusGeometry(torusRadius, tubeRadius);
     var torus = new THREE.Mesh(torusGeometry, materialTorus);
-    torus.position.set(x, y, z);
+    torus.position.set(x, y + torusRadius / 2, z);
     torus.rotation.x = Math.PI / 2;
     scene.add(torus);
 
@@ -98,8 +98,8 @@ function createTorusKnot(x, y, z) {
 
     var torusGeometry = new THREE.TorusKnotGeometry(torusRadius, tubeRadius);
     var torus = new THREE.Mesh(torusGeometry, materialTorusKnot);
-    torus.position.set(x, y, z);
     torus.rotation.x = Math.PI / 2;
+    torus.position.set(x, y + torusRadius / 2, z);
     scene.add(torus);
 }
 
@@ -110,7 +110,7 @@ function createDodecahedron(x, y, z) {
 
     var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
     var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
-    dodecahedron.position.set(x, y, z);
+    dodecahedron.position.set(x, y + radius / 2, z);
     scene.add(dodecahedron);
 }
 
@@ -121,7 +121,7 @@ function createIcosahedron(x, y, z) {
 
     var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
     var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
-    icosahedron.position.set(x, y, z);
+    icosahedron.position.set(x, y + radius / 2, z);
     scene.add(icosahedron);
 
 }
@@ -133,7 +133,7 @@ function createParallelpiped(x, y, z) {
 
     var parallelpipedGeometry = new THREE.BoxGeometry(parallelpipedWidth, parallelpipedHeight, parallelpipedLength);
     var parallelpiped = new THREE.Mesh(parallelpipedGeometry, materialParallelpiped);
-    parallelpiped.position.set(x, y, z);
+    parallelpiped.position.set(x, y + parallelpipedHeight / 2, z);
     scene.add(parallelpiped);
 }
 
