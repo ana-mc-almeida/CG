@@ -2,8 +2,37 @@
 <html>
 <head>
     <meta charset="ťutf-8" ť>
-    <title>Hello 3D World!</title>
+    <title>GRUA</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #hud {
+          position: fixed;
+          top: 10px;
+          right: 15px;
+          background-color: rgba(255, 255, 255, 0.5);
+          padding: 10px;
+          border-radius: 5px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+          width: 300px; /* Set a fixed width */
+          height: 400px; /* Set a fixed height */
+          p.highlighted 
+          {
+            background-color: yellow; /* Change the background color to highlight */
+            font-weight: bold; /* Optionally, make the text bold */
+          }
+        
+      }
+    </style>
     <script type="importmap">
         {
           "imports": {

@@ -7,7 +7,12 @@ var geometry, material, mesh;
 const BACKGROUND = new THREE.Color(0xeceae4);
 
 var materialBase, materialWalls;
-var materialCube, materialTorus, materialDodecahedron, materialTorusKnot, materialIcosahedron, materialParallelpiped;
+var materialCube,
+  materialTorus,
+  materialDodecahedron,
+  materialTorusKnot,
+  materialIcosahedron,
+  materialParallelpiped;
 
 var container;
 
@@ -25,15 +30,21 @@ var parallelpipedLength = 2;
 var torusRadius = 3;
 var tubeRadius = 1;
 
-var radius = 5
+var radius = 5;
 
 function createContainer(x, y, z) {
-  'use strict';
+  "use strict";
 
   container = new THREE.Object3D();
 
-  materialBase = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
-  materialWalls = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true });
+  materialBase = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
+  materialWalls = new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+    wireframe: true,
+  });
 
   // Base
   var baseGeometry = new THREE.BoxGeometry(containerLength, 1, containerWidth);
@@ -43,13 +54,21 @@ function createContainer(x, y, z) {
 
   // Walls
   // Back wall
-  var wallGeometry1 = new THREE.BoxGeometry(containerLength, containerHeight, 1);
+  var wallGeometry1 = new THREE.BoxGeometry(
+    containerLength,
+    containerHeight,
+    1
+  );
   var wall1 = new THREE.Mesh(wallGeometry1, materialWalls);
   wall1.position.z = -(containerWidth / 2);
   wall1.position.y = containerHeight / 2;
   container.add(wall1);
   // Front wall
-  var wallGeometry2 = new THREE.BoxGeometry(containerLength, containerHeight, 1);
+  var wallGeometry2 = new THREE.BoxGeometry(
+    containerLength,
+    containerHeight,
+    1
+  );
   var wall2 = new THREE.Mesh(wallGeometry2, materialWalls);
   wall2.position.z = containerWidth / 2;
   wall2.position.y = containerHeight / 2;
@@ -63,7 +82,7 @@ function createContainer(x, y, z) {
   // Right wall
   var wallGeometry4 = new THREE.BoxGeometry(1, containerHeight, containerWidth);
   var wall4 = new THREE.Mesh(wallGeometry4, materialWalls);
-  wall4.position.x = (containerLength / 2);
+  wall4.position.x = containerLength / 2;
   wall4.position.y = containerHeight / 2;
   container.add(wall4);
 
@@ -72,9 +91,12 @@ function createContainer(x, y, z) {
 }
 
 function createCube(x, y, z) {
-  'use strict';
+  "use strict";
 
-  materialCube = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  materialCube = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
 
   var cubeGeometry = new THREE.BoxGeometry(cubeSide, cubeSide, cubeSide);
   var cube = new THREE.Mesh(cubeGeometry, materialCube);
@@ -83,22 +105,27 @@ function createCube(x, y, z) {
 }
 
 function createTorus(x, y, z) {
-  'use strict';
+  "use strict";
 
-  materialTorus = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  materialTorus = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
 
   var torusGeometry = new THREE.TorusGeometry(torusRadius, tubeRadius);
   var torus = new THREE.Mesh(torusGeometry, materialTorus);
   torus.position.set(x, y + torusRadius / 2, z);
   torus.rotation.x = Math.PI / 2;
   scene.add(torus);
-
 }
 
 function createTorusKnot(x, y, z) {
-  'use strict';
+  "use strict";
 
-  materialTorusKnot = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  materialTorusKnot = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
 
   var torusGeometry = new THREE.TorusKnotGeometry(torusRadius, tubeRadius);
   var torus = new THREE.Mesh(torusGeometry, materialTorusKnot);
@@ -108,9 +135,12 @@ function createTorusKnot(x, y, z) {
 }
 
 function createDodecahedron(x, y, z) {
-  'use strict';
+  "use strict";
 
-  materialDodecahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  materialDodecahedron = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
 
   var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
   var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
@@ -119,24 +149,36 @@ function createDodecahedron(x, y, z) {
 }
 
 function createIcosahedron(x, y, z) {
-  'use strict';
+  "use strict";
 
-  materialIcosahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  materialIcosahedron = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
 
   var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
   var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
   icosahedron.position.set(x, y + radius, z);
   scene.add(icosahedron);
-
 }
 
 function createParallelpiped(x, y, z) {
-  'use strict';
+  "use strict";
 
-  materialParallelpiped = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  materialParallelpiped = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
 
-  var parallelpipedGeometry = new THREE.BoxGeometry(parallelpipedWidth, parallelpipedHeight, parallelpipedLength);
-  var parallelpiped = new THREE.Mesh(parallelpipedGeometry, materialParallelpiped);
+  var parallelpipedGeometry = new THREE.BoxGeometry(
+    parallelpipedWidth,
+    parallelpipedHeight,
+    parallelpipedLength
+  );
+  var parallelpiped = new THREE.Mesh(
+    parallelpipedGeometry,
+    materialParallelpiped
+  );
   parallelpiped.position.set(x, y + parallelpipedHeight / 2, z);
   scene.add(parallelpiped);
 }
@@ -182,7 +224,16 @@ function createLoads() {
         }
         break;
       case 5:
-        if (!checkCollision(x, y, z, parallelpipedWidth, parallelpipedHeight, parallelpipedLength)) {
+        if (
+          !checkCollision(
+            x,
+            y,
+            z,
+            parallelpipedWidth,
+            parallelpipedHeight,
+            parallelpipedLength
+          )
+        ) {
           createParallelpiped(x, y, z);
           i++;
         }
@@ -194,7 +245,6 @@ function createLoads() {
 }
 
 function checkCollision(x, y, z, width, height, length) {
-
   let newBoundingBox = new THREE.Box3(
     new THREE.Vector3(x - width, y - height, z - length),
     new THREE.Vector3(x + width, y + height, z + length)
@@ -362,7 +412,10 @@ function createRotatingCrane(x, y, z) {
 
   var rotatingCrane = new THREE.Object3D();
 
-  material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  material = new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  });
 
   addTurntable(rotatingCrane, 0, 0.5, 0);
   addHigherMast(rotatingCrane, 0, 1 + 3, 0);
@@ -406,6 +459,67 @@ function createMovingTrolley(x, y, z) {
   movingTrolley.position.z = z;
 }
 
+function createHUD() {
+  // Create HUD container
+  const hudContainer = document.createElement("div");
+  hudContainer.id = "hud";
+  hudContainer.style.position = "fixed";
+  hudContainer.style.top = "10px";
+  hudContainer.style.right = "10px";
+  hudContainer.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
+  hudContainer.style.padding = "15px";
+  hudContainer.style.borderRadius = "10px";
+  hudContainer.style.boxShadow = "0 0 12px rgba(0, 0, 0, 0.2)";
+  //document represents the HTML doc loaded in the window
+  document.body.appendChild(hudContainer);
+
+  // Function to update HUD with pressed key
+  function updateHUD(key) {
+    // Remove previous highlight
+    const highlightedElement = hudContainer.querySelector(".highlighted");
+    if (highlightedElement) {
+      console.log("Removing highlight from:", highlightedElement.textContent);
+      highlightedElement.classList.remove("highlighted");
+    }
+
+    // Highlight selected key
+    const selectedElement = hudContainer.querySelector(`p[data-key="${key}"]`);
+    if (selectedElement) {
+      console.log("Highlighting:", selectedElement.textContent);
+      selectedElement.classList.add("highlighted");
+    }
+  }
+
+  // Add initial HUD content
+  hudContainer.innerHTML = `
+      <h2>Key Mappings</h2>
+      <p data-key="1">Press 1: Front View</p>
+      <p data-key="2">Press 2: Side View</p>
+      <p data-key="3">Press 3: Top View</p>
+      <p data-key="4">Press 4: Orthogonal Projection</p>
+      <p data-key="5">Press 5: Perspective Projection</p>
+      <p data-key="6">Press 6: Move Camera (TODO)</p>
+      <p data-key="0">Press 0: Toggle Wireframes</p>
+  `;
+
+  // Listen for keydown events
+  document.addEventListener("keydown", function (event) {
+    console.log("Keydown event fired!");
+    // Get the pressed key
+    const key = event.key;
+
+    // Update HUD with pressed key
+    updateHUD(key);
+  });
+
+  // Listen for keyup events to remove highlight when key is released
+  document.addEventListener("keyup", function (event) {
+    console.log("Keyup event fired!");
+    // Remove highlight from HUD
+    updateHUD("");
+  });
+}
+
 function render() {
   "use strict";
   renderer.render(scene, activeCamera.camera);
@@ -432,6 +546,8 @@ function onKeyDown(e) {
     case 54: // '6'
       //TODO activeCamera = cameraMovel;
       break;
+    case 48: // '0'
+      toggleWireframes();
     default:
       break;
   }
@@ -485,6 +601,7 @@ function init() {
 
   createScene();
   createCameras();
+  createHUD();
 
   render();
 
@@ -667,5 +784,15 @@ function changeActiveCamera(cameraDescriptor) {
   activeCamera = cameraDescriptor;
 }
 
+function toggleWireframes() {
+  scene.traverse(function (node) {
+    if (node instanceof THREE.Mesh) {
+      node.material.wireframe = !node.material.wireframe;
+    }
+  });
+}
+
 init();
 animate();
+// Call createHUD function after DOM content is loaded
+document.addEventListener("DOMContentLoaded", createHUD);
