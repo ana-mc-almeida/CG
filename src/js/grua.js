@@ -1,22 +1,43 @@
 import * as THREE from "three";
 
 var activeCamera, scene, renderer;
-
 var geometry, material, mesh;
+
+// grua materials
+const materialFoundation = new THREE.MeshBasicMaterial({ color: 0xf00f00, wireframe: true, });
+const materialLowerMast = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
+const materialTurntable = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+const materialHigherMast = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
+const materialCab = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+const materialJib = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
+const materialCounterWeight = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+const materialTowerPeak = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
+const materialRightLoadLine = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialLeftLoadLine = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+
+// hook block materials
+const materialHoist = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+const materialSteelCable = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
+const materialHookBlock = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+//const materialHigherHook = new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true, });
+//const materialLowerHook= new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+
+//const BACKGROUND = new THREE.Color(0xeceae4);
+const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
+
+const materialBase = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialWalls = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true, });
+
+const materialCube = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+
+const materialTorus = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialDodecahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialTorusKnot = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialIcosahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialParallelpiped = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
 
 let wireframeToggle = false;
 let previousView = 1;
-
-const BACKGROUND = new THREE.Color(0xeceae4);
-//const BACKGROUND = new THREE.Color(0xf);    //TODO remove this, is just to not hurt the eyes :)
-
-var materialBase, materialWalls;
-var materialCube,
-  materialTorus,
-  materialDodecahedron,
-  materialTorusKnot,
-  materialIcosahedron,
-  materialParallelpiped;
 
 var container;
 
@@ -41,15 +62,6 @@ function createContainer(x, y, z) {
 
   container = new THREE.Object3D();
 
-  materialBase = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
-  materialWalls = new THREE.MeshBasicMaterial({
-    color: 0x0000ff,
-    wireframe: true,
-  });
-
   // Base
   var baseGeometry = new THREE.BoxGeometry(containerLength, 1, containerWidth);
   var base = new THREE.Mesh(baseGeometry, materialBase);
@@ -57,38 +69,40 @@ function createContainer(x, y, z) {
   container.add(base);
 
   // Walls
+  var smallWallGeometry = new THREE.BoxGeometry(
+    containerLength,
+    containerHeight,
+    1
+  );
+  var bigWallGeometry = new THREE.BoxGeometry(
+    1,
+    containerHeight,
+    containerWidth
+  );
+  
   // Back wall
-  var wallGeometry1 = new THREE.BoxGeometry(
-    containerLength,
-    containerHeight,
-    1
-  );
-  var wall1 = new THREE.Mesh(wallGeometry1, materialWalls);
-  wall1.position.z = -(containerWidth / 2);
-  wall1.position.y = containerHeight / 2;
-  container.add(wall1);
+  var wallBack = new THREE.Mesh(smallWallGeometry, materialWalls);
+  wallBack.position.z = -(containerWidth / 2);
+  wallBack.position.y = containerHeight / 2;
+  container.add(wallBack);
+
   // Front wall
-  var wallGeometry2 = new THREE.BoxGeometry(
-    containerLength,
-    containerHeight,
-    1
-  );
-  var wall2 = new THREE.Mesh(wallGeometry2, materialWalls);
-  wall2.position.z = containerWidth / 2;
-  wall2.position.y = containerHeight / 2;
-  container.add(wall2);
+  var wallFront = new THREE.Mesh(smallWallGeometry, materialWalls);
+  wallFront.position.z = containerWidth / 2;
+  wallFront.position.y = containerHeight / 2;
+  container.add(wallFront);
+
   // Left wall
-  var wallGeometry3 = new THREE.BoxGeometry(1, containerHeight, containerWidth);
-  var wall3 = new THREE.Mesh(wallGeometry3, materialWalls);
-  wall3.position.x = -(containerLength / 2);
-  wall3.position.y = containerHeight / 2;
-  container.add(wall3);
+  var wallLeft = new THREE.Mesh(bigWallGeometry, materialWalls);
+  wallLeft.position.x = -(containerLength / 2);
+  wallLeft.position.y = containerHeight / 2;
+  container.add(wallLeft);
+
   // Right wall
-  var wallGeometry4 = new THREE.BoxGeometry(1, containerHeight, containerWidth);
-  var wall4 = new THREE.Mesh(wallGeometry4, materialWalls);
-  wall4.position.x = containerLength / 2;
-  wall4.position.y = containerHeight / 2;
-  container.add(wall4);
+  var wallRight = new THREE.Mesh(bigWallGeometry, materialWalls);
+  wallRight.position.x = containerLength / 2;
+  wallRight.position.y = containerHeight / 2;
+  container.add(wallRight);
 
   container.position.set(x, y, z);
   scene.add(container);
@@ -96,11 +110,6 @@ function createContainer(x, y, z) {
 
 function createCube(x, y, z) {
   "use strict";
-
-  materialCube = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
 
   var cubeGeometry = new THREE.BoxGeometry(cubeSide, cubeSide, cubeSide);
   var cube = new THREE.Mesh(cubeGeometry, materialCube);
@@ -110,11 +119,6 @@ function createCube(x, y, z) {
 
 function createTorus(x, y, z) {
   "use strict";
-
-  materialTorus = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
 
   var torusGeometry = new THREE.TorusGeometry(torusRadius, tubeRadius);
   var torus = new THREE.Mesh(torusGeometry, materialTorus);
@@ -126,11 +130,6 @@ function createTorus(x, y, z) {
 function createTorusKnot(x, y, z) {
   "use strict";
 
-  materialTorusKnot = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
-
   var torusGeometry = new THREE.TorusKnotGeometry(torusRadius, tubeRadius);
   var torus = new THREE.Mesh(torusGeometry, materialTorusKnot);
   torus.rotation.x = Math.PI / 2;
@@ -141,11 +140,6 @@ function createTorusKnot(x, y, z) {
 function createDodecahedron(x, y, z) {
   "use strict";
 
-  materialDodecahedron = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
-
   var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
   var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
   dodecahedron.position.set(x, y + radius, z);
@@ -155,11 +149,6 @@ function createDodecahedron(x, y, z) {
 function createIcosahedron(x, y, z) {
   "use strict";
 
-  materialIcosahedron = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
-
   var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
   var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
   icosahedron.position.set(x, y + radius, z);
@@ -168,11 +157,6 @@ function createIcosahedron(x, y, z) {
 
 function createParallelpiped(x, y, z) {
   "use strict";
-
-  materialParallelpiped = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
 
   var parallelpipedGeometry = new THREE.BoxGeometry(
     parallelpipedWidth,
@@ -266,7 +250,7 @@ function checkCollision(x, y, z, width, height, length) {
 function addFoundation(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(6, 6, 6);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialFoundation);
   mesh.position.set(x, y, z);
   obj.add(mesh);
 }
@@ -274,7 +258,7 @@ function addFoundation(obj, x, y, z) {
 function addLowerMast(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(2, 2, 20);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialLowerMast);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -283,7 +267,7 @@ function addLowerMast(obj, x, y, z) {
 function addTurntable(obj, x, y, z) {
   "use strict";
   geometry = new THREE.CylinderGeometry(2, 2, 1, 32);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialTurntable);
   mesh.position.set(x, y, z);
   obj.add(mesh);
 }
@@ -291,7 +275,7 @@ function addTurntable(obj, x, y, z) {
 function addHigherMast(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(2, 2, 6);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialHigherMast);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -300,7 +284,7 @@ function addHigherMast(obj, x, y, z) {
 function addJib(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(2, 2, 39);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialJib);
   mesh.position.set(x, y, z);
   mesh.rotation.set(0, Math.PI / 2, 0);
   obj.add(mesh);
@@ -309,7 +293,7 @@ function addJib(obj, x, y, z) {
 function addCab(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(2, 2, 3);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialCab);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -318,7 +302,7 @@ function addCab(obj, x, y, z) {
 function addCounterweight(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(2, 2, 4);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialCounterWeight);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -327,7 +311,7 @@ function addCounterweight(obj, x, y, z) {
 function addTowerPeak(obj, x, y, z) {
   "use strict";
   geometry = new THREE.TetrahedronGeometry(2, 0);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialTowerPeak);
   mesh.position.set(x, y, z);
   obj.add(mesh);
 }
@@ -335,7 +319,7 @@ function addTowerPeak(obj, x, y, z) {
 function addRightLoadLine(obj, x, y, z) {
   "use strict";
   geometry = new THREE.CylinderGeometry(0.1, 0.1, 14.09, 32);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialRightLoadLine);
   mesh.position.set(x, y, z);
   mesh.rotation.set(0, 0, 0.47 * Math.PI);
   obj.add(mesh);
@@ -344,7 +328,7 @@ function addRightLoadLine(obj, x, y, z) {
 function addLeftLoadLine(obj, x, y, z) {
   "use strict";
   geometry = new THREE.CylinderGeometry(0.1, 0.1, 8.16, 32);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialLeftLoadLine);
   mesh.position.set(x, y, z);
   mesh.rotation.set(0, 0, 0.56 * Math.PI);
   obj.add(mesh);
@@ -353,7 +337,7 @@ function addLeftLoadLine(obj, x, y, z) {
 function addHoist(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(2, 2, 1);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialHoist);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -362,7 +346,7 @@ function addHoist(obj, x, y, z) {
 function addSteelCable(obj, x, y, z) {
   "use strict";
   geometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 32); //1 depende de lambda
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialSteelCable);
   mesh.position.set(x, y, z);
   obj.add(mesh);
 }
@@ -370,7 +354,7 @@ function addSteelCable(obj, x, y, z) {
 function addHookBlock(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(2, 2, 1);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialHookBlock);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -379,7 +363,7 @@ function addHookBlock(obj, x, y, z) {
 function addHigherHook(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialHookBlock);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -388,7 +372,7 @@ function addHigherHook(obj, x, y, z) {
 function addLowerHook(obj, x, y, z) {
   "use strict";
   geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  mesh = new THREE.Mesh(geometry, material);
+  mesh = new THREE.Mesh(geometry, materialHookBlock);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -398,8 +382,6 @@ function createLowerCrane(x, y, z) {
   "use strict";
 
   var lowerCrane = new THREE.Object3D();
-
-  material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
   addFoundation(lowerCrane, 0, 3, 0);
   addLowerMast(lowerCrane, 0, 6 + 20 / 2, 0);
@@ -415,11 +397,6 @@ function createRotatingCrane(x, y, z) {
   "use strict";
 
   var rotatingCrane = new THREE.Object3D();
-
-  material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-  });
 
   addTurntable(rotatingCrane, 0, 0.5, 0);
   addHigherMast(rotatingCrane, 0, 1 + 3, 0);
@@ -442,7 +419,7 @@ function createMovingTrolley(x, y, z) {
 
   var movingTrolley = new THREE.Object3D();
 
-  material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+  //material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
   addHoist(movingTrolley, 0, -0.5, 0);
   addSteelCable(movingTrolley, 0, -1 - 0.5, 0); //-0.5 depende de lambda
@@ -846,10 +823,18 @@ function changeActiveCamera(cameraDescriptor) {
   activeCamera = cameraDescriptor;
 }
 
+//TODO remove console.log
 function toggleWireframes() {
   scene.traverse(function (node) {
     if (node instanceof THREE.Mesh) {
+      console.log(node);
+      console.log("1->");
+      console.log(node.material.wireframe);
+      console.log("2->");
+      console.log(!node.material.wireframe);
       node.material.wireframe = !node.material.wireframe;
+      console.log("3->");
+      console.log(node.material.wireframe);
     }
   });
 }
