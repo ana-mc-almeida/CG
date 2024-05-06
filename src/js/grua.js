@@ -1,7 +1,8 @@
 import * as THREE from "three";
 
 var activeCamera, scene, renderer;
-var geometry, material, mesh;
+var geometry, mesh;
+var materialLowerHook, materialHigherHook;
 
 // grua materials
 const materialFoundation = new THREE.MeshBasicMaterial({ color: 0xf00f00, wireframe: true, });
@@ -19,8 +20,6 @@ const materialLeftLoadLine = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wire
 const materialHoist = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
 const materialSteelCable = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
 const materialHookBlock = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-//const materialHigherHook = new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true, });
-//const materialLowerHook= new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
 
 const BACKGROUND = new THREE.Color(0xeceae4);
 //const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
@@ -106,28 +105,24 @@ function createContainer(x, y, z) {
 
   // Back wall
   var wallBack = new THREE.Mesh(smallWallGeometry, materialBackWall);
-  wallBack.name = "Back Wall";
   wallBack.position.z = -(containerWidth / 2);
   wallBack.position.y = containerHeight / 2;
   container.add(wallBack);
 
   // Front wall
   var wallFront = new THREE.Mesh(smallWallGeometry, materialFrontWall);
-  wallFront.name = "Front Wall";
   wallFront.position.z = containerWidth / 2;
   wallFront.position.y = containerHeight / 2;
   container.add(wallFront);
 
   // Left wall
   var wallLeft = new THREE.Mesh(bigWallGeometry, materialLeftWall);
-  wallLeft.name = "Left Wall";
   wallLeft.position.x = -(containerLength / 2);
   wallLeft.position.y = containerHeight / 2;
   container.add(wallLeft);
 
   // Right wall
   var wallRight = new THREE.Mesh(bigWallGeometry, materialRightWall);
-  wallRight.name = "Right Wall";
   wallRight.position.x = containerLength / 2;
   wallRight.position.y = containerHeight / 2;
   container.add(wallRight);
@@ -379,17 +374,20 @@ function addHookBlock(obj, x, y, z) {
 
 function addHigherHook(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  mesh = new THREE.Mesh(geometry, materialHookBlock);
+  var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
+  materialHigherHook = new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true, });
+  var mesh = new THREE.Mesh(geometry, materialHigherHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
+  console.log('Added HigherHook to object', obj);
 }
 
 function addLowerHook(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  mesh = new THREE.Mesh(geometry, materialHookBlock);
+  var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
+  materialLowerHook = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+  var mesh = new THREE.Mesh(geometry, materialLowerHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
@@ -435,8 +433,6 @@ function createMovingTrolley(x, y, z) {
   "use strict";
 
   var movingTrolley = new THREE.Object3D();
-
-  //material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 
   addHoist(movingTrolley, 0, -0.5, 0);
   addSteelCable(movingTrolley, 0, -1 - 0.5, 0); //-0.5 depende de lambda
