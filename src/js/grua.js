@@ -64,8 +64,8 @@ var radius = 3;
 function getPositionY(geometry, y) {
   var size = new THREE.Vector3();
 
-  geometry.computeBoundingBox(); // Calcular a bounding box para obter o tamanho do objeto
-  geometry.boundingBox.getSize(size) // Obter as dimensões do objeto
+  geometry.computeBoundingBox(); 
+  geometry.boundingBox.getSize(size)
 
   return y + size.y / 2
 
@@ -74,8 +74,8 @@ function getPositionY(geometry, y) {
 function getPositionYRotated(geometry, y) {
   var size = new THREE.Vector3();
 
-  geometry.computeBoundingBox(); // Calcular a bounding box para obter o tamanho do objeto
-  geometry.boundingBox.getSize(size) // Obter as dimensões do objeto
+  geometry.computeBoundingBox(); 
+  geometry.boundingBox.getSize(size)
 
   return y + size.z / 2
 
