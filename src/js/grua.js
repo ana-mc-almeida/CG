@@ -4,7 +4,11 @@ var activeCamera, scene, renderer;
 
 var geometry, material, mesh;
 
+let wireframeToggle = false;
+let previousView = 1;
+
 const BACKGROUND = new THREE.Color(0xeceae4);
+//const BACKGROUND = new THREE.Color(0xf);    //TODO remove this, is just to not hurt the eyes :)
 
 var materialBase, materialWalls;
 var materialCube,
@@ -459,9 +463,10 @@ function createMovingTrolley(x, y, z) {
   movingTrolley.position.z = z;
 }
 
+const hudContainer = document.createElement("div");
 function createHUD() {
   // Create HUD container
-  const hudContainer = document.createElement("div");
+  //const hudContainer = document.createElement("div");
   hudContainer.id = "hud";
   hudContainer.style.position = "fixed";
   hudContainer.style.top = "10px";
@@ -473,51 +478,68 @@ function createHUD() {
   //document represents the HTML doc loaded in the window
   document.body.appendChild(hudContainer);
 
-  // Function to update HUD with pressed key
-  function updateHUD(key) {
-    // Remove previous highlight
-    const highlightedElement = hudContainer.querySelector(".highlighted");
-    if (highlightedElement) {
-      console.log("Removing highlight from:", highlightedElement.textContent);
-      highlightedElement.classList.remove("highlighted");
-    }
-
-    // Highlight selected key
-    const selectedElement = hudContainer.querySelector(`p[data-key="${key}"]`);
-    if (selectedElement) {
-      console.log("Highlighting:", selectedElement.textContent);
-      selectedElement.classList.add("highlighted");
-    }
-  }
-
   // Add initial HUD content
   hudContainer.innerHTML = `
+    <div id="title" style="margin-top: -10px;">
       <h2>Key Mappings</h2>
+    </div>
+    <div id="content" style="margin-top: -10px;">
+      <p data-key="0">Press 0: Toggle Wireframes</p>
       <p data-key="1">Press 1: Front View</p>
       <p data-key="2">Press 2: Side View</p>
       <p data-key="3">Press 3: Top View</p>
       <p data-key="4">Press 4: Orthogonal Projection</p>
       <p data-key="5">Press 5: Perspective Projection</p>
-      <p data-key="6">Press 6: Move Camera (TODO)</p>
-      <p data-key="0">Press 0: Toggle Wireframes</p>
+      <p data-key="q">Press Q(q): Eixo de Rotação (TODO)</p>
+      <p data-key="a">Press A(a): Eixo de Rotação (TODO)</p>
+      <p data-key="w">Press W(w): Carrinho (TODO)</p>
+      <p data-key="s">Press S(s): Carrinho (TODO)</p>
+      <p data-key="e">Press E(e): Bloco garra (TODO)</p>
+      <p data-key="d">Press D(d): Bloco garra (TODO)</p>
+      <p data-key="r">Praess R(r): Garra (TODO)</p>
+      <p data-key="f">Press F(f): Garra (TODO)</p>
+    </div>
   `;
 
-  // Listen for keydown events
-  document.addEventListener("keydown", function (event) {
-    console.log("Keydown event fired!");
-    // Get the pressed key
-    const key = event.key;
+  toggleHighlight("1", true);
+}
 
-    // Update HUD with pressed key
-    updateHUD(key);
-  });
+function toggleHighlight(key, add) {
+  const element = hudContainer.querySelector(`p[data-key="${key}"]`);
+  if (element) {
+    if (add) {
+      element.classList.add("highlighted");
+    } else {
+      element.classList.remove("highlighted");
+    }
+  }
+}
 
-  // Listen for keyup events to remove highlight when key is released
-  document.addEventListener("keyup", function (event) {
-    console.log("Keyup event fired!");
-    // Remove highlight from HUD
-    updateHUD("");
-  });
+function highlightOnKeyDown(key) {
+  const element = hudContainer.querySelector(`p[data-key="${key}"]`);
+  if (element) {
+    element.classList.add("highlighted");
+    document.addEventListener("keyup", function (event) {
+      if (event.key.toLowerCase() === key) {
+        element.classList.remove("highlighted");
+      }
+    });
+  }
+}
+
+function updateHUD(key) {
+  // updates hud based on key
+  if (key == 0) {
+    wireframeToggle = !wireframeToggle;
+    wireframeToggle ? toggleHighlight("0", true) : toggleHighlight("0", false);
+  } else if (/[1-6]/.test(key)) {
+    toggleHighlight(previousView, false);
+    console.log(key);
+    toggleHighlight(key, true);
+    previousView = key;
+  } else {
+    highlightOnKeyDown(key);
+  }
 }
 
 function render() {
@@ -528,26 +550,66 @@ function render() {
 function onKeyDown(e) {
   "use strict";
   switch (e.keyCode) {
+    case 48: // '0'
+      toggleWireframes();
+      updateHUD("0");
+      break;
     case 49: // '1'
       changeActiveCamera(cameras.front);
+      updateHUD("1");
       break;
     case 50: // '2'
       changeActiveCamera(cameras.side);
+      updateHUD("2");
       break;
     case 51: // '3'
       changeActiveCamera(cameras.top);
+      updateHUD("3");
       break;
     case 52: // '4'
       changeActiveCamera(cameras.orthogonal);
+      updateHUD("4");
       break;
     case 53: // '5'
       changeActiveCamera(cameras.perspective);
+      updateHUD("5");
       break;
     case 54: // '6'
       //TODO activeCamera = cameraMovel;
+      updateHUD("6");
       break;
-    case 48: // '0'
-      toggleWireframes();
+    case 65 || 97: // 'a' 'A'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("a"); // Highlight 'a' key
+      break;
+    case 81 || 113: // 'q' 'Q'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("q"); // Highlight 'q' key
+      break;
+    case 83 || 115: // 's' 'S'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("s"); // Highlight 's' key
+      break;
+    case 87 || 119: // 'w' 'W'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("w"); // Highlight 'w' key
+      break;
+    case 68 || 100: // 'd' 'D'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("d"); // Highlight 'd' key
+      break;
+    case 69 || 101: // 'e' 'E'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("e"); // Highlight 'e' key
+      break;
+    case 82 || 114: // 'r' 'R'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("r"); // Highlight 'r' key
+      break;
+    case 70 || 102: // 'f' 'F'
+      //TODO activeCamera = cameraMovel;
+      updateHUD("f"); // Highlight 'f' key
+      break;
     default:
       break;
   }
