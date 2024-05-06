@@ -202,46 +202,37 @@ function createLoads() {
 
     switch (i) {
       case 0:
-        if (!checkCollision(x, y, z, cubeSide, cubeSide, cubeSide)) {
+        if (!willCollide(x, y, z, cubeSide)) {
           createCube(x, y, z);
           i++;
         }
         break;
       case 1:
-        if (!checkCollision(x, y, z, torusRadius, tubeRadius, torusRadius)) {
+        if (!willCollide(x, y, z, torusRadius)) {
           createTorus(x, y, z);
           i++;
         }
         break;
       case 2:
-        if (!checkCollision(x, y, z, torusRadius, tubeRadius, torusRadius)) {
+        if (!willCollide(x, y, z, torusRadius)) {
           createTorusKnot(x, y, z);
           i++;
         }
         break;
       case 3:
-        if (!checkCollision(x, y, z, radius, radius, radius)) {
+        if (!willCollide(x, y, z, radius)) {
           createDodecahedron(x, y, z);
           i++;
         }
         break;
       case 4:
-        if (!checkCollision(x, y, z, radius, radius, radius)) {
+        if (!willCollide(x, y, z, radius)) {
           createIcosahedron(x, y, z);
           i++;
         }
         break;
       case 5:
-        if (
-          !checkCollision(
-            x,
-            y,
-            z,
-            parallelpipedWidth,
-            parallelpipedHeight,
-            parallelpipedLength
-          )
-        ) {
+        if (!willCollide(x, y, z, parallelpipedHeight)) {
           createParallelpiped(x, y, z);
           i++;
         }
@@ -252,15 +243,13 @@ function createLoads() {
   }
 }
 
-function checkCollision(x, y, z, width, height, length) {
-  let newBoundingBox = new THREE.Box3(
-    new THREE.Vector3(x - width, y - height, z - length),
-    new THREE.Vector3(x + width, y + height, z + length)
-  );
+function willCollide(x, y, z, radius) {
+  let newBoundingSphere = new THREE.Sphere(new THREE.Vector3(x, y, z), radius);
 
   for (let object of scene.children) {
-    let boundingBox = new THREE.Box3().setFromObject(object);
-    if (newBoundingBox.intersectsBox(boundingBox)) {
+    let boundingSphere = new THREE.Sphere();
+    new THREE.Box3().setFromObject(object).getBoundingSphere(boundingSphere);
+    if (newBoundingSphere.intersectsSphere(boundingSphere)) {
       return true;
     }
   }
