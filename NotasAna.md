@@ -13,6 +13,9 @@
 - [ ] Os cantos do contentor estão ok?
 - [x] É preciso os objetos estarem no eixo y?
   - O Tiago perguntou por mim :)
+- [ ] Posso usar a forma como estou a usar para
+  - [ ] Calculas as posições de Y
+  - [ ] Calcular as colisões das cargas
 
 ## TODO
 
