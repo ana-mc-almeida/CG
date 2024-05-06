@@ -55,7 +55,7 @@ var parallelpipedLength = 2;
 var torusRadius = 3;
 var tubeRadius = 1;
 
-var radius = 5;
+var radius = 3;
 
 function getPositionY(geometry, y) {
   var size = new THREE.Vector3();
