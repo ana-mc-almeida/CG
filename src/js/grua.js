@@ -26,7 +26,11 @@ const BACKGROUND = new THREE.Color(0xeceae4);
 //const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
 const materialBase = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-const materialWalls = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true, });
+const materialWallsProperties = { color: 0x0000ff, wireframe: true, };
+const materialBackWall = new THREE.MeshBasicMaterial(materialWallsProperties);
+const materialFrontWall = new THREE.MeshBasicMaterial(materialWallsProperties);
+const materialLeftWall = new THREE.MeshBasicMaterial(materialWallsProperties);
+const materialRightWall = new THREE.MeshBasicMaterial(materialWallsProperties);
 
 const materialCube = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
 
@@ -101,25 +105,29 @@ function createContainer(x, y, z) {
   );
 
   // Back wall
-  var wallBack = new THREE.Mesh(smallWallGeometry, materialWalls);
+  var wallBack = new THREE.Mesh(smallWallGeometry, materialBackWall);
+  wallBack.name = "Back Wall";
   wallBack.position.z = -(containerWidth / 2);
   wallBack.position.y = containerHeight / 2;
   container.add(wallBack);
 
   // Front wall
-  var wallFront = new THREE.Mesh(smallWallGeometry, materialWalls);
+  var wallFront = new THREE.Mesh(smallWallGeometry, materialFrontWall);
+  wallFront.name = "Front Wall";
   wallFront.position.z = containerWidth / 2;
   wallFront.position.y = containerHeight / 2;
   container.add(wallFront);
 
   // Left wall
-  var wallLeft = new THREE.Mesh(bigWallGeometry, materialWalls);
+  var wallLeft = new THREE.Mesh(bigWallGeometry, materialLeftWall);
+  wallLeft.name = "Left Wall";
   wallLeft.position.x = -(containerLength / 2);
   wallLeft.position.y = containerHeight / 2;
   container.add(wallLeft);
 
   // Right wall
-  var wallRight = new THREE.Mesh(bigWallGeometry, materialWalls);
+  var wallRight = new THREE.Mesh(bigWallGeometry, materialRightWall);
+  wallRight.name = "Right Wall";
   wallRight.position.x = containerLength / 2;
   wallRight.position.y = containerHeight / 2;
   container.add(wallRight);
@@ -833,22 +841,14 @@ function changeActiveCamera(cameraDescriptor) {
   activeCamera = cameraDescriptor;
 }
 
-//TODO remove console.log
 function toggleWireframes() {
   scene.traverse(function (node) {
     if (node instanceof THREE.Mesh) {
-      console.log(node);
-      console.log("1->");
-      console.log(node.material.wireframe);
-      console.log("2->");
-      console.log(!node.material.wireframe);
+      console.log('Toggling wireframe for', node.name);
       node.material.wireframe = !node.material.wireframe;
-      console.log("3->");
-      console.log(node.material.wireframe);
     }
   });
 }
-
 init();
 animate();
 // Call createHUD function after DOM content is loaded
