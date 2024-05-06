@@ -57,6 +57,26 @@ var tubeRadius = 1;
 
 var radius = 5;
 
+function getPositionY(geometry, y) {
+  var size = new THREE.Vector3();
+
+  geometry.computeBoundingBox(); // Calcular a bounding box para obter o tamanho do objeto
+  geometry.boundingBox.getSize(size) // Obter as dimensões do objeto
+
+  return y + size.y / 2
+
+}
+
+function getPositionYRotated(geometry, y) {
+  var size = new THREE.Vector3();
+
+  geometry.computeBoundingBox(); // Calcular a bounding box para obter o tamanho do objeto
+  geometry.boundingBox.getSize(size) // Obter as dimensões do objeto
+
+  return y + size.z / 2
+
+}
+
 function createContainer(x, y, z) {
   "use strict";
 
@@ -79,7 +99,7 @@ function createContainer(x, y, z) {
     containerHeight,
     containerWidth
   );
-  
+
   // Back wall
   var wallBack = new THREE.Mesh(smallWallGeometry, materialWalls);
   wallBack.position.z = -(containerWidth / 2);
@@ -122,8 +142,8 @@ function createTorus(x, y, z) {
 
   var torusGeometry = new THREE.TorusGeometry(torusRadius, tubeRadius);
   var torus = new THREE.Mesh(torusGeometry, materialTorus);
-  torus.position.set(x, y + torusRadius / 2, z);
   torus.rotation.x = Math.PI / 2;
+  torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
 }
 
@@ -133,7 +153,7 @@ function createTorusKnot(x, y, z) {
   var torusGeometry = new THREE.TorusKnotGeometry(torusRadius, tubeRadius);
   var torus = new THREE.Mesh(torusGeometry, materialTorusKnot);
   torus.rotation.x = Math.PI / 2;
-  torus.position.set(x, y + torusRadius, z);
+  torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
 }
 
@@ -142,7 +162,7 @@ function createDodecahedron(x, y, z) {
 
   var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
   var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
-  dodecahedron.position.set(x, y + radius, z);
+  dodecahedron.position.set(x, getPositionY(dodecahedronGeometry, y), z);
   scene.add(dodecahedron);
 }
 
@@ -151,7 +171,7 @@ function createIcosahedron(x, y, z) {
 
   var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
   var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
-  icosahedron.position.set(x, y + radius, z);
+  icosahedron.position.set(x, getPositionY(icosahedronGeometry, y), z);
   scene.add(icosahedron);
 }
 
@@ -608,7 +628,13 @@ function createScene() {
 
   scene = new THREE.Scene();
 
-  scene.add(new THREE.AxesHelper(10));
+  scene.add(new THREE.AxesHelper(30));
+
+  var negativeAxesHelper = new THREE.AxesHelper(30);
+  negativeAxesHelper.rotation.y = Math.PI; // Rotacionar em 180 graus
+  scene.add(negativeAxesHelper);
+
+
   scene.background = BACKGROUND;
 
   createLowerCrane(0, 0, 0);

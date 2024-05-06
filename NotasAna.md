@@ -11,8 +11,8 @@
 ## Dúvidas
 
 - [ ] Os cantos do contentor estão ok?
-- [ ] É preciso os objetos estarem no eixo y?
-  - Se sim, como é que se faz isso?
+- [x] É preciso os objetos estarem no eixo y?
+  - O Tiago perguntou por mim :)
 
 ## TODO
 
