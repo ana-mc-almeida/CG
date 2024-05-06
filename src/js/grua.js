@@ -660,8 +660,8 @@ function animate() {
 
 const CAMERA_GEOMETRY = Object.freeze({
   sceneViewAABB: [
-    new THREE.Vector3(-10, -1, -30),
-    new THREE.Vector3(35, 40, 30),
+    new THREE.Vector3(-45, -5, -39),
+    new THREE.Vector3(45, 40, 40),
   ],
   orthogonalDistance: 500, // distance from the camera to the scene in orthogonal projection
   orthogonalNear: 1, // closest distance from the camera at which objects are rendered
