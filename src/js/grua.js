@@ -617,12 +617,7 @@ function createScene() {
 
   scene = new THREE.Scene();
 
-  scene.add(new THREE.AxesHelper(30));
-
-  var negativeAxesHelper = new THREE.AxesHelper(30);
-  negativeAxesHelper.rotation.y = Math.PI; // Rotacionar em 180 graus
-  scene.add(negativeAxesHelper);
-
+  scene.add(new THREE.AxesHelper(10));
 
   scene.background = BACKGROUND;
 
