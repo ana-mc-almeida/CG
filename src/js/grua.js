@@ -22,8 +22,8 @@ const materialHookBlock = new THREE.MeshBasicMaterial({ color: 0x00ff00, wirefra
 //const materialHigherHook = new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true, });
 //const materialLowerHook= new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
 
-//const BACKGROUND = new THREE.Color(0xeceae4);
-const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
+const BACKGROUND = new THREE.Color(0xeceae4);
+//const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
 const materialBase = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
 const materialWalls = new THREE.MeshBasicMaterial({ color: 0x0000ff, wireframe: true, });
@@ -660,7 +660,7 @@ function animate() {
 
 const CAMERA_GEOMETRY = Object.freeze({
   sceneViewAABB: [
-    new THREE.Vector3(-45, -5, -39),
+    new THREE.Vector3(-60, -5, -39),
     new THREE.Vector3(45, 40, 40),
   ],
   orthogonalDistance: 500, // distance from the camera to the scene in orthogonal projection
