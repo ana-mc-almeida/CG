@@ -5,39 +5,99 @@ var geometry, mesh;
 var materialLowerHook, materialHigherHook;
 
 // grua materials
-const materialFoundation = new THREE.MeshBasicMaterial({ color: 0xf00f00, wireframe: true, });
-const materialLowerMast = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
-const materialTurntable = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
-const materialHigherMast = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
-const materialCab = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
-const materialJib = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
-const materialCounterWeight = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
-const materialTowerPeak = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
-const materialRightLoadLine = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-const materialLeftLoadLine = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+const materialFoundation = new THREE.MeshBasicMaterial({
+  color: 0xf00f00,
+  wireframe: true,
+});
+const materialLowerMast = new THREE.MeshBasicMaterial({
+  color: 0x0f0ff0,
+  wireframe: true,
+});
+const materialTurntable = new THREE.MeshBasicMaterial({
+  color: 0xf00f0f,
+  wireframe: true,
+});
+const materialHigherMast = new THREE.MeshBasicMaterial({
+  color: 0x0f0ff0,
+  wireframe: true,
+});
+const materialCab = new THREE.MeshBasicMaterial({
+  color: 0xf00f0f,
+  wireframe: true,
+});
+const materialJib = new THREE.MeshBasicMaterial({
+  color: 0x0f0ff0,
+  wireframe: true,
+});
+const materialCounterWeight = new THREE.MeshBasicMaterial({
+  color: 0xf00f0f,
+  wireframe: true,
+});
+const materialTowerPeak = new THREE.MeshBasicMaterial({
+  color: 0x0f0ff0,
+  wireframe: true,
+});
+const materialRightLoadLine = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
+const materialLeftLoadLine = new THREE.MeshBasicMaterial({
+  color: 0xf00f0f,
+  wireframe: true,
+});
 
 // hook block materials
-const materialHoist = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
-const materialSteelCable = new THREE.MeshBasicMaterial({ color: 0x0f0ff0, wireframe: true, });
-const materialHookBlock = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialHoist = new THREE.MeshBasicMaterial({
+  color: 0xf00f0f,
+  wireframe: true,
+});
+const materialSteelCable = new THREE.MeshBasicMaterial({
+  color: 0x0f0ff0,
+  wireframe: true,
+});
+const materialHookBlock = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
 
 const BACKGROUND = new THREE.Color(0xeceae4);
 //const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
-const materialBase = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-const materialWallsProperties = { color: 0x0000ff, wireframe: true, };
+const materialBase = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
+const materialWallsProperties = { color: 0x0000ff, wireframe: true };
 const materialBackWall = new THREE.MeshBasicMaterial(materialWallsProperties);
 const materialFrontWall = new THREE.MeshBasicMaterial(materialWallsProperties);
 const materialLeftWall = new THREE.MeshBasicMaterial(materialWallsProperties);
 const materialRightWall = new THREE.MeshBasicMaterial(materialWallsProperties);
 
-const materialCube = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialCube = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
 
-const materialTorus = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-const materialDodecahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-const materialTorusKnot = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-const materialIcosahedron = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
-const materialParallelpiped = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true, });
+const materialTorus = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
+const materialDodecahedron = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
+const materialTorusKnot = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
+const materialIcosahedron = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
+const materialParallelpiped = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+  wireframe: true,
+});
 
 let wireframeToggle = false;
 let previousView = 1;
@@ -63,21 +123,19 @@ var radius = 3;
 function getPositionY(geometry, y) {
   var size = new THREE.Vector3();
 
-  geometry.computeBoundingBox(); 
-  geometry.boundingBox.getSize(size)
+  geometry.computeBoundingBox();
+  geometry.boundingBox.getSize(size);
 
-  return y + size.y / 2
-
+  return y + size.y / 2;
 }
 
 function getPositionYRotated(geometry, y) {
   var size = new THREE.Vector3();
 
-  geometry.computeBoundingBox(); 
-  geometry.boundingBox.getSize(size)
+  geometry.computeBoundingBox();
+  geometry.boundingBox.getSize(size);
 
-  return y + size.z / 2
-
+  return y + size.z / 2;
 }
 
 function createContainer(x, y, z) {
@@ -375,18 +433,24 @@ function addHookBlock(obj, x, y, z) {
 function addHigherHook(obj, x, y, z) {
   "use strict";
   var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  materialHigherHook = new THREE.MeshBasicMaterial({ color: 0xffff00, wireframe: true, });
+  materialHigherHook = new THREE.MeshBasicMaterial({
+    color: 0xffff00,
+    wireframe: true,
+  });
   var mesh = new THREE.Mesh(geometry, materialHigherHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
-  console.log('Added HigherHook to object', obj);
+  console.log("Added HigherHook to object", obj);
 }
 
 function addLowerHook(obj, x, y, z) {
   "use strict";
   var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  materialLowerHook = new THREE.MeshBasicMaterial({ color: 0xf00f0f, wireframe: true, });
+  materialLowerHook = new THREE.MeshBasicMaterial({
+    color: 0xf00f0f,
+    wireframe: true,
+  });
   var mesh = new THREE.Mesh(geometry, materialLowerHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -652,11 +716,10 @@ function init() {
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  //adicionar inicializar materiais
   createScene();
   createCameras();
   createHUD();
-
-  render();
 
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("resize", onResize);
@@ -666,7 +729,7 @@ function init() {
 
 function animate() {
   "use strict";
-
+  //update();
   render();
 
   requestAnimationFrame(animate);
@@ -840,7 +903,7 @@ function changeActiveCamera(cameraDescriptor) {
 function toggleWireframes() {
   scene.traverse(function (node) {
     if (node instanceof THREE.Mesh) {
-      console.log('Toggling wireframe for', node.name);
+      console.log("Toggling wireframe for", node.name);
       node.material.wireframe = !node.material.wireframe;
     }
   });

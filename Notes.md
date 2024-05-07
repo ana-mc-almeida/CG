@@ -19,3 +19,38 @@
 
 - Use `clock` from js to frames
   - Para ficar uniforme para todos os PCs
+
+- Alterar para array de materiais  - Alice
+
+- fazer resize (se der tempo)   - Alice
+
+- não usar traverse - substituir por arrays de materiais/ objetos
+
+- mudar a camara (ou a ortogonal ou a perspetiva)
+
+- Colisões:
+  - Podemos usar uma esfera global ou uma esfera na ponta de cada garra
+  - Na animação temos de:
+    - posicionar a garra
+    - levantar a garra
+    - movimentar o carrinho
+    - baixar a garra
+    - largar a carga
+    - fazer a carga desapaecer
+
+- só ter um render
+- ter o update
+
+## ASK
+
+- [X] Resize automático?
+  - se quisermos
+- [X] Tecla '0' para wireframe
+  - passar para tecla '7'
+- [X] Os cantos do contentor estão ok?
+  - OUI
+- [X] Posso usar a forma como estou a usar para
+  - [X] Calculas as posições de Y
+    - OK
+  - [X] Calcular as colisões das cargas
+    - CRIAR LISTA COM OS OBJTOS QUE QUERO CHECKAR
