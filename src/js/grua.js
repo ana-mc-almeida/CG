@@ -643,16 +643,6 @@ function onKeyDown(e) {
   // TODO
 }
 
-/*function onResize() {
-  "use strict";
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  if (window.innerHeight > 0 && window.innerWidth > 0) {
-    activeCamera.camera.aspect = window.innerWidth / window.innerHeight;
-    activeCamera.camera.updateProjectionMatrix();
-  }
-  // TODO
-}*/
-
 function onResize() {
   renderer.setSize(window.innerWidth, window.innerHeight);
 
