@@ -643,7 +643,7 @@ function onKeyDown(e) {
   // TODO
 }
 
-function onResize() {
+/*function onResize() {
   "use strict";
   renderer.setSize(window.innerWidth, window.innerHeight);
   if (window.innerHeight > 0 && window.innerWidth > 0) {
@@ -651,6 +651,14 @@ function onResize() {
     activeCamera.camera.updateProjectionMatrix();
   }
   // TODO
+}*/
+
+function onResize() {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  if (window.innerHeight > 0 && window.innerWidth > 0) {
+    refreshCameraParameters(activeCamera);
+  }
 }
 
 function createScene() {

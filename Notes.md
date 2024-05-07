@@ -5,7 +5,7 @@
 - Requesitos do enunciado:
   - Alice
     - [x] Tarefa 1 (0.50) - cena e câmara
-    - [ ] Tarefa 5 (0.25) - alterar arames/sólido
+    - [X] Tarefa 5 (0.25) - alterar arames/sólido
     - [x] Tarefa 7 (0.50) - Heads-Up Display
   - Mafalda
     - [x] Tarefa 2 (0.75) - grua
