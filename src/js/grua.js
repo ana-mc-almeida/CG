@@ -12,43 +12,43 @@ let previousView = 1;
 
 // Declare materials
 //Grua
-let materialFoundation, 
-    materialLowerMast, 
-    materialTurntable, 
-    materialHigherMast, 
-    materialCab, 
-    materialJib, 
-    materialCounterWeight, 
-    materialTowerPeak, 
-    materialRightLoadLine, 
-    materialLeftLoadLine;
+let materialFoundation,
+  materialLowerMast,
+  materialTurntable,
+  materialHigherMast,
+  materialCab,
+  materialJib,
+  materialCounterWeight,
+  materialTowerPeak,
+  materialRightLoadLine,
+  materialLeftLoadLine;
 
 //Hook block
-let materialHoist, 
-    materialSteelCable, 
-    materialHookBlock, 
-    materialHigherHook, 
-    materialLowerHook;
+let materialHoist,
+  materialSteelCable,
+  materialHookBlock,
+  materialHigherHook,
+  materialLowerHook;
 
 //Container
 let
-    materialWalls, 
-    materialBase;
+  materialWalls,
+  materialBase;
 
 //Objects
-let materialCube, 
-    materialTorus, 
-    materialDodecahedron, 
-    materialTorusKnot, 
-    materialIcosahedron, 
-    materialParallelpiped;
+let materialCube,
+  materialTorus,
+  materialDodecahedron,
+  materialTorusKnot,
+  materialIcosahedron,
+  materialParallelpiped;
 
 // Declare dimensions
 // Container dimensions
 var containerWidth = 10,
-    containerHeight = 10,
-    containerBaseHeight = 1,
-    containerLength = 20;
+  containerHeight = 10,
+  containerBaseHeight = 1,
+  containerLength = 20;
 
 // Objects dimensions
 // Cube dimensions
@@ -56,8 +56,8 @@ var cubeSide = 2;
 
 // Parallelpiped dimensions
 var parallelpipedWidth = 2,
-    parallelpipedHeight = 5,
-    parallelpipedLength = 2;
+  parallelpipedHeight = 5,
+  parallelpipedLength = 2;
 
 // Torus dimensions
 var torusRadius = 3;
