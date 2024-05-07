@@ -2,123 +2,104 @@ import * as THREE from "three";
 
 var activeCamera, scene, renderer;
 var geometry, mesh;
-var materialLowerHook, materialHigherHook;
+var container;
 
-// grua materials
-const materialFoundation = new THREE.MeshBasicMaterial({
-  color: 0xf00f00,
-  wireframe: true,
-});
-const materialLowerMast = new THREE.MeshBasicMaterial({
-  color: 0x0f0ff0,
-  wireframe: true,
-});
-const materialTurntable = new THREE.MeshBasicMaterial({
-  color: 0xf00f0f,
-  wireframe: true,
-});
-const materialHigherMast = new THREE.MeshBasicMaterial({
-  color: 0x0f0ff0,
-  wireframe: true,
-});
-const materialCab = new THREE.MeshBasicMaterial({
-  color: 0xf00f0f,
-  wireframe: true,
-});
-const materialJib = new THREE.MeshBasicMaterial({
-  color: 0x0f0ff0,
-  wireframe: true,
-});
-const materialCounterWeight = new THREE.MeshBasicMaterial({
-  color: 0xf00f0f,
-  wireframe: true,
-});
-const materialTowerPeak = new THREE.MeshBasicMaterial({
-  color: 0x0f0ff0,
-  wireframe: true,
-});
-const materialRightLoadLine = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-const materialLeftLoadLine = new THREE.MeshBasicMaterial({
-  color: 0xf00f0f,
-  wireframe: true,
-});
-
-// hook block materials
-const materialHoist = new THREE.MeshBasicMaterial({
-  color: 0xf00f0f,
-  wireframe: true,
-});
-const materialSteelCable = new THREE.MeshBasicMaterial({
-  color: 0x0f0ff0,
-  wireframe: true,
-});
-const materialHookBlock = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-
-const BACKGROUND = new THREE.Color(0xeceae4);
-//const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
-
-const materialBase = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-const materialWallsProperties = { color: 0x0000ff, wireframe: true };
-const materialBackWall = new THREE.MeshBasicMaterial(materialWallsProperties);
-const materialFrontWall = new THREE.MeshBasicMaterial(materialWallsProperties);
-const materialLeftWall = new THREE.MeshBasicMaterial(materialWallsProperties);
-const materialRightWall = new THREE.MeshBasicMaterial(materialWallsProperties);
-
-const materialCube = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-
-const materialTorus = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-const materialDodecahedron = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-const materialTorusKnot = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-const materialIcosahedron = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-const materialParallelpiped = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
+//const BACKGROUND = new THREE.Color(0xeceae4);
+const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
 let wireframeToggle = false;
 let previousView = 1;
 
-var container;
+// Declare materials
+//Grua
+let materialFoundation, 
+    materialLowerMast, 
+    materialTurntable, 
+    materialHigherMast, 
+    materialCab, 
+    materialJib, 
+    materialCounterWeight, 
+    materialTowerPeak, 
+    materialRightLoadLine, 
+    materialLeftLoadLine;
 
-var containerWidth = 10;
-var containerHeight = 10;
-var containerBaseHeight = 1;
-var containerLength = 20;
+//Hook block
+let materialHoist, 
+    materialSteelCable, 
+    materialHookBlock, 
+    materialHigherHook, 
+    materialLowerHook;
 
+//Container
+let
+    materialWalls, 
+    materialBase;
+
+//Objects
+let materialCube, 
+    materialTorus, 
+    materialDodecahedron, 
+    materialTorusKnot, 
+    materialIcosahedron, 
+    materialParallelpiped;
+
+// Declare dimensions
+// Container dimensions
+var containerWidth = 10,
+    containerHeight = 10,
+    containerBaseHeight = 1,
+    containerLength = 20;
+
+// Objects dimensions
+// Cube dimensions
 var cubeSide = 2;
 
-var parallelpipedWidth = 2;
-var parallelpipedHeight = 5;
-var parallelpipedLength = 2;
+// Parallelpiped dimensions
+var parallelpipedWidth = 2,
+    parallelpipedHeight = 5,
+    parallelpipedLength = 2;
 
+// Torus dimensions
 var torusRadius = 3;
+
+// tube dimensions
 var tubeRadius = 1;
 
+//  radius 
 var radius = 3;
+
+function createMaterial(color) {
+  return new THREE.MeshBasicMaterial({ color, wireframe: true });
+}
+const materials = [
+  // Grua materials
+  materialFoundation = createMaterial(0xf00f0),
+  materialLowerMast = createMaterial(0x0f0ff0),
+  materialTurntable = createMaterial(0xf00f0f),
+  materialHigherMast = createMaterial(0x0f0ff0),
+  materialCab = createMaterial(0xf00f0f),
+  materialJib = createMaterial(0x0f0ff0),
+  materialCounterWeight = createMaterial(0xf00f0f),
+  materialTowerPeak = createMaterial(0x0f0ff0),
+  materialRightLoadLine = createMaterial(0x00ff00),
+  materialLeftLoadLine = createMaterial(0xf00f0f),
+  // Hook block materials
+  materialHoist = createMaterial(0xf00f0f),
+  materialSteelCable = createMaterial(0x0f0ff0),
+  materialHookBlock = createMaterial(0x00ff00),
+  materialHigherHook = createMaterial(0xf55f00),
+  materialLowerHook = createMaterial(0x00ffff),
+  // Container materials
+  materialWalls = createMaterial(0x0000ff),
+  materialBase = createMaterial(0x00ff00),
+  // Objects materials
+  materialCube = createMaterial(0x00ff00),
+  materialTorus = createMaterial(0x00ff00),
+  materialDodecahedron = createMaterial(0x00ff00),
+  materialTorusKnot = createMaterial(0x00ff00),
+  materialIcosahedron = createMaterial(0x00ff00),
+  materialParallelpiped = createMaterial(0x00ff00),
+];
 
 function getPositionY(geometry, y) {
   var size = new THREE.Vector3();
@@ -162,25 +143,25 @@ function createContainer(x, y, z) {
   );
 
   // Back wall
-  var wallBack = new THREE.Mesh(smallWallGeometry, materialBackWall);
+  var wallBack = new THREE.Mesh(smallWallGeometry, materialWalls);
   wallBack.position.z = -(containerWidth / 2);
   wallBack.position.y = containerHeight / 2;
   container.add(wallBack);
 
   // Front wall
-  var wallFront = new THREE.Mesh(smallWallGeometry, materialFrontWall);
+  var wallFront = new THREE.Mesh(smallWallGeometry, materialWalls);
   wallFront.position.z = containerWidth / 2;
   wallFront.position.y = containerHeight / 2;
   container.add(wallFront);
 
   // Left wall
-  var wallLeft = new THREE.Mesh(bigWallGeometry, materialLeftWall);
+  var wallLeft = new THREE.Mesh(bigWallGeometry, materialWalls);
   wallLeft.position.x = -(containerLength / 2);
   wallLeft.position.y = containerHeight / 2;
   container.add(wallLeft);
 
   // Right wall
-  var wallRight = new THREE.Mesh(bigWallGeometry, materialRightWall);
+  var wallRight = new THREE.Mesh(bigWallGeometry, materialWalls);
   wallRight.position.x = containerLength / 2;
   wallRight.position.y = containerHeight / 2;
   container.add(wallRight);
@@ -433,10 +414,6 @@ function addHookBlock(obj, x, y, z) {
 function addHigherHook(obj, x, y, z) {
   "use strict";
   var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  materialHigherHook = new THREE.MeshBasicMaterial({
-    color: 0xffff00,
-    wireframe: true,
-  });
   var mesh = new THREE.Mesh(geometry, materialHigherHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -447,10 +424,6 @@ function addHigherHook(obj, x, y, z) {
 function addLowerHook(obj, x, y, z) {
   "use strict";
   var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
-  materialLowerHook = new THREE.MeshBasicMaterial({
-    color: 0xf00f0f,
-    wireframe: true,
-  });
   var mesh = new THREE.Mesh(geometry, materialLowerHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -900,14 +873,12 @@ function changeActiveCamera(cameraDescriptor) {
   activeCamera = cameraDescriptor;
 }
 
+
 function toggleWireframes() {
-  scene.traverse(function (node) {
-    if (node instanceof THREE.Mesh) {
-      console.log("Toggling wireframe for", node.name);
-      node.material.wireframe = !node.material.wireframe;
-    }
-  });
+  Object.values(materials).forEach((material) => (material.wireframe = !material.wireframe));
 }
+
+
 init();
 animate();
 // Call createHUD function after DOM content is loaded
