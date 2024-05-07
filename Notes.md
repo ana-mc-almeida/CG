@@ -18,15 +18,16 @@
 ## Teacher notes
 
 - [ ] Use `clock` from js to frames
+
   - Para ficar uniforme para todos os PCs
 
-- [X] Alterar para array de materiais  - Alice
+- [x] Alterar para array de materiais - Alice
 
-- [X] fazer resize (se der tempo)   -> feito Alice
+- [x] fazer resize (se der tempo) -> feito Alice
 
-- [X] não usar traverse - substituir por arrays de materiais/ objetos   -> Acho que está feito (Alice)
+- [x] não usar traverse - substituir por arrays de materiais/ objetos -> Acho que está feito (Alice)
 
-- [X] mudar a camara (ou a ortogonal ou a perspetiva)     -> Acho que já está (Alice)
+- [x] mudar a camara (ou a ortogonal ou a perspetiva) -> Acho que já está (Alice)
 
 - Colisões:
 
@@ -39,15 +40,8 @@
     - 5. largar a carga
     - 6. fazer a carga desapaecer
 
-- [X] só ter um render
+- [x] só ter um render
 - [ ] ter o update
-
-## TODO
-
-- [ ] Alterar para array de materiais - Alice
-- [ ] fazer resize (se der tempo) - Alice
-- [ ] não usar traverse - substituir por arrays de materiais/ objetos
-- [ ] mudar a camara (ou a ortogonal ou a perspetiva)
 
 ## ASK
 
