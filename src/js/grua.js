@@ -750,7 +750,7 @@ const cameras = {
   }),
   // perspective projection: isometric view
   perspective: createPerspectiveCamera({
-    x: -CAMERA_GEOMETRY.perspectiveDistance,
+    x: CAMERA_GEOMETRY.perspectiveDistance,
     y: CAMERA_GEOMETRY.perspectiveDistance,
     z: -CAMERA_GEOMETRY.perspectiveDistance,
   }),
