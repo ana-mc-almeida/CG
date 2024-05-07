@@ -17,9 +17,16 @@
 
 ## Teacher notes
 
-- Use `clock` from js to frames
-
+- [ ] Use `clock` from js to frames
   - Para ficar uniforme para todos os PCs
+
+- [X] Alterar para array de materiais  - Alice
+
+- [X] fazer resize (se der tempo)   -> feito Alice
+
+- [X] não usar traverse - substituir por arrays de materiais/ objetos   -> Acho que está feito (Alice)
+
+- [X] mudar a camara (ou a ortogonal ou a perspetiva)     -> Acho que já está (Alice)
 
 - Colisões:
 
@@ -32,8 +39,8 @@
     - 5. largar a carga
     - 6. fazer a carga desapaecer
 
-- só ter um render
-- ter o update
+- [X] só ter um render
+- [ ] ter o update
 
 ## TODO
 
