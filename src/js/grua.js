@@ -4,8 +4,8 @@ var activeCamera, scene, renderer;
 var geometry, mesh;
 var container;
 
-//const BACKGROUND = new THREE.Color(0xeceae4);
-const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
+const BACKGROUND = new THREE.Color(0xeceae4);
+// const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
 let wireframeToggle = false;
 let previousView = 1;
