@@ -17,16 +17,16 @@
 
 ## Teacher notes
 
-- Use `clock` from js to frames
-  - Para ficar uniforme para todos os PCs
+- [ ] Use `clock` from js to frames
+  - [ ] Para ficar uniforme para todos os PCs
 
-- Alterar para array de materiais  - Alice
+- [X] Alterar para array de materiais  - Alice
 
-- fazer resize (se der tempo)   - Alice
+- [X] fazer resize (se der tempo)   -> feito Alice
 
-- não usar traverse - substituir por arrays de materiais/ objetos
+- [X] não usar traverse - substituir por arrays de materiais/ objetos   -> Acho que está feito (Alice)
 
-- mudar a camara (ou a ortogonal ou a perspetiva)
+- [X] mudar a camara (ou a ortogonal ou a perspetiva)     -> Acho que já está (Alice)
 
 - Colisões:
   - Podemos usar uma esfera global ou uma esfera na ponta de cada garra
@@ -38,8 +38,8 @@
     - largar a carga
     - fazer a carga desapaecer
 
-- só ter um render
-- ter o update
+- [X] só ter um render
+- [ ] ter o update
 
 ## ASK
 
