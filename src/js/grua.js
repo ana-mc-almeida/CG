@@ -4,51 +4,51 @@ var activeCamera, scene, renderer;
 var geometry, mesh;
 var container;
 
-//const BACKGROUND = new THREE.Color(0xeceae4);
-const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
+const BACKGROUND = new THREE.Color(0xeceae4);
+// const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
 let wireframeToggle = false;
 let previousView = 1;
 
 // Declare materials
 //Grua
-let materialFoundation, 
-    materialLowerMast, 
-    materialTurntable, 
-    materialHigherMast, 
-    materialCab, 
-    materialJib, 
-    materialCounterWeight, 
-    materialTowerPeak, 
-    materialRightLoadLine, 
-    materialLeftLoadLine;
+let materialFoundation,
+  materialLowerMast,
+  materialTurntable,
+  materialHigherMast,
+  materialCab,
+  materialJib,
+  materialCounterWeight,
+  materialTowerPeak,
+  materialRightLoadLine,
+  materialLeftLoadLine;
 
 //Hook block
-let materialHoist, 
-    materialSteelCable, 
-    materialHookBlock, 
-    materialHigherHook, 
-    materialLowerHook;
+let materialHoist,
+  materialSteelCable,
+  materialHookBlock,
+  materialHigherHook,
+  materialLowerHook;
 
 //Container
 let
-    materialWalls, 
-    materialBase;
+  materialWalls,
+  materialBase;
 
 //Objects
-let materialCube, 
-    materialTorus, 
-    materialDodecahedron, 
-    materialTorusKnot, 
-    materialIcosahedron, 
-    materialParallelpiped;
+let materialCube,
+  materialTorus,
+  materialDodecahedron,
+  materialTorusKnot,
+  materialIcosahedron,
+  materialParallelpiped;
 
 // Declare dimensions
 // Container dimensions
 var containerWidth = 10,
-    containerHeight = 10,
-    containerBaseHeight = 1,
-    containerLength = 20;
+  containerHeight = 10,
+  containerBaseHeight = 1,
+  containerLength = 20;
 
 // Objects dimensions
 // Cube dimensions
@@ -56,8 +56,8 @@ var cubeSide = 2;
 
 // Parallelpiped dimensions
 var parallelpipedWidth = 2,
-    parallelpipedHeight = 5,
-    parallelpipedLength = 2;
+  parallelpipedHeight = 5,
+  parallelpipedLength = 2;
 
 // Torus dimensions
 var torusRadius = 3;
@@ -67,6 +67,8 @@ var tubeRadius = 1;
 
 //  radius 
 var radius = 3;
+
+var objectsOnTheFloor = [];
 
 function createMaterial(color) {
   return new THREE.MeshBasicMaterial({ color, wireframe: true });
@@ -168,6 +170,7 @@ function createContainer(x, y, z) {
 
   container.position.set(x, y, z);
   scene.add(container);
+  objectsOnTheFloor.push(container);
 }
 
 function createCube(x, y, z) {
@@ -177,6 +180,7 @@ function createCube(x, y, z) {
   var cube = new THREE.Mesh(cubeGeometry, materialCube);
   cube.position.set(x, y + cubeSide / 2, z);
   scene.add(cube);
+  objectsOnTheFloor.push(cube);
 }
 
 function createTorus(x, y, z) {
@@ -187,6 +191,7 @@ function createTorus(x, y, z) {
   torus.rotation.x = Math.PI / 2;
   torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
+  objectsOnTheFloor.push(torus);
 }
 
 function createTorusKnot(x, y, z) {
@@ -197,6 +202,7 @@ function createTorusKnot(x, y, z) {
   torus.rotation.x = Math.PI / 2;
   torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
+  objectsOnTheFloor.push(torus);
 }
 
 function createDodecahedron(x, y, z) {
@@ -206,6 +212,7 @@ function createDodecahedron(x, y, z) {
   var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
   dodecahedron.position.set(x, getPositionY(dodecahedronGeometry, y), z);
   scene.add(dodecahedron);
+  objectsOnTheFloor.push(dodecahedron);
 }
 
 function createIcosahedron(x, y, z) {
@@ -215,6 +222,7 @@ function createIcosahedron(x, y, z) {
   var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
   icosahedron.position.set(x, getPositionY(icosahedronGeometry, y), z);
   scene.add(icosahedron);
+  objectsOnTheFloor.push(icosahedron);
 }
 
 function createParallelpiped(x, y, z) {
@@ -231,6 +239,7 @@ function createParallelpiped(x, y, z) {
   );
   parallelpiped.position.set(x, y + parallelpipedHeight / 2, z);
   scene.add(parallelpiped);
+  objectsOnTheFloor.push(parallelpiped);
 }
 
 function createLoads() {
@@ -304,6 +313,7 @@ function addFoundation(obj, x, y, z) {
   mesh = new THREE.Mesh(geometry, materialFoundation);
   mesh.position.set(x, y, z);
   obj.add(mesh);
+  objectsOnTheFloor.push(mesh);
 }
 
 function addLowerMast(obj, x, y, z) {

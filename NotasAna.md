@@ -10,12 +10,15 @@
 
 ## Dúvidas
 
-- [ ] Os cantos do contentor estão ok?
+- [x] Os cantos do contentor estão ok?
+  - O stor disse que era indiferente
 - [x] É preciso os objetos estarem no eixo y?
   - O Tiago perguntou por mim :)
-- [ ] Posso usar a forma como estou a usar para
-  - [ ] Calculas as posições de Y
-  - [ ] Calcular as colisões das cargas
+- [x] Posso usar a forma como estou a usar para:
+  - [x] Calculas as posições de Y
+    - Tudo bem
+  - [x] Calcular as colisões das cargas
+    - Não posso utilizar cenas como o scene traverse
 
 ## TODO
 
