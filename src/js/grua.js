@@ -521,12 +521,13 @@ function createHUD() {
       <h2>Key Mappings</h2>
     </div>
     <div id="content" style="margin-top: -10px;">
-      <p data-key="0">Press 0: Toggle Wireframes</p>
       <p data-key="1">Press 1: Front View</p>
       <p data-key="2">Press 2: Side View</p>
       <p data-key="3">Press 3: Top View</p>
       <p data-key="4">Press 4: Orthogonal Projection</p>
       <p data-key="5">Press 5: Perspective Projection</p>
+      <p data-key="6">Press 6: Mobile Camera</p>
+      <p data-key="7">Press 7: Toggle Wireframes</p>
       <p data-key="q">Press Q(q): Eixo de Rotação (TODO)</p>
       <p data-key="a">Press A(a): Eixo de Rotação (TODO)</p>
       <p data-key="w">Press W(w): Carrinho (TODO)</p>
@@ -566,9 +567,9 @@ function highlightOnKeyDown(key) {
 
 function updateHUD(key) {
   // updates hud based on key
-  if (key == 0) {
+  if (key == 7) {
     wireframeToggle = !wireframeToggle;
-    wireframeToggle ? toggleHighlight("0", true) : toggleHighlight("0", false);
+    wireframeToggle ? toggleHighlight("7", true) : toggleHighlight("7", false);
   } else if (/[1-6]/.test(key)) {
     toggleHighlight(previousView, false);
     console.log(key);
@@ -587,10 +588,6 @@ function render() {
 function onKeyDown(e) {
   "use strict";
   switch (e.keyCode) {
-    case 48: // '0'
-      toggleWireframes();
-      updateHUD("0");
-      break;
     case 49: // '1'
       changeActiveCamera(cameras.front);
       updateHUD("1");
@@ -613,7 +610,12 @@ function onKeyDown(e) {
       break;
     case 54: // '6'
       //TODO activeCamera = cameraMovel;
+      changeActiveCamera(cameras.mobile);
       updateHUD("6");
+      break;
+    case 55: // '7'
+      toggleWireframes();
+      updateHUD("7");
       break;
     case 65 || 97: // 'a' 'A'
       //TODO activeCamera = cameraMovel;
@@ -760,6 +762,12 @@ const cameras = {
   }),
   // perspective projection: isometric view
   perspective: createPerspectiveCamera({
+    x: CAMERA_GEOMETRY.perspectiveDistance,
+    y: CAMERA_GEOMETRY.perspectiveDistance,
+    z: -CAMERA_GEOMETRY.perspectiveDistance,
+  }),
+  // perspective projection: mobile view
+  mobile: createPerspectiveCamera({
     x: CAMERA_GEOMETRY.perspectiveDistance,
     y: CAMERA_GEOMETRY.perspectiveDistance,
     z: -CAMERA_GEOMETRY.perspectiveDistance,
