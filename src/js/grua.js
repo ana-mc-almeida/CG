@@ -134,6 +134,24 @@ function getPositionYRotated(geometry, y) {
   return y + size.z / 2;
 }
 
+function createSphere(object, name = null) {
+  let sphere = new THREE.Sphere();
+  new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
+
+  //Debug
+  // let sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
+  // let sphereGeometry = new THREE.SphereGeometry(sphere.radius);
+  // let sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  // sphereMesh.position.copy(sphere.center);
+  // scene.add(sphereMesh);
+
+  if (name) {
+    collisionSpheres[name] = sphere;
+  }
+
+  return sphere;
+}
+
 function createContainer(x, y, z) {
   "use strict";
 
@@ -691,6 +709,37 @@ function highlightOnKeyDown(key) {
   }
 }
 
+function updateHUD(key) {
+  // updates hud based on key
+  if (key == 7) {
+    wireframeToggle = !wireframeToggle;
+    wireframeToggle ? toggleHighlight("7", true) : toggleHighlight("7", false);
+  } else if (/[1-6]/.test(key)) {
+    toggleHighlight(previousView, false);
+    // console.log(key);
+    toggleHighlight(key, true);
+    previousView = key;
+  } else {
+    highlightOnKeyDown(key);
+  }
+}
+
+function checkCraneCollision() {
+  let newBoundingSphere = createSphere(movingHook);
+
+  // console.log(collisionSpheres)
+
+  for (let [name, boundingSphere] of Object.entries(collisionSpheres)) {
+    // TODO: check if sould use intersectsSphere or radius
+    if (newBoundingSphere.intersectsSphere(boundingSphere) && name !== "container") {
+      console.log("Collision detected");
+      return true;
+    }
+  }
+  console.log("No collision detected");
+  return false;
+}
+
 function moveHookUp(delta) {
   if (movingHook.position.y < 0) {
     var translationVector = new THREE.Vector3(0, 8 * delta, 0);
@@ -763,55 +812,6 @@ function moveTrolleyForward(delta) {
     return delta;
   }
   return 0;
-}
-
-function createSphere(object, name = null) {
-  let sphere = new THREE.Sphere();
-  new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
-
-  //Debug
-  // let sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
-  // let sphereGeometry = new THREE.SphereGeometry(sphere.radius);
-  // let sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  // sphereMesh.position.copy(sphere.center);
-  // scene.add(sphereMesh);
-
-  if (name) {
-    collisionSpheres[name] = sphere;
-  }
-
-  return sphere;
-}
-
-function checkCraneCollision() {
-  let newBoundingSphere = createSphere(movingHook);
-
-  // console.log(collisionSpheres)
-
-  for (let [name, boundingSphere] of Object.entries(collisionSpheres)) {
-    // TODO: check if sould use intersectsSphere or radius
-    if (newBoundingSphere.intersectsSphere(boundingSphere) && name !== "container") {
-      console.log("Collision detected");
-      return true;
-    }
-  }
-  console.log("No collision detected");
-  return false;
-}
-
-function updateHUD(key) {
-  // updates hud based on key
-  if (key == 7) {
-    wireframeToggle = !wireframeToggle;
-    wireframeToggle ? toggleHighlight("7", true) : toggleHighlight("7", false);
-  } else if (/[1-6]/.test(key)) {
-    toggleHighlight(previousView, false);
-    // console.log(key);
-    toggleHighlight(key, true);
-    previousView = key;
-  } else {
-    highlightOnKeyDown(key);
-  }
 }
 
 function update() {
