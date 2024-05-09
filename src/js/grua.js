@@ -81,6 +81,8 @@ var radius = 3;
 
 var objectsOnTheFloor = [];
 
+var collisionSpheres = {};
+
 function createMaterial(color) {
   return new THREE.MeshBasicMaterial({ color, wireframe: true });
 }
@@ -182,6 +184,8 @@ function createContainer(x, y, z) {
   container.position.set(x, y, z);
   scene.add(container);
   objectsOnTheFloor.push(container);
+
+  createSphere(container, "container");
 }
 
 function createCube(x, y, z) {
@@ -192,6 +196,8 @@ function createCube(x, y, z) {
   cube.position.set(x, y + cubeSide / 2, z);
   scene.add(cube);
   objectsOnTheFloor.push(cube);
+
+  createSphere(cube, "cube");
 }
 
 function createTorus(x, y, z) {
@@ -203,6 +209,8 @@ function createTorus(x, y, z) {
   torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
   objectsOnTheFloor.push(torus);
+
+  createSphere(torus, "torus");
 }
 
 function createTorusKnot(x, y, z) {
@@ -214,6 +222,8 @@ function createTorusKnot(x, y, z) {
   torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
   objectsOnTheFloor.push(torus);
+
+  createSphere(torus, "torusKnot");
 }
 
 function createDodecahedron(x, y, z) {
@@ -224,6 +234,8 @@ function createDodecahedron(x, y, z) {
   dodecahedron.position.set(x, getPositionY(dodecahedronGeometry, y), z);
   scene.add(dodecahedron);
   objectsOnTheFloor.push(dodecahedron);
+
+  createSphere(dodecahedron, "dodecahedron");
 }
 
 function createIcosahedron(x, y, z) {
@@ -234,6 +246,8 @@ function createIcosahedron(x, y, z) {
   icosahedron.position.set(x, getPositionY(icosahedronGeometry, y), z);
   scene.add(icosahedron);
   objectsOnTheFloor.push(icosahedron);
+
+  createSphere(icosahedron, "icosahedron");
 }
 
 function createParallelpiped(x, y, z) {
@@ -251,6 +265,8 @@ function createParallelpiped(x, y, z) {
   parallelpiped.position.set(x, y + parallelpipedHeight / 2, z);
   scene.add(parallelpiped);
   objectsOnTheFloor.push(parallelpiped);
+
+  createSphere(parallelpiped, "parallelpiped");
 }
 
 function createLoads() {
@@ -262,7 +278,7 @@ function createLoads() {
     let y = 0;
     let z = Math.random() * doubleMax - max;
 
-    console.log(x, y, z);
+    // console.log(x, y, z);
 
     switch (i) {
       case 0:
@@ -456,7 +472,7 @@ function addHigherHook(obj, x, y, z) {
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
-  console.log("Added HigherHook to object", obj);
+  // console.log("Added HigherHook to object", obj);
 }
 
 function addLowerHook(obj, x, y, z) {
@@ -675,6 +691,40 @@ function highlightOnKeyDown(key) {
   }
 }
 
+function createSphere(object, name = null) {
+  let sphere = new THREE.Sphere();
+  new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
+
+  //Debug
+  // let sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
+  // let sphereGeometry = new THREE.SphereGeometry(sphere.radius);
+  // let sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  // sphereMesh.position.copy(sphere.center);
+  // scene.add(sphereMesh);
+
+  if (name) {
+    collisionSpheres[name] = sphere;
+  }
+
+  return sphere;
+}
+
+function checkCraneCollision() {
+  let newBoundingSphere = createSphere(movingHook);
+
+  // console.log(collisionSpheres)
+
+  for (let [name, boundingSphere] of Object.entries(collisionSpheres)) {
+    // TODO: check if sould use intersectsSphere or radius
+    if (newBoundingSphere.intersectsSphere(boundingSphere) && name !== "container") {
+      console.log("Collision detected");
+      return true;
+    }
+  }
+  console.log("No collision detected");
+  return false;
+}
+
 function updateHUD(key) {
   // updates hud based on key
   if (key == 7) {
@@ -682,7 +732,7 @@ function updateHUD(key) {
     wireframeToggle ? toggleHighlight("7", true) : toggleHighlight("7", false);
   } else if (/[1-6]/.test(key)) {
     toggleHighlight(previousView, false);
-    console.log(key);
+    // console.log(key);
     toggleHighlight(key, true);
     previousView = key;
   } else {
@@ -698,21 +748,29 @@ function update() {
     if (movingTrolley.position.x > 5) {
       var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
       movingTrolley.applyMatrix4(translationMatrix);
+
+      checkCraneCollision();
     }
   }
   if (movingTrolley_flagS == false && movingTrolley_flagW == true) {
     if (movingTrolley.position.x < 29) {
       var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
       movingTrolley.applyMatrix4(translationMatrix);
+
+      checkCraneCollision();
     }
   }
   if (rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
     var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
     rotatingCrane.applyMatrix4(rotationMatrix);
+
+    checkCraneCollision();
   }
   if (rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
     var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
     rotatingCrane.applyMatrix4(rotationMatrix);
+
+    checkCraneCollision();
   }
   if (movingHook_flagD == true && movingHook_flagE == false) {
     if (movingHook.position.y > -27.5) {
@@ -731,6 +789,8 @@ function update() {
 
       var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
       steelCable.applyMatrix4(inverseTranslationMatrix);
+
+      checkCraneCollision();
     }
   }
   if (movingHook_flagD == false && movingHook_flagE == true) {
@@ -750,6 +810,8 @@ function update() {
 
       var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
       steelCable.applyMatrix4(inverseTranslationMatrix);
+
+      checkCraneCollision();
     }
   }
 
@@ -767,6 +829,8 @@ function update() {
       hook2.rotateOnWorldAxis(axis2, angle);
       hook3.rotateOnWorldAxis(axis3, angle);
       hook4.rotateOnWorldAxis(axis4, angle);
+
+      checkCraneCollision();
     }
   }
   if (rotatingHook_flagF == false && rotatingHook_flagR == true) {
@@ -781,6 +845,8 @@ function update() {
       hook2.rotateOnWorldAxis(axis2, angle);
       hook3.rotateOnWorldAxis(axis3, angle);
       hook4.rotateOnWorldAxis(axis4, angle);
+
+      checkCraneCollision();
     }
   }
 }
