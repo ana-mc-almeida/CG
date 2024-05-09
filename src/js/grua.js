@@ -71,7 +71,7 @@ var parallelpipedWidth = 2,
   parallelpipedLength = 2;
 
 // Torus dimensions
-var torusRadius = 3;
+var torusRadius = 2;
 
 // tube dimensions
 var tubeRadius = 1;
@@ -80,6 +80,16 @@ var tubeRadius = 1;
 var radius = 3;
 
 var objectsOnTheFloor = [];
+
+var collisionSpheres = {};
+var collidingObjects = {};
+
+var collisionAnimationInProgress = false;
+var animationPhase = 0;
+var collidingObject = null;
+
+var trolleyMaxX = 29;
+var hookMaxY = -27.5;
 
 function createMaterial(color) {
   return new THREE.MeshBasicMaterial({ color, wireframe: true });
@@ -132,6 +142,25 @@ function getPositionYRotated(geometry, y) {
   return y + size.z / 2;
 }
 
+function createSphere(object, name = null) {
+  let sphere = new THREE.Sphere();
+  new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
+
+  //Debug
+  // let sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
+  // let sphereGeometry = new THREE.SphereGeometry(sphere.radius);
+  // let sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  // sphereMesh.position.copy(sphere.center);
+  // scene.add(sphereMesh);
+
+  if (name) {
+    collisionSpheres[name] = sphere;
+    collidingObjects[name] = object;
+  }
+
+  return sphere;
+}
+
 function createContainer(x, y, z) {
   "use strict";
 
@@ -182,6 +211,8 @@ function createContainer(x, y, z) {
   container.position.set(x, y, z);
   scene.add(container);
   objectsOnTheFloor.push(container);
+
+  createSphere(container, "container");
 }
 
 function createCube(x, y, z) {
@@ -192,6 +223,8 @@ function createCube(x, y, z) {
   cube.position.set(x, y + cubeSide / 2, z);
   scene.add(cube);
   objectsOnTheFloor.push(cube);
+
+  createSphere(cube, "cube");
 }
 
 function createTorus(x, y, z) {
@@ -203,6 +236,8 @@ function createTorus(x, y, z) {
   torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
   objectsOnTheFloor.push(torus);
+
+  createSphere(torus, "torus");
 }
 
 function createTorusKnot(x, y, z) {
@@ -214,6 +249,8 @@ function createTorusKnot(x, y, z) {
   torus.position.set(x, getPositionYRotated(torusGeometry, y), z);
   scene.add(torus);
   objectsOnTheFloor.push(torus);
+
+  createSphere(torus, "torusKnot");
 }
 
 function createDodecahedron(x, y, z) {
@@ -224,6 +261,8 @@ function createDodecahedron(x, y, z) {
   dodecahedron.position.set(x, getPositionY(dodecahedronGeometry, y), z);
   scene.add(dodecahedron);
   objectsOnTheFloor.push(dodecahedron);
+
+  createSphere(dodecahedron, "dodecahedron");
 }
 
 function createIcosahedron(x, y, z) {
@@ -234,6 +273,8 @@ function createIcosahedron(x, y, z) {
   icosahedron.position.set(x, getPositionY(icosahedronGeometry, y), z);
   scene.add(icosahedron);
   objectsOnTheFloor.push(icosahedron);
+
+  createSphere(icosahedron, "icosahedron");
 }
 
 function createParallelpiped(x, y, z) {
@@ -251,16 +292,20 @@ function createParallelpiped(x, y, z) {
   parallelpiped.position.set(x, y + parallelpipedHeight / 2, z);
   scene.add(parallelpiped);
   objectsOnTheFloor.push(parallelpiped);
+
+  createSphere(parallelpiped, "parallelpiped");
 }
 
 function createLoads() {
   let i = 0;
   while (i < 6) {
-    let x = Math.random() * 58 - 29;
+    let max = 29 / Math.sqrt(2);
+    let doubleMax = 2 * max;
+    let x = Math.random() * doubleMax - max;
     let y = 0;
-    let z = Math.random() * 58 - 29;
+    let z = Math.random() * doubleMax - max;
 
-    console.log(x, y, z);
+    // console.log(x, y, z);
 
     switch (i) {
       case 0:
@@ -382,23 +427,23 @@ function addCounterweight(obj, x, y, z) {
 
 function addTowerPeak(obj, x, y, z) {
   'use strict';
-    const geometry = new THREE.BufferGeometry();
-    const sideLength = 2;
-    const vertices = new Float32Array([
-        -1, 0, -1, // v0
-        -1, 0, 1 , // v1
-        1, 0, 0, // v2
-        0, 1.633, 0 // v3 - vertix
-    ]);
-    const indices = [
-        0, 1, 2,
-        0, 2, 3,
-        2, 1, 3,
-        0, 3, 1
-    ];
-    geometry.setIndex(indices);
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    const mesh = new THREE.Mesh(geometry, materialTowerPeak);
+  const geometry = new THREE.BufferGeometry();
+  const sideLength = 2;
+  const vertices = new Float32Array([
+    -1, 0, -1, // v0
+    -1, 0, 1, // v1
+    1, 0, 0, // v2
+    0, 1.633, 0 // v3 - vertix
+  ]);
+  const indices = [
+    0, 1, 2,
+    0, 2, 3,
+    2, 1, 3,
+    0, 3, 1
+  ];
+  geometry.setIndex(indices);
+  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  const mesh = new THREE.Mesh(geometry, materialTowerPeak);
   mesh.position.set(x, y, z);
   obj.add(mesh);
 }
@@ -454,7 +499,7 @@ function addHigherHook(obj, x, y, z) {
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
   obj.add(mesh);
-  console.log("Added HigherHook to object", obj);
+  // console.log("Added HigherHook to object", obj);
 }
 
 function addLowerHook(obj, x, y, z) {
@@ -553,59 +598,59 @@ function createMovingHook(x, y, z) {
 }
 
 function createHook1(x, y, z) {
-"use strict";
+  "use strict";
 
-hook1 = new THREE.Object3D();
+  hook1 = new THREE.Object3D();
 
-addLowerHook(hook1, 0, 0, 0);
+  addLowerHook(hook1, 0, 0, 0);
 
-movingHook.add(hook1);
+  movingHook.add(hook1);
 
-hook1.position.x = x;
-hook1.position.y = y - 4.5;
-hook1.position.z = z + 0.75;
+  hook1.position.x = x;
+  hook1.position.y = y - 4.5;
+  hook1.position.z = z + 0.75;
 }
 
 function createHook2(x, y, z) {
-"use strict";
+  "use strict";
 
-hook2 = new THREE.Object3D();
+  hook2 = new THREE.Object3D();
 
-addLowerHook(hook2, 0, 0, 0);
+  addLowerHook(hook2, 0, 0, 0);
 
-movingHook.add(hook2);
+  movingHook.add(hook2);
 
-hook2.position.x = x;
-hook2.position.y = y - 4.5;
-hook2.position.z = z - 0.75;
+  hook2.position.x = x;
+  hook2.position.y = y - 4.5;
+  hook2.position.z = z - 0.75;
 }
 
 function createHook3(x, y, z) {
-"use strict";
+  "use strict";
 
-hook3 = new THREE.Object3D();
+  hook3 = new THREE.Object3D();
 
-addLowerHook(hook3, 0, 0, 0);
+  addLowerHook(hook3, 0, 0, 0);
 
-movingHook.add(hook3);
+  movingHook.add(hook3);
 
-hook3.position.x = x + 0.75;
-hook3.position.y = y - 4.5;
-hook3.position.z = z;
+  hook3.position.x = x + 0.75;
+  hook3.position.y = y - 4.5;
+  hook3.position.z = z;
 }
 
 function createHook4(x, y, z) {
-"use strict";
+  "use strict";
 
-hook4 = new THREE.Object3D();
+  hook4 = new THREE.Object3D();
 
-addLowerHook(hook4, 0, 0, 0);
+  addLowerHook(hook4, 0, 0, 0);
 
-movingHook.add(hook4);
+  movingHook.add(hook4);
 
-hook4.position.x = x - 0.75;
-hook4.position.y = y - 4.5;
-hook4.position.z = z;
+  hook4.position.x = x - 0.75;
+  hook4.position.y = y - 4.5;
+  hook4.position.z = z;
 }
 
 const hudContainer = document.createElement("div");
@@ -680,7 +725,7 @@ function updateHUD(key) {
     wireframeToggle ? toggleHighlight("7", true) : toggleHighlight("7", false);
   } else if (/[1-6]/.test(key)) {
     toggleHighlight(previousView, false);
-    console.log(key);
+    // console.log(key);
     toggleHighlight(key, true);
     previousView = key;
   } else {
@@ -688,97 +733,263 @@ function updateHUD(key) {
   }
 }
 
+function checkCraneCollision() {
+  let newBoundingSphere = createSphere(movingHook);
+
+  // console.log(collisionSpheres)
+
+  for (let [name, boundingSphere] of Object.entries(collisionSpheres)) {
+    // TODO: check if sould use intersectsSphere or radius
+    if (newBoundingSphere.intersectsSphere(boundingSphere) && name !== "container") {
+      console.log("Collision detected");
+      collisionAnimationInProgress = true;
+      collidingObject = name;
+      return true;
+    }
+  }
+  console.log("No collision detected");
+  return false;
+}
+
+function moveHookUp(delta) {
+  if (movingHook.position.y < 0) {
+    var translationVector = new THREE.Vector3(0, 8 * delta, 0);
+    var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+    movingHook.applyMatrix4(translationMatrix);
+
+    var originalPosition = steelCable.position.clone();
+    var currentHeight = steelCable.scale.y;
+    var scaleFactor = 1 - (translationVector.y / currentHeight);
+
+    var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+    steelCable.applyMatrix4(scaleMatrix);
+
+    var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+
+    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
+    steelCable.applyMatrix4(inverseTranslationMatrix);
+
+    return delta;
+  }
+  return 0;
+}
+
+function moveHookDown(delta) {
+  if (movingHook.position.y > hookMaxY) {
+    var translationVector = new THREE.Vector3(0, -8 * delta, 0);
+    var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+    movingHook.applyMatrix4(translationMatrix);
+
+    var originalPosition = steelCable.position.clone();
+    var currentHeight = steelCable.scale.y;
+    var scaleFactor = 1 + (-translationVector.y / currentHeight);
+
+    var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+    steelCable.applyMatrix4(scaleMatrix);
+
+    var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+
+    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
+    steelCable.applyMatrix4(inverseTranslationMatrix);
+
+    return delta;
+  }
+  return 0;
+}
+
+function moveCraneClockwise(delta) {
+  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
+  rotatingCrane.applyMatrix4(rotationMatrix);
+}
+
+function moveCraneAntiClockwise(delta) {
+  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
+  rotatingCrane.applyMatrix4(rotationMatrix);
+}
+
+function moveTrolleyBackward(delta) {
+  if (movingTrolley.position.x > 5) {
+    var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
+    movingTrolley.applyMatrix4(translationMatrix);
+    return delta;
+  }
+  return 0;
+}
+
+function moveTrolleyForward(delta) {
+  if (movingTrolley.position.x < 29) {
+    var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
+    movingTrolley.applyMatrix4(translationMatrix);
+    return delta;
+  }
+  return 0;
+}
+
+function moveHookIn(delta) {
+  var angle = Math.PI / 8;
+
+  if (hook3.rotation.z > -angle) {
+    var axis1 = new THREE.Vector3(1, 0, 0);
+    var axis2 = new THREE.Vector3(-1, 0, 0);
+    var axis3 = new THREE.Vector3(0, 0, -1);
+    var axis4 = new THREE.Vector3(0, 0, 1);
+    var angle = (Math.PI / 10) * delta;
+
+    hook1.rotateOnWorldAxis(axis1, angle);
+    hook2.rotateOnWorldAxis(axis2, angle);
+    hook3.rotateOnWorldAxis(axis3, angle);
+    hook4.rotateOnWorldAxis(axis4, angle);
+  }
+}
+
+function moveHookOut(delta) {
+  var angle = Math.PI / 8;
+
+  if (hook3.rotation.z < angle) {
+    var axis1 = new THREE.Vector3(-1, 0, 0);
+    var axis2 = new THREE.Vector3(1, 0, 0);
+    var axis3 = new THREE.Vector3(0, 0, 1);
+    var axis4 = new THREE.Vector3(0, 0, -1);
+    var angle = (Math.PI / 10) * delta;
+
+    hook1.rotateOnWorldAxis(axis1, angle);
+    hook2.rotateOnWorldAxis(axis2, angle);
+    hook3.rotateOnWorldAxis(axis3, angle);
+    hook4.rotateOnWorldAxis(axis4, angle);
+  }
+}
+
 function update() {
   'use strict';
   let delta = clock.getDelta();
 
-  if(movingTrolley_flagS == true && movingTrolley_flagW == false) {
-      if(movingTrolley.position.x > 5) {
-          var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
-          movingTrolley.applyMatrix4(translationMatrix);
-      }
-  }
-  if(movingTrolley_flagS == false && movingTrolley_flagW == true) {
-      if(movingTrolley.position.x < 29) {
-          var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
-          movingTrolley.applyMatrix4(translationMatrix);
-      }
-  }
-  if(rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
-      var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
-      rotatingCrane.applyMatrix4(rotationMatrix);
-  }
-  if(rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
-      var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
-      rotatingCrane.applyMatrix4(rotationMatrix);
-  }
-  if(movingHook_flagD == true && movingHook_flagE == false) {
-      if(movingHook.position.y>-27.5) {
-        var translationVector = new THREE.Vector3(0, -8 * delta, 0);
-        var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
-        movingHook.applyMatrix4(translationMatrix);
-
-        var originalPosition = steelCable.position.clone();
-        var currentHeight = steelCable.scale.y;
-        var scaleFactor = 1 + (-translationVector.y / currentHeight);
-
-        var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
-        steelCable.applyMatrix4(scaleMatrix);
-
-        var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
-
-        var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
-        steelCable.applyMatrix4(inverseTranslationMatrix);
-      }
-  }
-  if(movingHook_flagD == false && movingHook_flagE == true) {
-      if(movingHook.position.y<0) {
-        var translationVector = new THREE.Vector3(0, 8 * delta, 0);
-        var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
-        movingHook.applyMatrix4(translationMatrix);
-        
-        var originalPosition = steelCable.position.clone();
-        var currentHeight = steelCable.scale.y;
-        var scaleFactor = 1 - (translationVector.y / currentHeight);
-
-        var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
-        steelCable.applyMatrix4(scaleMatrix);
-
-        var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
-
-        var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
-        steelCable.applyMatrix4(inverseTranslationMatrix);
-      }
-  }
-
   var angle = Math.PI / 8;
 
-  if(rotatingHook_flagF == true && rotatingHook_flagR == false) {
-    if(hook3.rotation.z < angle) {
-      var axis1 = new THREE.Vector3(-1, 0, 0);
-      var axis2 = new THREE.Vector3(1, 0, 0);
-      var axis3 = new THREE.Vector3(0, 0, 1);
-      var axis4 = new THREE.Vector3(0, 0, -1);
-      var angle = (Math.PI / 10) * delta;
+  if (collisionAnimationInProgress) {
 
-      hook1.rotateOnWorldAxis(axis1, angle);
-      hook2.rotateOnWorldAxis(axis2, angle);
-      hook3.rotateOnWorldAxis(axis3, angle);
-      hook4.rotateOnWorldAxis(axis4, angle);
+    var object = collidingObjects[collidingObject];
+
+    switch (animationPhase) {
+      case 0: // posicionar o objecto na garra
+        let boundingBox = new THREE.Box3().setFromObject(object);
+        let size = new THREE.Vector3();
+        boundingBox.getSize(size);
+
+
+        object.position.set(0, -5 - size.y / 2, 0);
+        movingHook.add(object);
+
+        animationPhase++;
+        break
+      case 1: // fechar a garra
+        if (hook3.rotation.z > -angle) {
+          moveHookIn(delta);
+          return;
+        }
+        animationPhase++;
+        break
+      case 2: // levantar a garra
+        if (movingHook.position.y < 0) {
+          moveHookUp(delta);
+          // moveObjectUp(delta, object)
+          return;
+        }
+        animationPhase++;
+        break;
+      case 3: // movimentar o carrinho
+        if (movingTrolley.position.x < trolleyMaxX) {
+          moveTrolleyForward(delta);
+          // moveObjectForward(delta, object);
+          return;
+        }
+        animationPhase++;
+        break
+      case 4: // rodar a grua
+        if (rotatingCrane.rotation.y < 0) {
+          moveCraneAntiClockwise(delta);
+          // moveObjectAntiClockwise(delta, object);
+          if (rotatingCrane.rotation.y > 0)
+            animationPhase++;
+          return;
+        }
+        if (rotatingCrane.rotation.y > 0) {
+          moveCraneClockwise(delta);
+          // moveObjectClockwise(delta, object);
+          if (rotatingCrane.rotation.y < 0)
+            animationPhase++;
+          return;
+        }
+        animationPhase++;
+        break
+      case 5: // baixar a garra
+        if (movingHook.position.y > hookMaxY * 0.7) {
+          moveHookDown(delta);
+          // moveObjectDown(delta, object);
+          return;
+        }
+        animationPhase++;
+        break
+      case 6:// largar a carga
+        if (hook3.rotation.z < 0) {
+          moveHookOut(delta);
+          return;
+        }
+        animationPhase++;
+        break
+      case 7: // fazer a carga desapaecer
+        movingHook.remove(object);
+        scene.remove(collidingObjects[collidingObject]);
+        delete collidingObjects[collidingObject];
+        delete collisionSpheres[collidingObject];
+        animationPhase++;
+        break
+      case 8: // levantar a garra
+        if (movingHook.position.y < hookMaxY / 2) {
+          moveHookUp(delta);
+          return;
+        }
+        animationPhase++;
+        break;
+      default:
+        animationPhase = 0;
+        collisionAnimationInProgress = false;
+        return;
     }
-  }
-  if(rotatingHook_flagF == false && rotatingHook_flagR == true) {
-    if(hook3.rotation.z > -angle) {
-      var axis1 = new THREE.Vector3(1, 0, 0);
-      var axis2 = new THREE.Vector3(-1, 0, 0);
-      var axis3 = new THREE.Vector3(0, 0, -1);
-      var axis4 = new THREE.Vector3(0, 0, 1);
-      var angle = (Math.PI / 10) * delta;
 
-      hook1.rotateOnWorldAxis(axis1, angle);
-      hook2.rotateOnWorldAxis(axis2, angle);
-      hook3.rotateOnWorldAxis(axis3, angle);
-      hook4.rotateOnWorldAxis(axis4, angle);
+  }
+  else {
+    if (movingTrolley_flagS == true && movingTrolley_flagW == false) {
+      moveTrolleyBackward(delta);
+      checkCraneCollision();
+    }
+    if (movingTrolley_flagS == false && movingTrolley_flagW == true) {
+      moveTrolleyForward(delta);
+      checkCraneCollision();
+    }
+    if (rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
+      moveCraneClockwise(delta);
+      checkCraneCollision();
+    }
+    if (rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
+      moveCraneAntiClockwise(delta);
+      checkCraneCollision();
+    }
+    if (movingHook_flagD == true && movingHook_flagE == false) {
+      moveHookDown(delta);
+      checkCraneCollision();
+    }
+    if (movingHook_flagD == false && movingHook_flagE == true) {
+      moveHookUp(delta);
+      checkCraneCollision();
+    }
+
+    if (rotatingHook_flagF == true && rotatingHook_flagR == false) {
+      moveHookOut(delta);
+      checkCraneCollision();
+    }
+    if (rotatingHook_flagF == false && rotatingHook_flagR == true) {
+      moveHookIn(delta);
+      checkCraneCollision();
     }
   }
 }
@@ -918,7 +1129,7 @@ function createScene() {
   createLowerCrane(0, 0, 0);
   createRotatingCrane(0, 6 + 20, 0);
 
-  createContainer(15, 0, 15);
+  createContainer(trolleyMaxX, 0, 0);
   createLoads();
 }
 

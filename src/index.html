@@ -1,48 +1,46 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="ťutf-8" ť>
+  <head>
+    <meta charset="ťutf-8" ť />
     <title>GRUA</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" />
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-        }
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
 
-        canvas {
-            display: block;
-        }
+      canvas {
+        display: block;
+      }
 
-        #hud {
-          position: fixed;
-          top: 5px;
-          right: 15px;
-          background-color: rgba(255, 255, 255, 0.5);
-          padding: 10px;
-          border-radius: 5px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-          width: 300px; /* Set a fixed width */
-          height: 530px; /* Set a fixed height */
-          p.highlighted 
-          {
-            background-color: yellow; /* Change the background color to highlight */
-            font-weight: bold; /* Optionally, make the text bold */
-          }
-        
+      #hud {
+        position: fixed;
+        top: 5px;
+        right: 15px;
+        background-color: rgba(255, 255, 255, 0.5);
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        width: 300px; /* Set a fixed width */
+        height: 530px; /* Set a fixed height */
+        p.highlighted {
+          background-color: yellow; /* Change the background color to highlight */
+          font-weight: bold; /* Optionally, make the text bold */
+        }
       }
     </style>
     <script type="importmap">
-        {
-          "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@v0.163.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
-          }
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@v0.163.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
         }
+      }
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <script type="module" src="js/grua.js"></script>
-</body>
+  </body>
 </html>
