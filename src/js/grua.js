@@ -2,7 +2,18 @@ import * as THREE from "three";
 
 var activeCamera, scene, renderer;
 var geometry, mesh;
+
 var container;
+let clock = new THREE.Clock();
+var movingTrolley, lowerCrane, rotatingCrane, movingHook, steelCable, hook1, hook2, hook3, hook4;
+let movingTrolley_flagS = false;
+let movingTrolley_flagW = false;
+let rotatingCrane_flagA = false;
+let rotatingCrane_flagQ = false;
+let movingHook_flagE = false;
+let movingHook_flagD = false;
+let rotatingHook_flagR = false;
+let rotatingHook_flagF = false;
 
 const BACKGROUND = new THREE.Color(0xeceae4);
 // const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
@@ -370,9 +381,24 @@ function addCounterweight(obj, x, y, z) {
 }
 
 function addTowerPeak(obj, x, y, z) {
-  "use strict";
-  geometry = new THREE.TetrahedronGeometry(2, 0);
-  mesh = new THREE.Mesh(geometry, materialTowerPeak);
+  'use strict';
+    const geometry = new THREE.BufferGeometry();
+    const sideLength = 2;
+    const vertices = new Float32Array([
+        -1, 0, -1, // v0
+        -1, 0, 1 , // v1
+        1, 0, 0, // v2
+        0, 1.633, 0 // v3 - vertix
+    ]);
+    const indices = [
+        0, 1, 2,
+        0, 2, 3,
+        2, 1, 3,
+        0, 3, 1
+    ];
+    geometry.setIndex(indices);
+    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    const mesh = new THREE.Mesh(geometry, materialTowerPeak);
   mesh.position.set(x, y, z);
   obj.add(mesh);
 }
@@ -391,7 +417,7 @@ function addLeftLoadLine(obj, x, y, z) {
   geometry = new THREE.CylinderGeometry(0.1, 0.1, 8.16, 32);
   mesh = new THREE.Mesh(geometry, materialLeftLoadLine);
   mesh.position.set(x, y, z);
-  mesh.rotation.set(0, 0, 0.56 * Math.PI);
+  mesh.rotation.set(0, 0, 0.555 * Math.PI);
   obj.add(mesh);
 }
 
@@ -443,7 +469,7 @@ function addLowerHook(obj, x, y, z) {
 function createLowerCrane(x, y, z) {
   "use strict";
 
-  var lowerCrane = new THREE.Object3D();
+  lowerCrane = new THREE.Object3D();
 
   addFoundation(lowerCrane, 0, 3, 0);
   addLowerMast(lowerCrane, 0, 6 + 20 / 2, 0);
@@ -458,46 +484,128 @@ function createLowerCrane(x, y, z) {
 function createRotatingCrane(x, y, z) {
   "use strict";
 
-  var rotatingCrane = new THREE.Object3D();
+  rotatingCrane = new THREE.Object3D();
 
   addTurntable(rotatingCrane, 0, 0.5, 0);
   addHigherMast(rotatingCrane, 0, 1 + 3, 0);
   addCab(rotatingCrane, 0, 1 + 3 + 0.5, 1 + 1);
   addJib(rotatingCrane, 11.5, 1 + 6 + 1, 0);
   addCounterweight(rotatingCrane, -5, 1 + 6 + 1 - 1, 0);
-  addTowerPeak(rotatingCrane, 0, 1 + 6 + 2 + 1, 0);
-  addRightLoadLine(rotatingCrane, 7, 1 + 6 + 2 + 1, 0);
-  addLeftLoadLine(rotatingCrane, -4, 1 + 6 + 2 + 1, 0);
+  addTowerPeak(rotatingCrane, 0, 1 + 6 + 2, 0);
+  addRightLoadLine(rotatingCrane, 7, 1 + 6 + 2 + 0.811, 0);
+  addLeftLoadLine(rotatingCrane, -4, 1 + 6 + 2 + 0.811, 0);
 
   scene.add(rotatingCrane);
 
   rotatingCrane.position.x = x;
   rotatingCrane.position.y = y;
   rotatingCrane.position.z = z;
+
+  createMovingTrolley(29, 7, 0);
 }
 
 function createMovingTrolley(x, y, z) {
   "use strict";
 
-  var movingTrolley = new THREE.Object3D();
+  movingTrolley = new THREE.Object3D();
 
   addHoist(movingTrolley, 0, -0.5, 0);
-  addSteelCable(movingTrolley, 0, -1 - 0.5, 0); //-0.5 depende de lambda
-  addHookBlock(movingTrolley, 0, -1 - 1 - 0.5, 0); //-1 depende de lambda
-  addHigherHook(movingTrolley, 0, -1 - 1 - 1 - 0.5, 0.75);
-  addHigherHook(movingTrolley, 0, -1 - 1 - 1 - 0.5, -0.75);
-  addHigherHook(movingTrolley, 0.75, -1 - 1 - 1 - 0.5, 0);
-  addHigherHook(movingTrolley, -0.75, -1 - 1 - 1 - 0.5, 0);
-  addLowerHook(movingTrolley, 0, -1 - 1 - 1 - 1 - 0.5, 0.75);
-  addLowerHook(movingTrolley, 0, -1 - 1 - 1 - 1 - 0.5, -0.75);
-  addLowerHook(movingTrolley, 0.75, -1 - 1 - 1 - 1 - 0.5, 0);
-  addLowerHook(movingTrolley, -0.75, -1 - 1 - 1 - 1 - 0.5, 0);
 
-  scene.add(movingTrolley);
+  steelCable = new THREE.Object3D();
+  addSteelCable(steelCable, 0, -1 - 0.5, 0);
+
+  movingTrolley.add(steelCable);
+
+  rotatingCrane.add(movingTrolley);
 
   movingTrolley.position.x = x;
   movingTrolley.position.y = y;
   movingTrolley.position.z = z;
+
+  createMovingHook(0, 0, 0);
+}
+
+function createMovingHook(x, y, z) {
+  "use strict";
+
+  movingHook = new THREE.Object3D();
+  hook2 = new THREE.Object3D();
+  hook3 = new THREE.Object3D();
+  hook4 = new THREE.Object3D();
+
+  // -1 - 1 - 1 - 1 - 0.5 in new 0 of y
+  addHookBlock(movingHook, 0, -2.5, 0);
+  addHigherHook(movingHook, 0, -3.5, 0.75);
+  addHigherHook(movingHook, 0, -3.5, -0.75);
+  addHigherHook(movingHook, 0.75, -3.5, 0);
+  addHigherHook(movingHook, -0.75, -3.5, 0);
+
+  movingTrolley.add(movingHook);
+
+  movingHook.position.x = x;
+  movingHook.position.y = y;
+  movingHook.position.z = z;
+
+  createHook1(0, 0, 0);
+  createHook2(0, 0, 0);
+  createHook3(0, 0, 0);
+  createHook4(0, 0, 0);
+}
+
+function createHook1(x, y, z) {
+"use strict";
+
+hook1 = new THREE.Object3D();
+
+addLowerHook(hook1, 0, 0, 0);
+
+movingHook.add(hook1);
+
+hook1.position.x = x;
+hook1.position.y = y - 4.5;
+hook1.position.z = z + 0.75;
+}
+
+function createHook2(x, y, z) {
+"use strict";
+
+hook2 = new THREE.Object3D();
+
+addLowerHook(hook2, 0, 0, 0);
+
+movingHook.add(hook2);
+
+hook2.position.x = x;
+hook2.position.y = y - 4.5;
+hook2.position.z = z - 0.75;
+}
+
+function createHook3(x, y, z) {
+"use strict";
+
+hook3 = new THREE.Object3D();
+
+addLowerHook(hook3, 0, 0, 0);
+
+movingHook.add(hook3);
+
+hook3.position.x = x + 0.75;
+hook3.position.y = y - 4.5;
+hook3.position.z = z;
+}
+
+function createHook4(x, y, z) {
+"use strict";
+
+hook4 = new THREE.Object3D();
+
+addLowerHook(hook4, 0, 0, 0);
+
+movingHook.add(hook4);
+
+hook4.position.x = x - 0.75;
+hook4.position.y = y - 4.5;
+hook4.position.z = z;
 }
 
 const hudContainer = document.createElement("div");
@@ -580,6 +688,101 @@ function updateHUD(key) {
   }
 }
 
+function update() {
+  'use strict';
+  let delta = clock.getDelta();
+
+  if(movingTrolley_flagS == true && movingTrolley_flagW == false) {
+      if(movingTrolley.position.x > 5) {
+          var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
+          movingTrolley.applyMatrix4(translationMatrix);
+      }
+  }
+  if(movingTrolley_flagS == false && movingTrolley_flagW == true) {
+      if(movingTrolley.position.x < 29) {
+          var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
+          movingTrolley.applyMatrix4(translationMatrix);
+      }
+  }
+  if(rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
+      var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
+      rotatingCrane.applyMatrix4(rotationMatrix);
+  }
+  if(rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
+      var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
+      rotatingCrane.applyMatrix4(rotationMatrix);
+  }
+  if(movingHook_flagD == true && movingHook_flagE == false) {
+      if(movingHook.position.y>-27.5) {
+        var translationVector = new THREE.Vector3(0, -8 * delta, 0);
+        var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+        movingHook.applyMatrix4(translationMatrix);
+
+        var originalPosition = steelCable.position.clone();
+        var currentHeight = steelCable.scale.y;
+        var scaleFactor = 1 + (-translationVector.y / currentHeight);
+
+        var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+        steelCable.applyMatrix4(scaleMatrix);
+
+        var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+
+        var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
+        steelCable.applyMatrix4(inverseTranslationMatrix);
+      }
+  }
+  if(movingHook_flagD == false && movingHook_flagE == true) {
+      if(movingHook.position.y<0) {
+        var translationVector = new THREE.Vector3(0, 8 * delta, 0);
+        var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+        movingHook.applyMatrix4(translationMatrix);
+        
+        var originalPosition = steelCable.position.clone();
+        var currentHeight = steelCable.scale.y;
+        var scaleFactor = 1 - (translationVector.y / currentHeight);
+
+        var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+        steelCable.applyMatrix4(scaleMatrix);
+
+        var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+
+        var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
+        steelCable.applyMatrix4(inverseTranslationMatrix);
+      }
+  }
+
+  var angle = Math.PI / 8;
+
+  if(rotatingHook_flagF == true && rotatingHook_flagR == false) {
+    if(hook3.rotation.z < angle) {
+      var axis1 = new THREE.Vector3(-1, 0, 0);
+      var axis2 = new THREE.Vector3(1, 0, 0);
+      var axis3 = new THREE.Vector3(0, 0, 1);
+      var axis4 = new THREE.Vector3(0, 0, -1);
+      var angle = (Math.PI / 10) * delta;
+
+      hook1.rotateOnWorldAxis(axis1, angle);
+      hook2.rotateOnWorldAxis(axis2, angle);
+      hook3.rotateOnWorldAxis(axis3, angle);
+      hook4.rotateOnWorldAxis(axis4, angle);
+    }
+  }
+  if(rotatingHook_flagF == false && rotatingHook_flagR == true) {
+    if(hook3.rotation.z > -angle) {
+      var axis1 = new THREE.Vector3(1, 0, 0);
+      var axis2 = new THREE.Vector3(-1, 0, 0);
+      var axis3 = new THREE.Vector3(0, 0, -1);
+      var axis4 = new THREE.Vector3(0, 0, 1);
+      var angle = (Math.PI / 10) * delta;
+
+      hook1.rotateOnWorldAxis(axis1, angle);
+      hook2.rotateOnWorldAxis(axis2, angle);
+      hook3.rotateOnWorldAxis(axis3, angle);
+      hook4.rotateOnWorldAxis(axis4, angle);
+    }
+  }
+}
+
 function render() {
   "use strict";
   renderer.render(scene, activeCamera.camera);
@@ -620,39 +823,79 @@ function onKeyDown(e) {
     case 65 || 97: // 'a' 'A'
       //TODO activeCamera = cameraMovel;
       updateHUD("a"); // Highlight 'a' key
+      rotatingCrane_flagA = true;
       break;
     case 81 || 113: // 'q' 'Q'
       //TODO activeCamera = cameraMovel;
       updateHUD("q"); // Highlight 'q' key
+      rotatingCrane_flagQ = true;
       break;
     case 83 || 115: // 's' 'S'
       //TODO activeCamera = cameraMovel;
       updateHUD("s"); // Highlight 's' key
+      movingTrolley_flagS = true;
       break;
     case 87 || 119: // 'w' 'W'
       //TODO activeCamera = cameraMovel;
       updateHUD("w"); // Highlight 'w' key
+      movingTrolley_flagW = true;
       break;
     case 68 || 100: // 'd' 'D'
       //TODO activeCamera = cameraMovel;
       updateHUD("d"); // Highlight 'd' key
+      movingHook_flagD = true;
       break;
     case 69 || 101: // 'e' 'E'
       //TODO activeCamera = cameraMovel;
       updateHUD("e"); // Highlight 'e' key
+      movingHook_flagE = true;
       break;
     case 82 || 114: // 'r' 'R'
       //TODO activeCamera = cameraMovel;
       updateHUD("r"); // Highlight 'r' key
+      rotatingHook_flagR = true;
       break;
     case 70 || 102: // 'f' 'F'
       //TODO activeCamera = cameraMovel;
       updateHUD("f"); // Highlight 'f' key
+      rotatingHook_flagF = true;
       break;
     default:
       break;
   }
   // TODO
+}
+
+function onKeyUp(e) {
+  "use strict";
+  switch (e.keyCode) {
+    case 65 || 97: // 'a' 'A'
+      rotatingCrane_flagA = false;
+      break;
+    case 81 || 113: // 'q' 'Q'
+      rotatingCrane_flagQ = false;
+      break;
+    case 83 || 115: // 's' 'S'
+      movingTrolley_flagS = false;
+      break;
+    case 87 || 119: // 'w' 'W'
+      movingTrolley_flagW = false;
+      break;
+    case 68 || 100: // 'd' 'D'
+      movingHook_flagD = false;
+      break;
+    case 69 || 101: // 'e' 'E'
+      movingHook_flagE = false;
+      break;
+    case 82 || 114: // 'r' 'R'
+      rotatingHook_flagR = false;
+      break;
+    case 70 || 102: // 'f' 'F'
+      rotatingHook_flagF = false;
+      break;
+    default:
+      break;
+  }
 }
 
 function onResize() {
@@ -674,7 +917,6 @@ function createScene() {
 
   createLowerCrane(0, 0, 0);
   createRotatingCrane(0, 6 + 20, 0);
-  createMovingTrolley(29, 6 + 20 + 6 + 1, 0);
 
   createContainer(15, 0, 15);
   createLoads();
@@ -705,6 +947,7 @@ function init() {
   createHUD();
 
   window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
   window.addEventListener("resize", onResize);
 
   // TODO: update this
@@ -712,7 +955,7 @@ function init() {
 
 function animate() {
   "use strict";
-  //update();
+  update();
   render();
 
   requestAnimationFrame(animate);
