@@ -17,7 +17,7 @@
 
 ## Teacher notes
 
-- [ ] Use `clock` from js to frames
+- [x] Use `clock` from js to frames
 
   - Para ficar uniforme para todos os PCs
 
@@ -41,7 +41,7 @@
     - 6. fazer a carga desapaecer
 
 - [x] só ter um render
-- [ ] ter o update
+- [x] ter o update
 
 ## ASK
 

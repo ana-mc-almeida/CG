@@ -82,6 +82,14 @@ var radius = 3;
 var objectsOnTheFloor = [];
 
 var collisionSpheres = {};
+var collidingObjects = {};
+
+var collisionAnimationInProgress = false;
+var animationPhase = 0;
+var collidingObject = null;
+
+var trolleyMaxX = 29;
+var hookMaxY = -27.5;
 
 function createMaterial(color) {
   return new THREE.MeshBasicMaterial({ color, wireframe: true });
@@ -147,6 +155,7 @@ function createSphere(object, name = null) {
 
   if (name) {
     collisionSpheres[name] = sphere;
+    collidingObjects[name] = object;
   }
 
   return sphere;
@@ -733,6 +742,8 @@ function checkCraneCollision() {
     // TODO: check if sould use intersectsSphere or radius
     if (newBoundingSphere.intersectsSphere(boundingSphere) && name !== "container") {
       console.log("Collision detected");
+      collisionAnimationInProgress = true;
+      collidingObject = name;
       return true;
     }
   }
@@ -764,7 +775,7 @@ function moveHookUp(delta) {
 }
 
 function moveHookDown(delta) {
-  if (movingHook.position.y > -27.5) {
+  if (movingHook.position.y > hookMaxY) {
     var translationVector = new THREE.Vector3(0, -8 * delta, 0);
     var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
     movingHook.applyMatrix4(translationMatrix);
@@ -814,66 +825,170 @@ function moveTrolleyForward(delta) {
   return 0;
 }
 
+function moveHookIn(delta) {
+  var angle = Math.PI / 8;
+
+  if (hook3.rotation.z > -angle) {
+    var axis1 = new THREE.Vector3(1, 0, 0);
+    var axis2 = new THREE.Vector3(-1, 0, 0);
+    var axis3 = new THREE.Vector3(0, 0, -1);
+    var axis4 = new THREE.Vector3(0, 0, 1);
+    var angle = (Math.PI / 10) * delta;
+
+    hook1.rotateOnWorldAxis(axis1, angle);
+    hook2.rotateOnWorldAxis(axis2, angle);
+    hook3.rotateOnWorldAxis(axis3, angle);
+    hook4.rotateOnWorldAxis(axis4, angle);
+  }
+}
+
+function moveHookOut(delta) {
+  var angle = Math.PI / 8;
+
+  if (hook3.rotation.z < angle) {
+    var axis1 = new THREE.Vector3(-1, 0, 0);
+    var axis2 = new THREE.Vector3(1, 0, 0);
+    var axis3 = new THREE.Vector3(0, 0, 1);
+    var axis4 = new THREE.Vector3(0, 0, -1);
+    var angle = (Math.PI / 10) * delta;
+
+    hook1.rotateOnWorldAxis(axis1, angle);
+    hook2.rotateOnWorldAxis(axis2, angle);
+    hook3.rotateOnWorldAxis(axis3, angle);
+    hook4.rotateOnWorldAxis(axis4, angle);
+  }
+}
+
 function update() {
   'use strict';
   let delta = clock.getDelta();
 
-  if (movingTrolley_flagS == true && movingTrolley_flagW == false) {
-    moveTrolleyBackward(delta);
-    checkCraneCollision();
-  }
-  if (movingTrolley_flagS == false && movingTrolley_flagW == true) {
-    moveTrolleyForward(delta);
-    checkCraneCollision();
-  }
-  if (rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
-    moveCraneClockwise(delta);
-    checkCraneCollision();
-  }
-  if (rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
-    moveCraneAntiClockwise(delta);
-    checkCraneCollision();
-  }
-  if (movingHook_flagD == true && movingHook_flagE == false) {
-    moveHookDown(delta);
-    checkCraneCollision();
-  }
-  if (movingHook_flagD == false && movingHook_flagE == true) {
-    moveHookUp(delta);
-    checkCraneCollision();
-  }
-
   var angle = Math.PI / 8;
 
-  if (rotatingHook_flagF == true && rotatingHook_flagR == false) {
-    if (hook3.rotation.z < angle) {
-      var axis1 = new THREE.Vector3(-1, 0, 0);
-      var axis2 = new THREE.Vector3(1, 0, 0);
-      var axis3 = new THREE.Vector3(0, 0, 1);
-      var axis4 = new THREE.Vector3(0, 0, -1);
-      var angle = (Math.PI / 10) * delta;
+  if (collisionAnimationInProgress) {
 
-      hook1.rotateOnWorldAxis(axis1, angle);
-      hook2.rotateOnWorldAxis(axis2, angle);
-      hook3.rotateOnWorldAxis(axis3, angle);
-      hook4.rotateOnWorldAxis(axis4, angle);
+    var object = collidingObjects[collidingObject];
 
+    switch (animationPhase) {
+      case 0: // posicionar o objecto na garra
+        let boundingBox = new THREE.Box3().setFromObject(object);
+        let size = new THREE.Vector3();
+        boundingBox.getSize(size);
+
+
+        object.position.set(0, -5 - size.y / 2, 0);
+        movingHook.add(object);
+
+        animationPhase++;
+        break
+      case 1: // fechar a garra
+        if (hook3.rotation.z > -angle) {
+          moveHookIn(delta);
+          return;
+        }
+        animationPhase++;
+        break
+      case 2: // levantar a garra
+        if (movingHook.position.y < 0) {
+          moveHookUp(delta);
+          // moveObjectUp(delta, object)
+          return;
+        }
+        animationPhase++;
+        break;
+      case 3: // movimentar o carrinho
+        if (movingTrolley.position.x < trolleyMaxX) {
+          moveTrolleyForward(delta);
+          // moveObjectForward(delta, object);
+          return;
+        }
+        animationPhase++;
+        break
+      case 4: // rodar a grua
+        if (rotatingCrane.rotation.y < 0) {
+          moveCraneAntiClockwise(delta);
+          // moveObjectAntiClockwise(delta, object);
+          if (rotatingCrane.rotation.y > 0)
+            animationPhase++;
+          return;
+        }
+        if (rotatingCrane.rotation.y > 0) {
+          moveCraneClockwise(delta);
+          // moveObjectClockwise(delta, object);
+          if (rotatingCrane.rotation.y < 0)
+            animationPhase++;
+          return;
+        }
+        animationPhase++;
+        break
+      case 5: // baixar a garra
+        if (movingHook.position.y > hookMaxY * 0.7) {
+          moveHookDown(delta);
+          // moveObjectDown(delta, object);
+          return;
+        }
+        animationPhase++;
+        break
+      case 6:// largar a carga
+        if (hook3.rotation.z < 0) {
+          moveHookOut(delta);
+          return;
+        }
+        animationPhase++;
+        break
+      case 7: // fazer a carga desapaecer
+        movingHook.remove(object);
+        scene.remove(collidingObjects[collidingObject]);
+        delete collidingObjects[collidingObject];
+        delete collisionSpheres[collidingObject];
+        animationPhase++;
+        break
+      case 8: // levantar a garra
+        if (movingHook.position.y < hookMaxY / 2) {
+          moveHookUp(delta);
+          return;
+        }
+        animationPhase++;
+        break;
+      default:
+        animationPhase = 0;
+        collisionAnimationInProgress = false;
+        return;
+    }
+
+  }
+  else {
+    if (movingTrolley_flagS == true && movingTrolley_flagW == false) {
+      moveTrolleyBackward(delta);
       checkCraneCollision();
     }
-  }
-  if (rotatingHook_flagF == false && rotatingHook_flagR == true) {
-    if (hook3.rotation.z > -angle) {
-      var axis1 = new THREE.Vector3(1, 0, 0);
-      var axis2 = new THREE.Vector3(-1, 0, 0);
-      var axis3 = new THREE.Vector3(0, 0, -1);
-      var axis4 = new THREE.Vector3(0, 0, 1);
-      var angle = (Math.PI / 10) * delta;
+    if (movingTrolley_flagS == false && movingTrolley_flagW == true) {
+      moveTrolleyForward(delta);
+      checkCraneCollision();
+    }
+    if (rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
+      moveCraneClockwise(delta);
+      checkCraneCollision();
+    }
+    if (rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
+      moveCraneAntiClockwise(delta);
+      checkCraneCollision();
+    }
+    if (movingHook_flagD == true && movingHook_flagE == false) {
+      moveHookDown(delta);
+      checkCraneCollision();
+    }
+    if (movingHook_flagD == false && movingHook_flagE == true) {
+      moveHookUp(delta);
+      checkCraneCollision();
+    }
 
-      hook1.rotateOnWorldAxis(axis1, angle);
-      hook2.rotateOnWorldAxis(axis2, angle);
-      hook3.rotateOnWorldAxis(axis3, angle);
-      hook4.rotateOnWorldAxis(axis4, angle);
-
+    if (rotatingHook_flagF == true && rotatingHook_flagR == false) {
+      moveHookOut(delta);
+      checkCraneCollision();
+    }
+    if (rotatingHook_flagF == false && rotatingHook_flagR == true) {
+      moveHookIn(delta);
       checkCraneCollision();
     }
   }
@@ -1014,7 +1129,7 @@ function createScene() {
   createLowerCrane(0, 0, 0);
   createRotatingCrane(0, 6 + 20, 0);
 
-  createContainer(15, 0, 15);
+  createContainer(trolleyMaxX, 0, 0);
   createLoads();
 }
 
