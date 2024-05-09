@@ -691,6 +691,80 @@ function highlightOnKeyDown(key) {
   }
 }
 
+function moveHookUp(delta) {
+  if (movingHook.position.y < 0) {
+    var translationVector = new THREE.Vector3(0, 8 * delta, 0);
+    var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+    movingHook.applyMatrix4(translationMatrix);
+
+    var originalPosition = steelCable.position.clone();
+    var currentHeight = steelCable.scale.y;
+    var scaleFactor = 1 - (translationVector.y / currentHeight);
+
+    var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+    steelCable.applyMatrix4(scaleMatrix);
+
+    var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+
+    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
+    steelCable.applyMatrix4(inverseTranslationMatrix);
+
+    return delta;
+  }
+  return 0;
+}
+
+function moveHookDown(delta) {
+  if (movingHook.position.y > -27.5) {
+    var translationVector = new THREE.Vector3(0, -8 * delta, 0);
+    var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+    movingHook.applyMatrix4(translationMatrix);
+
+    var originalPosition = steelCable.position.clone();
+    var currentHeight = steelCable.scale.y;
+    var scaleFactor = 1 + (-translationVector.y / currentHeight);
+
+    var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+    steelCable.applyMatrix4(scaleMatrix);
+
+    var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+
+    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
+    steelCable.applyMatrix4(inverseTranslationMatrix);
+
+    return delta;
+  }
+  return 0;
+}
+
+function moveCraneClockwise(delta) {
+  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
+  rotatingCrane.applyMatrix4(rotationMatrix);
+}
+
+function moveCraneAntiClockwise(delta) {
+  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
+  rotatingCrane.applyMatrix4(rotationMatrix);
+}
+
+function moveTrolleyBackward(delta) {
+  if (movingTrolley.position.x > 5) {
+    var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
+    movingTrolley.applyMatrix4(translationMatrix);
+    return delta;
+  }
+  return 0;
+}
+
+function moveTrolleyForward(delta) {
+  if (movingTrolley.position.x < 29) {
+    var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
+    movingTrolley.applyMatrix4(translationMatrix);
+    return delta;
+  }
+  return 0;
+}
+
 function createSphere(object, name = null) {
   let sphere = new THREE.Sphere();
   new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
@@ -745,74 +819,28 @@ function update() {
   let delta = clock.getDelta();
 
   if (movingTrolley_flagS == true && movingTrolley_flagW == false) {
-    if (movingTrolley.position.x > 5) {
-      var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
-      movingTrolley.applyMatrix4(translationMatrix);
-
-      checkCraneCollision();
-    }
+    moveTrolleyBackward(delta);
+    checkCraneCollision();
   }
   if (movingTrolley_flagS == false && movingTrolley_flagW == true) {
-    if (movingTrolley.position.x < 29) {
-      var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
-      movingTrolley.applyMatrix4(translationMatrix);
-
-      checkCraneCollision();
-    }
+    moveTrolleyForward(delta);
+    checkCraneCollision();
   }
   if (rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
-    var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
-    rotatingCrane.applyMatrix4(rotationMatrix);
-
+    moveCraneClockwise(delta);
     checkCraneCollision();
   }
   if (rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
-    var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
-    rotatingCrane.applyMatrix4(rotationMatrix);
-
+    moveCraneAntiClockwise(delta);
     checkCraneCollision();
   }
   if (movingHook_flagD == true && movingHook_flagE == false) {
-    if (movingHook.position.y > -27.5) {
-      var translationVector = new THREE.Vector3(0, -8 * delta, 0);
-      var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
-      movingHook.applyMatrix4(translationMatrix);
-
-      var originalPosition = steelCable.position.clone();
-      var currentHeight = steelCable.scale.y;
-      var scaleFactor = 1 + (-translationVector.y / currentHeight);
-
-      var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
-      steelCable.applyMatrix4(scaleMatrix);
-
-      var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
-
-      var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
-      steelCable.applyMatrix4(inverseTranslationMatrix);
-
-      checkCraneCollision();
-    }
+    moveHookDown(delta);
+    checkCraneCollision();
   }
   if (movingHook_flagD == false && movingHook_flagE == true) {
-    if (movingHook.position.y < 0) {
-      var translationVector = new THREE.Vector3(0, 8 * delta, 0);
-      var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
-      movingHook.applyMatrix4(translationMatrix);
-
-      var originalPosition = steelCable.position.clone();
-      var currentHeight = steelCable.scale.y;
-      var scaleFactor = 1 - (translationVector.y / currentHeight);
-
-      var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
-      steelCable.applyMatrix4(scaleMatrix);
-
-      var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
-
-      var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
-      steelCable.applyMatrix4(inverseTranslationMatrix);
-
-      checkCraneCollision();
-    }
+    moveHookUp(delta);
+    checkCraneCollision();
   }
 
   var angle = Math.PI / 8;
