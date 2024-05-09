@@ -71,7 +71,7 @@ var parallelpipedWidth = 2,
   parallelpipedLength = 2;
 
 // Torus dimensions
-var torusRadius = 3;
+var torusRadius = 2;
 
 // tube dimensions
 var tubeRadius = 1;
@@ -256,9 +256,11 @@ function createParallelpiped(x, y, z) {
 function createLoads() {
   let i = 0;
   while (i < 6) {
-    let x = Math.random() * 58 - 29;
+    let max = 29 / Math.sqrt(2);
+    let doubleMax = 2 * max;
+    let x = Math.random() * doubleMax - max;
     let y = 0;
-    let z = Math.random() * 58 - 29;
+    let z = Math.random() * doubleMax - max;
 
     console.log(x, y, z);
 
