@@ -693,14 +693,14 @@ function createHUD() {
       <p data-key="5">Press 5: Perspective Projection</p>
       <p data-key="6">Press 6: Mobile Camera</p>
       <p data-key="7">Press 7: Toggle Wireframes</p>
-      <p data-key="q">Press Q(q): Eixo de Rotação (TODO)</p>
-      <p data-key="a">Press A(a): Eixo de Rotação (TODO)</p>
-      <p data-key="w">Press W(w): Carrinho (TODO)</p>
-      <p data-key="s">Press S(s): Carrinho (TODO)</p>
-      <p data-key="e">Press E(e): Bloco garra (TODO)</p>
-      <p data-key="d">Press D(d): Bloco garra (TODO)</p>
-      <p data-key="r">Praess R(r): Garra (TODO)</p>
-      <p data-key="f">Press F(f): Garra (TODO)</p>
+      <p data-key="a">Press A(a): Rotate Crane clock-wise</p>
+      <p data-key="q">Press Q(q): Rotate Crane anti-clockwise</p>
+      <p data-key="s">Press S(s): Move trolley backwards</p>
+      <p data-key="w">Press W(w): Move trolley onwards</p>
+      <p data-key="e">Press E(e): Move claw block up</p>
+      <p data-key="d">Press D(d): Move claw block down</p>
+      <p data-key="r">Praess R(r): Close claw</p>
+      <p data-key="f">Press F(f): Open claw</p>
     </div>
   `;
 
