@@ -595,6 +595,18 @@ function createMovingHook(x, y, z) {
   createHook2(0, 0, 0);
   createHook3(0, 0, 0);
   createHook4(0, 0, 0);
+
+  var camera = cameras.mobile.camera;
+
+  camera.position.set(0, 0, 0);
+
+  var zAxis = new THREE.Vector3(0, 0, -1);
+  // Rotate the camera around the z-axis by 180 degrees 
+  camera.rotateOnAxis(zAxis, Math.PI);
+  // Make the camera look at x0z
+  camera.rotation.x = -Math.PI / 2;
+  // Attach the camera to the moving hook
+  movingHook.add(camera);
 }
 
 function createHook1(x, y, z) {
@@ -1138,7 +1150,10 @@ function createCameras() {
   // set the initial camera
   activeCamera = cameras.front;
 
-  Object.values(cameras).forEach((cameraDescriptor) => {
+  const cameraDescriptors = Object.values(cameras);
+  const firstFiveCameraDescriptors = cameraDescriptors.slice(0, 5);
+
+  firstFiveCameraDescriptors.forEach((cameraDescriptor) => {
     refreshCameraParameters(cameraDescriptor);
     cameraDescriptor.camera.lookAt(scene.position);
   });
@@ -1182,7 +1197,7 @@ const CAMERA_GEOMETRY = Object.freeze({
   orthogonalFar: 1000, // furthest distance from the camera at which objects are rendered
   perspectiveDistance: 35,
   perspectiveFov: 80, // vertical field of view angle in degrees for the perspective camera
-  perspectiveNear: 15,
+  perspectiveNear: 5.1,
   perspectiveFar: 1500,
 });
 
@@ -1222,9 +1237,9 @@ const cameras = {
   }),
   // perspective projection: mobile view
   mobile: createPerspectiveCamera({
-    x: CAMERA_GEOMETRY.perspectiveDistance,
-    y: CAMERA_GEOMETRY.perspectiveDistance,
-    z: -CAMERA_GEOMETRY.perspectiveDistance,
+    x: 0,
+    y: 0,
+    z: 0,
   }),
 };
 
