@@ -382,23 +382,23 @@ function addCounterweight(obj, x, y, z) {
 
 function addTowerPeak(obj, x, y, z) {
   'use strict';
-    const geometry = new THREE.BufferGeometry();
-    const sideLength = 2;
-    const vertices = new Float32Array([
-        -1, 0, -1, // v0
-        -1, 0, 1 , // v1
-        1, 0, 0, // v2
-        0, 1.633, 0 // v3 - vertix
-    ]);
-    const indices = [
-        0, 1, 2,
-        0, 2, 3,
-        2, 1, 3,
-        0, 3, 1
-    ];
-    geometry.setIndex(indices);
-    geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    const mesh = new THREE.Mesh(geometry, materialTowerPeak);
+  const geometry = new THREE.BufferGeometry();
+  const sideLength = 2;
+  const vertices = new Float32Array([
+    -1, 0, -1, // v0
+    -1, 0, 1, // v1
+    1, 0, 0, // v2
+    0, 1.633, 0 // v3 - vertix
+  ]);
+  const indices = [
+    0, 1, 2,
+    0, 2, 3,
+    2, 1, 3,
+    0, 3, 1
+  ];
+  geometry.setIndex(indices);
+  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  const mesh = new THREE.Mesh(geometry, materialTowerPeak);
   mesh.position.set(x, y, z);
   obj.add(mesh);
 }
@@ -553,59 +553,59 @@ function createMovingHook(x, y, z) {
 }
 
 function createHook1(x, y, z) {
-"use strict";
+  "use strict";
 
-hook1 = new THREE.Object3D();
+  hook1 = new THREE.Object3D();
 
-addLowerHook(hook1, 0, 0, 0);
+  addLowerHook(hook1, 0, 0, 0);
 
-movingHook.add(hook1);
+  movingHook.add(hook1);
 
-hook1.position.x = x;
-hook1.position.y = y - 4.5;
-hook1.position.z = z + 0.75;
+  hook1.position.x = x;
+  hook1.position.y = y - 4.5;
+  hook1.position.z = z + 0.75;
 }
 
 function createHook2(x, y, z) {
-"use strict";
+  "use strict";
 
-hook2 = new THREE.Object3D();
+  hook2 = new THREE.Object3D();
 
-addLowerHook(hook2, 0, 0, 0);
+  addLowerHook(hook2, 0, 0, 0);
 
-movingHook.add(hook2);
+  movingHook.add(hook2);
 
-hook2.position.x = x;
-hook2.position.y = y - 4.5;
-hook2.position.z = z - 0.75;
+  hook2.position.x = x;
+  hook2.position.y = y - 4.5;
+  hook2.position.z = z - 0.75;
 }
 
 function createHook3(x, y, z) {
-"use strict";
+  "use strict";
 
-hook3 = new THREE.Object3D();
+  hook3 = new THREE.Object3D();
 
-addLowerHook(hook3, 0, 0, 0);
+  addLowerHook(hook3, 0, 0, 0);
 
-movingHook.add(hook3);
+  movingHook.add(hook3);
 
-hook3.position.x = x + 0.75;
-hook3.position.y = y - 4.5;
-hook3.position.z = z;
+  hook3.position.x = x + 0.75;
+  hook3.position.y = y - 4.5;
+  hook3.position.z = z;
 }
 
 function createHook4(x, y, z) {
-"use strict";
+  "use strict";
 
-hook4 = new THREE.Object3D();
+  hook4 = new THREE.Object3D();
 
-addLowerHook(hook4, 0, 0, 0);
+  addLowerHook(hook4, 0, 0, 0);
 
-movingHook.add(hook4);
+  movingHook.add(hook4);
 
-hook4.position.x = x - 0.75;
-hook4.position.y = y - 4.5;
-hook4.position.z = z;
+  hook4.position.x = x - 0.75;
+  hook4.position.y = y - 4.5;
+  hook4.position.z = z;
 }
 
 const hudContainer = document.createElement("div");
@@ -692,69 +692,69 @@ function update() {
   'use strict';
   let delta = clock.getDelta();
 
-  if(movingTrolley_flagS == true && movingTrolley_flagW == false) {
-      if(movingTrolley.position.x > 5) {
-          var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
-          movingTrolley.applyMatrix4(translationMatrix);
-      }
+  if (movingTrolley_flagS == true && movingTrolley_flagW == false) {
+    if (movingTrolley.position.x > 5) {
+      var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
+      movingTrolley.applyMatrix4(translationMatrix);
+    }
   }
-  if(movingTrolley_flagS == false && movingTrolley_flagW == true) {
-      if(movingTrolley.position.x < 29) {
-          var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
-          movingTrolley.applyMatrix4(translationMatrix);
-      }
+  if (movingTrolley_flagS == false && movingTrolley_flagW == true) {
+    if (movingTrolley.position.x < 29) {
+      var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
+      movingTrolley.applyMatrix4(translationMatrix);
+    }
   }
-  if(rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
-      var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
-      rotatingCrane.applyMatrix4(rotationMatrix);
+  if (rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
+    var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
+    rotatingCrane.applyMatrix4(rotationMatrix);
   }
-  if(rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
-      var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
-      rotatingCrane.applyMatrix4(rotationMatrix);
+  if (rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
+    var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
+    rotatingCrane.applyMatrix4(rotationMatrix);
   }
-  if(movingHook_flagD == true && movingHook_flagE == false) {
-      if(movingHook.position.y>-27.5) {
-        var translationVector = new THREE.Vector3(0, -8 * delta, 0);
-        var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
-        movingHook.applyMatrix4(translationMatrix);
+  if (movingHook_flagD == true && movingHook_flagE == false) {
+    if (movingHook.position.y > -27.5) {
+      var translationVector = new THREE.Vector3(0, -8 * delta, 0);
+      var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+      movingHook.applyMatrix4(translationMatrix);
 
-        var originalPosition = steelCable.position.clone();
-        var currentHeight = steelCable.scale.y;
-        var scaleFactor = 1 + (-translationVector.y / currentHeight);
+      var originalPosition = steelCable.position.clone();
+      var currentHeight = steelCable.scale.y;
+      var scaleFactor = 1 + (-translationVector.y / currentHeight);
 
-        var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
-        steelCable.applyMatrix4(scaleMatrix);
+      var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+      steelCable.applyMatrix4(scaleMatrix);
 
-        var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+      var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
 
-        var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
-        steelCable.applyMatrix4(inverseTranslationMatrix);
-      }
+      var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
+      steelCable.applyMatrix4(inverseTranslationMatrix);
+    }
   }
-  if(movingHook_flagD == false && movingHook_flagE == true) {
-      if(movingHook.position.y<0) {
-        var translationVector = new THREE.Vector3(0, 8 * delta, 0);
-        var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
-        movingHook.applyMatrix4(translationMatrix);
-        
-        var originalPosition = steelCable.position.clone();
-        var currentHeight = steelCable.scale.y;
-        var scaleFactor = 1 - (translationVector.y / currentHeight);
+  if (movingHook_flagD == false && movingHook_flagE == true) {
+    if (movingHook.position.y < 0) {
+      var translationVector = new THREE.Vector3(0, 8 * delta, 0);
+      var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+      movingHook.applyMatrix4(translationMatrix);
 
-        var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
-        steelCable.applyMatrix4(scaleMatrix);
+      var originalPosition = steelCable.position.clone();
+      var currentHeight = steelCable.scale.y;
+      var scaleFactor = 1 - (translationVector.y / currentHeight);
 
-        var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+      var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
+      steelCable.applyMatrix4(scaleMatrix);
 
-        var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
-        steelCable.applyMatrix4(inverseTranslationMatrix);
-      }
+      var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+
+      var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
+      steelCable.applyMatrix4(inverseTranslationMatrix);
+    }
   }
 
   var angle = Math.PI / 8;
 
-  if(rotatingHook_flagF == true && rotatingHook_flagR == false) {
-    if(hook3.rotation.z < angle) {
+  if (rotatingHook_flagF == true && rotatingHook_flagR == false) {
+    if (hook3.rotation.z < angle) {
       var axis1 = new THREE.Vector3(-1, 0, 0);
       var axis2 = new THREE.Vector3(1, 0, 0);
       var axis3 = new THREE.Vector3(0, 0, 1);
@@ -767,8 +767,8 @@ function update() {
       hook4.rotateOnWorldAxis(axis4, angle);
     }
   }
-  if(rotatingHook_flagF == false && rotatingHook_flagR == true) {
-    if(hook3.rotation.z > -angle) {
+  if (rotatingHook_flagF == false && rotatingHook_flagR == true) {
+    if (hook3.rotation.z > -angle) {
       var axis1 = new THREE.Vector3(1, 0, 0);
       var axis2 = new THREE.Vector3(-1, 0, 0);
       var axis3 = new THREE.Vector3(0, 0, -1);
