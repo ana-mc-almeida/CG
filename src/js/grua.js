@@ -2,6 +2,9 @@ import * as THREE from "three";
 
 var activeCamera, scene, renderer;
 var geometry, mesh;
+var originalHUDContent, showMoreHUDContent, showLessHUDContent;
+var showMore = true;
+var keys = {};
 
 var container;
 let clock = new THREE.Clock();
@@ -24,7 +27,6 @@ let rotatingHook_flagR = false;
 let rotatingHook_flagF = false;
 
 const BACKGROUND = new THREE.Color(0xeceae4);
-// const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
 // Declare materials
 //Grua
@@ -126,6 +128,54 @@ const materials = [
   (materialIcosahedron = createMaterial(0x4eb8b0)),
   (materialParallelpiped = createMaterial(0xef0000)),
 ];
+
+function createHUDContent(showMore = false, showLess = false) {
+  return `
+  <div id="title" style="margin-top: -10px;">
+  <h2>Key Mappings</h2>
+  ${
+    showMore
+      ? '<span id="showMore" style="cursor: pointer; font-weight: bold;">show more</span>'
+      : ""
+  }
+  </div>
+  ${
+    showMore
+      ? ""
+      : `
+  <div id="content" style="margin-top: -10px;">
+  <p data-key="1">Press 1: Front View</p>
+  <p data-key="2">Press 2: Side View</p>
+  <p data-key="3">Press 3: Top View</p>
+  <p data-key="4">Press 4: Orthogonal Projection</p>
+  <p data-key="5">Press 5: Perspective Projection</p>
+  <p data-key="6">Press 6: Mobile Camera</p>
+  <p data-key="7">Press 7: Toggle Wireframes</p>
+  <p data-key="a">Press A(a): Rotate Crane clock-wise</p>
+  <p data-key="q">Press Q(q): Rotate Crane anti-clockwise</p>
+  <p data-key="s">Press S(s): Move trolley backwards</p>
+  <p data-key="w">Press W(w): Move trolley onwards</p>
+  <p data-key="e">Press E(e): Move claw block up</p>
+  <p data-key="d">Press D(d): Move claw block down</p>
+  <p data-key="r">Press R(r): Close claw</p>
+  <p data-key="f">Press F(f): Open claw</p>
+  ${
+    showLess
+      ? '<span id="showLess" style="cursor: pointer; font-weight: bold;">show less</span>'
+      : ""
+  }
+  </div>`
+  }
+  <style>
+  ${showMore ? "#showMore:hover { color: blue; }" : ""}
+  ${showLess ? "#showLess:hover { color: blue; }" : ""}
+  </style>
+  `;
+}
+
+originalHUDContent = createHUDContent();
+showMoreHUDContent = createHUDContent(true);
+showLessHUDContent = createHUDContent(false, true);
 
 function getPositionY(geometry, y) {
   var size = new THREE.Vector3();
@@ -674,11 +724,11 @@ function createHook4(x, y, z) {
 const hudContainer = document.createElement("div");
 function createHUD() {
   // Create HUD container
-  //const hudContainer = document.createElement("div");
   hudContainer.id = "hud";
   hudContainer.style.position = "fixed";
   hudContainer.style.top = "10px";
   hudContainer.style.right = "10px";
+  hudContainer.style.width = "310px";
   hudContainer.style.backgroundColor = "rgba(255, 255, 255, 0.5)";
   hudContainer.style.padding = "15px";
   hudContainer.style.borderRadius = "10px";
@@ -687,56 +737,40 @@ function createHUD() {
   document.body.appendChild(hudContainer);
 
   // Add initial HUD content
-  hudContainer.innerHTML = `
-    <div id="title" style="margin-top: -10px;">
-      <h2>Key Mappings</h2>
-    </div>
-    <div id="content" style="margin-top: -10px;">
-      <p data-key="1">Press 1: Front View</p>
-      <p data-key="2">Press 2: Side View</p>
-      <p data-key="3">Press 3: Top View</p>
-      <p data-key="4">Press 4: Orthogonal Projection</p>
-      <p data-key="5">Press 5: Perspective Projection</p>
-      <p data-key="6">Press 6: Mobile Camera</p>
-      <p data-key="7">Press 7: Toggle Wireframes</p>
-      <p data-key="a">Press A(a): Rotate Crane clock-wise</p>
-      <p data-key="q">Press Q(q): Rotate Crane anti-clockwise</p>
-      <p data-key="s">Press S(s): Move trolley backwards</p>
-      <p data-key="w">Press W(w): Move trolley onwards</p>
-      <p data-key="e">Press E(e): Move claw block up</p>
-      <p data-key="d">Press D(d): Move claw block down</p>
-      <p data-key="r">Praess R(r): Close claw</p>
-      <p data-key="f">Press F(f): Open claw</p>
-    </div>
-  `;
+  hudContainer.innerHTML = originalHUDContent;
 }
 
-function toggleHighlight(key, add) {
-  const element = hudContainer.querySelector(`p[data-key="${key}"]`);
-  if (element) {
-    if (add) {
-      element.classList.add("highlighted");
-    } else {
-      element.classList.remove("highlighted");
-    }
+function updateHUD() {
+  // updates hud based on key
+  if (activeCamera === cameras.side) {
+    hudContainer.innerHTML = showMore ? showMoreHUDContent : showLessHUDContent;
+  } else {
+    showMore = true;
+    hudContainer.innerHTML = originalHUDContent;
   }
 }
 
-function highlightOnKeyDown(key) {
-  const element = hudContainer.querySelector(`p[data-key="${key}"]`);
-  if (element) {
-    element.classList.add("highlighted");
-    document.addEventListener("keyup", function (event) {
-      if (event.key.toLowerCase() === key) {
+document.addEventListener("click", function (event) {
+  if (event.target.id === "showMore") {
+    showMore = false;
+    updateHUD();
+  } else if (event.target.id === "showLess") {
+    showMore = true;
+    updateHUD();
+  }
+});
+
+function updateHighlights() {
+  for (var key in keys) {
+    const element = hudContainer.querySelector(`p[data-key="${key}"]`);
+    if (element) {
+      if (keys[key]) {
+        element.classList.add("highlighted");
+      } else {
         element.classList.remove("highlighted");
       }
-    });
+    }
   }
-}
-
-function updateHUD(key) {
-  // updates hud based on key
-  highlightOnKeyDown(key);
 }
 
 function checkCraneCollision() {
@@ -1020,87 +1054,104 @@ function render() {
   renderer.render(scene, activeCamera.camera);
 }
 
+function getKeyValue(e) {
+  if (e.keyCode >= 48 && e.keyCode <= 57) {
+    return String(e.keyCode - 48);
+  } else {
+    return String.fromCharCode(e.keyCode).toLowerCase();
+  }
+}
+
 function onKeyDown(e) {
   "use strict";
+  var key = getKeyValue(e);
+  keys[key] = true;
+  console.log("Key pressed: " + key);
   switch (e.keyCode) {
     case 49: // '1'
       changeActiveCamera(cameras.front);
-      updateHUD("1");
+      updateHUD();
       break;
     case 50: // '2'
       changeActiveCamera(cameras.side);
-      updateHUD("2");
+      updateHUD();
       break;
     case 51: // '3'
       changeActiveCamera(cameras.top);
-      updateHUD("3");
+      updateHUD();
       break;
     case 52: // '4'
       changeActiveCamera(cameras.orthogonal);
-      updateHUD("4");
+      updateHUD();
       break;
     case 53: // '5'
       changeActiveCamera(cameras.perspective);
-      updateHUD("5");
+      updateHUD();
       break;
     case 54: // '6'
       //TODO activeCamera = cameraMovel;
       changeActiveCamera(cameras.mobile);
-      updateHUD("6");
+      updateHUD();
       break;
     case 55: // '7'
       toggleWireframes();
-      updateHUD("7");
       break;
     case 65 || 97: // 'a' 'A'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("a"); // Highlight 'a' key
       rotatingCrane_flagA = true;
       break;
     case 81 || 113: // 'q' 'Q'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("q"); // Highlight 'q' key
       rotatingCrane_flagQ = true;
       break;
     case 83 || 115: // 's' 'S'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("s"); // Highlight 's' key
       movingTrolley_flagS = true;
       break;
     case 87 || 119: // 'w' 'W'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("w"); // Highlight 'w' key
       movingTrolley_flagW = true;
       break;
     case 68 || 100: // 'd' 'D'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("d"); // Highlight 'd' key
       movingHook_flagD = true;
       break;
     case 69 || 101: // 'e' 'E'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("e"); // Highlight 'e' key
       movingHook_flagE = true;
       break;
     case 82 || 114: // 'r' 'R'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("r"); // Highlight 'r' key
       rotatingHook_flagR = true;
       break;
     case 70 || 102: // 'f' 'F'
-      //TODO activeCamera = cameraMovel;
-      updateHUD("f"); // Highlight 'f' key
       rotatingHook_flagF = true;
       break;
     default:
       break;
   }
-  // TODO
+  updateHighlights();
 }
 
 function onKeyUp(e) {
   "use strict";
+  var key = getKeyValue(e);
+  keys[key] = false;
   switch (e.keyCode) {
+    case 49: // '1'
+      updateHUD();
+      break;
+    case 50: // '2'
+      updateHUD();
+      break;
+    case 51: // '3'
+      updateHUD();
+      break;
+    case 52: // '4'
+      updateHUD();
+      break;
+    case 53: // '5'
+      updateHUD();
+      break;
+    case 54: // '6'
+      updateHUD();
+      break;
+    case 55: // '7'
+      updateHUD();
+      break;
     case 65 || 97: // 'a' 'A'
       rotatingCrane_flagA = false;
       break;
@@ -1128,6 +1179,7 @@ function onKeyUp(e) {
     default:
       break;
   }
+  updateHighlights();
 }
 
 function onResize() {
