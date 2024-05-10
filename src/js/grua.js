@@ -219,11 +219,11 @@ function createSphere({ object, name = null, radius = null }) {
   // scene.add(sphereMesh);
 
   if (name) {
-    collisionSpheres[name] = sphere;
+    collisionSpheres[name] = { center: sphere.center, radius: sphere.radius };
     collidingObjects[name] = object;
   }
 
-  return sphere;
+  return { center: sphere.center, radius: sphere.radius };
 }
 
 function createContainer(x, y, z) {
@@ -764,16 +764,20 @@ function updateHighlights() {
 }
 
 function checkCraneCollision() {
-  let newBoundingSphere = createSphere(movingHook);
+  let { center, radius } = createSphere({ object: movingHook });
 
-  // console.log(collisionSpheres)
+  for (let [name, sphere] of Object.entries(collisionSpheres)) {
+    const loadCenter = sphere.center;
+    const loadRadius = sphere.radius;
 
-  for (let [name, boundingSphere] of Object.entries(collisionSpheres)) {
-    // TODO: check if sould use intersectsSphere or radius
-    if (
-      newBoundingSphere.intersectsSphere(boundingSphere) &&
-      name !== "container"
-    ) {
+    const sumRadius = radius + loadRadius;
+    const powSumRadius = sumRadius * sumRadius;
+    const distanceX = center.x - loadCenter.x;
+    const distanceY = center.y - loadCenter.y;
+    const distanceZ = center.z - loadCenter.z;
+    const powDistance = (distanceX * distanceX) + (distanceY * distanceY) + (distanceZ * distanceZ);
+
+    if (powSumRadius >= powDistance && name !== "container") {
       console.log("Collision detected");
       collisionAnimationInProgress = true;
       collidingObject = name;
@@ -976,7 +980,6 @@ function update() {
       case 3: // movimentar o carrinho
         if (movingTrolley.position.x < trolleyMaxX) {
           moveTrolleyForward(delta);
-          // moveObjectForward(delta, object);
           return;
         }
         animationPhase++;
@@ -984,13 +987,11 @@ function update() {
       case 4: // rodar a grua
         if (rotatingCrane.rotation.y < 0) {
           moveCraneAntiClockwise(delta);
-          // moveObjectAntiClockwise(delta, object);
           if (rotatingCrane.rotation.y > 0) animationPhase++;
           return;
         }
         if (rotatingCrane.rotation.y > 0) {
           moveCraneClockwise(delta);
-          // moveObjectClockwise(delta, object);
           if (rotatingCrane.rotation.y < 0) animationPhase++;
           return;
         }
@@ -999,7 +1000,6 @@ function update() {
       case 5: // baixar a garra
         if (movingHook.position.y > hookMaxY * 0.7) {
           moveHookDown(delta);
-          // moveObjectDown(delta, object);
           return;
         }
         animationPhase++;
