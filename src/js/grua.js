@@ -5,7 +5,15 @@ var geometry, mesh;
 
 var container;
 let clock = new THREE.Clock();
-var movingTrolley, lowerCrane, rotatingCrane, movingHook, steelCable, hook1, hook2, hook3, hook4;
+var movingTrolley,
+  lowerCrane,
+  rotatingCrane,
+  movingHook,
+  steelCable,
+  hook1,
+  hook2,
+  hook3,
+  hook4;
 let movingTrolley_flagS = false;
 let movingTrolley_flagW = false;
 let rotatingCrane_flagA = false;
@@ -42,9 +50,7 @@ let materialHoist,
   materialLowerHook;
 
 //Container
-let
-  materialWalls,
-  materialBase;
+let materialWalls, materialBase;
 
 //Objects
 let materialCube,
@@ -76,7 +82,7 @@ var torusRadius = 2;
 // tube dimensions
 var tubeRadius = 1;
 
-//  radius 
+//  radius
 var radius = 3;
 
 var objectsOnTheFloor = [];
@@ -96,32 +102,32 @@ function createMaterial(color) {
 }
 const materials = [
   // Grua materials
-  materialFoundation = createMaterial(0x744700),
-  materialLowerMast = createMaterial(0xbf9000),
-  materialTurntable = createMaterial(0x990000),
-  materialHigherMast = createMaterial(0xdaa520),
-  materialCab = createMaterial(0xb7410e),
-  materialJib = createMaterial(0xdaa520),
-  materialCounterWeight = createMaterial(0xb7410e),
-  materialTowerPeak = createMaterial(0x8b4513),
-  materialRightLoadLine = createMaterial(0x9c9282),
-  materialLeftLoadLine = createMaterial(0x9c9282),
+  (materialFoundation = createMaterial(0x744700)),
+  (materialLowerMast = createMaterial(0xbf9000)),
+  (materialTurntable = createMaterial(0x990000)),
+  (materialHigherMast = createMaterial(0xdaa520)),
+  (materialCab = createMaterial(0xb7410e)),
+  (materialJib = createMaterial(0xdaa520)),
+  (materialCounterWeight = createMaterial(0xb7410e)),
+  (materialTowerPeak = createMaterial(0x8b4513)),
+  (materialRightLoadLine = createMaterial(0x9c9282)),
+  (materialLeftLoadLine = createMaterial(0x9c9282)),
   // Hook block materials
-  materialHoist = createMaterial(0x990000),
-  materialSteelCable = createMaterial(0x000000),
-  materialHookBlock = createMaterial(0xb7410e),
-  materialHigherHook = createMaterial(0x8b4513),
-  materialLowerHook = createMaterial(0xc04e3a	),
+  (materialHoist = createMaterial(0x990000)),
+  (materialSteelCable = createMaterial(0x000000)),
+  (materialHookBlock = createMaterial(0xb7410e)),
+  (materialHigherHook = createMaterial(0x8b4513)),
+  (materialLowerHook = createMaterial(0xc04e3a)),
   // Container materials
-  materialWalls = createMaterial(0x2D3142),
-  materialBase = createMaterial(0x796969),
+  (materialWalls = createMaterial(0x2d3142)),
+  (materialBase = createMaterial(0x796969)),
   // Objects materials
-  materialCube = createMaterial(0xfb9062	),
-  materialTorus = createMaterial(0x9966cc),
-  materialDodecahedron = createMaterial(0xce4993),
-  materialTorusKnot = createMaterial(0x009dff),
-  materialIcosahedron = createMaterial(0x4eb8b0),
-  materialParallelpiped = createMaterial(0xef0000),
+  (materialCube = createMaterial(0xfb9062)),
+  (materialTorus = createMaterial(0x9966cc)),
+  (materialDodecahedron = createMaterial(0xce4993)),
+  (materialTorusKnot = createMaterial(0x009dff)),
+  (materialIcosahedron = createMaterial(0x4eb8b0)),
+  (materialParallelpiped = createMaterial(0xef0000)),
 ];
 
 function getPositionY(geometry, y) {
@@ -353,7 +359,7 @@ function createLoads() {
 function willCollide(x, y, z, radius) {
   let newBoundingSphere = new THREE.Sphere(new THREE.Vector3(x, y, z), radius);
 
-  for (let object of scene.children) {
+  for (let object of objectsOnTheFloor) {
     let boundingSphere = new THREE.Sphere();
     new THREE.Box3().setFromObject(object).getBoundingSphere(boundingSphere);
     if (newBoundingSphere.intersectsSphere(boundingSphere)) {
@@ -426,23 +432,26 @@ function addCounterweight(obj, x, y, z) {
 }
 
 function addTowerPeak(obj, x, y, z) {
-  'use strict';
+  "use strict";
   const geometry = new THREE.BufferGeometry();
   const sideLength = 2;
   const vertices = new Float32Array([
-    -1, 0, -1, // v0
-    -1, 0, 1, // v1
-    1, 0, 0, // v2
-    0, 1.633, 0 // v3 - vertix
+    -1,
+    0,
+    -1, // v0
+    -1,
+    0,
+    1, // v1
+    1,
+    0,
+    0, // v2
+    0,
+    1.633,
+    0, // v3 - vertix
   ]);
-  const indices = [
-    0, 1, 2,
-    0, 2, 3,
-    2, 1, 3,
-    0, 3, 1
-  ];
+  const indices = [0, 1, 2, 0, 2, 3, 2, 1, 3, 0, 3, 1];
   geometry.setIndex(indices);
-  geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+  geometry.setAttribute("position", new THREE.BufferAttribute(vertices, 3));
   const mesh = new THREE.Mesh(geometry, materialTowerPeak);
   mesh.position.set(x, y, z);
   obj.add(mesh);
@@ -601,7 +610,7 @@ function createMovingHook(x, y, z) {
   camera.position.set(0, 0, 0);
 
   var zAxis = new THREE.Vector3(0, 0, -1);
-  // Rotate the camera around the z-axis by 180 degrees 
+  // Rotate the camera around the z-axis by 180 degrees
   camera.rotateOnAxis(zAxis, Math.PI);
   // Make the camera look at x0z
   camera.rotation.x = -Math.PI / 2;
@@ -752,7 +761,10 @@ function checkCraneCollision() {
 
   for (let [name, boundingSphere] of Object.entries(collisionSpheres)) {
     // TODO: check if sould use intersectsSphere or radius
-    if (newBoundingSphere.intersectsSphere(boundingSphere) && name !== "container") {
+    if (
+      newBoundingSphere.intersectsSphere(boundingSphere) &&
+      name !== "container"
+    ) {
       console.log("Collision detected");
       collisionAnimationInProgress = true;
       collidingObject = name;
@@ -766,19 +778,27 @@ function checkCraneCollision() {
 function moveHookUp(delta) {
   if (movingHook.position.y < 0) {
     var translationVector = new THREE.Vector3(0, 8 * delta, 0);
-    var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+    var translationMatrix = new THREE.Matrix4().makeTranslation(
+      translationVector
+    );
     movingHook.applyMatrix4(translationMatrix);
 
     var originalPosition = steelCable.position.clone();
     var currentHeight = steelCable.scale.y;
-    var scaleFactor = 1 - (translationVector.y / currentHeight);
+    var scaleFactor = 1 - translationVector.y / currentHeight;
 
     var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
     steelCable.applyMatrix4(scaleMatrix);
 
-    var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+    var inverseTranslationVector = originalPosition
+      .clone()
+      .sub(steelCable.position);
 
-    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y - (8 * delta), 0);
+    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(
+      0,
+      inverseTranslationVector.y - 8 * delta,
+      0
+    );
     steelCable.applyMatrix4(inverseTranslationMatrix);
 
     return delta;
@@ -789,19 +809,27 @@ function moveHookUp(delta) {
 function moveHookDown(delta) {
   if (movingHook.position.y > hookMaxY) {
     var translationVector = new THREE.Vector3(0, -8 * delta, 0);
-    var translationMatrix = new THREE.Matrix4().makeTranslation(translationVector);
+    var translationMatrix = new THREE.Matrix4().makeTranslation(
+      translationVector
+    );
     movingHook.applyMatrix4(translationMatrix);
 
     var originalPosition = steelCable.position.clone();
     var currentHeight = steelCable.scale.y;
-    var scaleFactor = 1 + (-translationVector.y / currentHeight);
+    var scaleFactor = 1 + -translationVector.y / currentHeight;
 
     var scaleMatrix = new THREE.Matrix4().makeScale(1, scaleFactor, 1);
     steelCable.applyMatrix4(scaleMatrix);
 
-    var inverseTranslationVector = originalPosition.clone().sub(steelCable.position);
+    var inverseTranslationVector = originalPosition
+      .clone()
+      .sub(steelCable.position);
 
-    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(0, inverseTranslationVector.y + (8 * delta), 0);
+    var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(
+      0,
+      inverseTranslationVector.y + 8 * delta,
+      0
+    );
     steelCable.applyMatrix4(inverseTranslationMatrix);
 
     return delta;
@@ -810,18 +838,26 @@ function moveHookDown(delta) {
 }
 
 function moveCraneClockwise(delta) {
-  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, -1, 0), (Math.PI / 10) * delta);
+  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(
+    new THREE.Vector3(0, -1, 0),
+    (Math.PI / 10) * delta
+  );
   rotatingCrane.applyMatrix4(rotationMatrix);
 }
 
 function moveCraneAntiClockwise(delta) {
-  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(new THREE.Vector3(0, 1, 0), (Math.PI / 10) * delta);
+  var rotationMatrix = new THREE.Matrix4().makeRotationAxis(
+    new THREE.Vector3(0, 1, 0),
+    (Math.PI / 10) * delta
+  );
   rotatingCrane.applyMatrix4(rotationMatrix);
 }
 
 function moveTrolleyBackward(delta) {
   if (movingTrolley.position.x > 5) {
-    var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(-8 * delta, 0, 0));
+    var translationMatrix = new THREE.Matrix4().makeTranslation(
+      new THREE.Vector3(-8 * delta, 0, 0)
+    );
     movingTrolley.applyMatrix4(translationMatrix);
     return delta;
   }
@@ -830,7 +866,9 @@ function moveTrolleyBackward(delta) {
 
 function moveTrolleyForward(delta) {
   if (movingTrolley.position.x < 29) {
-    var translationMatrix = new THREE.Matrix4().makeTranslation(new THREE.Vector3(8 * delta, 0, 0));
+    var translationMatrix = new THREE.Matrix4().makeTranslation(
+      new THREE.Vector3(8 * delta, 0, 0)
+    );
     movingTrolley.applyMatrix4(translationMatrix);
     return delta;
   }
@@ -872,13 +910,12 @@ function moveHookOut(delta) {
 }
 
 function update() {
-  'use strict';
+  "use strict";
   let delta = clock.getDelta();
 
   var angle = Math.PI / 8;
 
   if (collisionAnimationInProgress) {
-
     var object = collidingObjects[collidingObject];
 
     switch (animationPhase) {
@@ -887,19 +924,18 @@ function update() {
         let size = new THREE.Vector3();
         boundingBox.getSize(size);
 
-
         object.position.set(0, -5 - size.y / 2, 0);
         movingHook.add(object);
 
         animationPhase++;
-        break
+        break;
       case 1: // fechar a garra
         if (hook3.rotation.z > -angle) {
           moveHookIn(delta);
           return;
         }
         animationPhase++;
-        break
+        break;
       case 2: // levantar a garra
         if (movingHook.position.y < 0) {
           moveHookUp(delta);
@@ -915,24 +951,22 @@ function update() {
           return;
         }
         animationPhase++;
-        break
+        break;
       case 4: // rodar a grua
         if (rotatingCrane.rotation.y < 0) {
           moveCraneAntiClockwise(delta);
           // moveObjectAntiClockwise(delta, object);
-          if (rotatingCrane.rotation.y > 0)
-            animationPhase++;
+          if (rotatingCrane.rotation.y > 0) animationPhase++;
           return;
         }
         if (rotatingCrane.rotation.y > 0) {
           moveCraneClockwise(delta);
           // moveObjectClockwise(delta, object);
-          if (rotatingCrane.rotation.y < 0)
-            animationPhase++;
+          if (rotatingCrane.rotation.y < 0) animationPhase++;
           return;
         }
         animationPhase++;
-        break
+        break;
       case 5: // baixar a garra
         if (movingHook.position.y > hookMaxY * 0.7) {
           moveHookDown(delta);
@@ -940,21 +974,21 @@ function update() {
           return;
         }
         animationPhase++;
-        break
-      case 6:// largar a carga
+        break;
+      case 6: // largar a carga
         if (hook3.rotation.z < 0) {
           moveHookOut(delta);
           return;
         }
         animationPhase++;
-        break
+        break;
       case 7: // fazer a carga desapaecer
         movingHook.remove(object);
         scene.remove(collidingObjects[collidingObject]);
         delete collidingObjects[collidingObject];
         delete collisionSpheres[collidingObject];
         animationPhase++;
-        break
+        break;
       case 8: // levantar a garra
         if (movingHook.position.y < hookMaxY / 2) {
           moveHookUp(delta);
@@ -967,9 +1001,7 @@ function update() {
         collisionAnimationInProgress = false;
         return;
     }
-
-  }
-  else {
+  } else {
     if (movingTrolley_flagS == true && movingTrolley_flagW == false) {
       moveTrolleyBackward(delta);
       checkCraneCollision();
@@ -1358,11 +1390,11 @@ function changeActiveCamera(cameraDescriptor) {
   activeCamera = cameraDescriptor;
 }
 
-
 function toggleWireframes() {
-  Object.values(materials).forEach((material) => (material.wireframe = !material.wireframe));
+  Object.values(materials).forEach(
+    (material) => (material.wireframe = !material.wireframe)
+  );
 }
-
 
 init();
 animate();
