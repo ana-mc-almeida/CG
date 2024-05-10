@@ -100,7 +100,6 @@ var higherMastHeight = 6;
 
 // Turntable Dimensions
 var turntableHeight = 1;
-var turntableRadius = 1;
 
 // Jib Dimensions
 var jibLength = 39;
@@ -126,7 +125,6 @@ var cablesRadius = 0.1;
 
 // Hoist Dimensions
 var hoistHeight = 1;
-var hoistSideLenght = 2;
 
 // Cable Dimensions
 var steelCableLenght = 1;
@@ -136,15 +134,12 @@ var towerPeakHeight = 1.633;
 
 // Hook Dimensions
 var hookBlockHeight = 1;
-var hookBlockSideLenght = 2;
 var hookHeight = 1;
 var hookSideLenght = 0.5;
 var hookDisplacement = 0.75;
 var hookMaxY = -27.5;
-var hookMinY = 5;
 var trolleyMaxX = 29;
 var hookMaxX = 29;
-var hookMinX = 5;
 var hookInitialY = 7;
 var maxHookAngle = Math.PI / 8;
 
@@ -152,8 +147,10 @@ var maxHookAngle = Math.PI / 8;
 var translationSpeed = 8;
 var rotationSpeed = (Math.PI / 10);
 
+// Objects on the floor
 var objectsOnTheFloor = [];
 
+// Colisions
 var collisionSpheres = {};
 var collidingObjects = {};
 
