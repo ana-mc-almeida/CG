@@ -267,14 +267,6 @@ function createSphere({ object, name = null, radius = null }) {
     sphere = new THREE.Sphere(boundingSphere.center, radius);
   }
 
-
-  //Debug
-  // let sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
-  // let sphereGeometry = new THREE.SphereGeometry(sphere.radius);
-  // let sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-  // sphereMesh.position.copy(sphere.center);
-  // scene.add(sphereMesh);
-
   if (name) {
     collisionSpheres[name] = { center: sphere.center, radius: sphere.radius };
     collidingObjects[name] = object;
@@ -646,8 +638,8 @@ function createCrane(x, y, z) {
   lowerCrane.add(cranePivot);
   createRotatingCrane(cranePivot, 0, foundationSize + lowerMastHeight, 0);
 
-  addFoundation(lowerCrane, 0, foundationSize/2, 0);
-  addLowerMast(lowerCrane, 0, foundationSize + lowerMastHeight/2, 0);
+  addFoundation(lowerCrane, 0, foundationSize / 2, 0);
+  addLowerMast(lowerCrane, 0, foundationSize + lowerMastHeight / 2, 0);
 
   scene.add(lowerCrane);
 
@@ -661,14 +653,14 @@ function createRotatingCrane(parent, x, y, z) {
 
   rotatingCrane = new THREE.Object3D();
 
-  addTurntable(rotatingCrane, 0, turntableHeight/2, 0);
-  addHigherMast(rotatingCrane, 0, turntableHeight + higherMastHeight/2, 0);
-  addCab(rotatingCrane, 0, turntableHeight + higherMastHeight/2 + 0.5, cabDisplacementZ + squareSideLength/2);
-  addJib(rotatingCrane, jibCenterX, turntableHeight + higherMastHeight + squareSideLength/2, 0);
-  addCounterweight(rotatingCrane, counterweightDisplacementX, turntableHeight + higherMastHeight + squareSideLength/2 + counterweightDisplacementY, 0);
+  addTurntable(rotatingCrane, 0, turntableHeight / 2, 0);
+  addHigherMast(rotatingCrane, 0, turntableHeight + higherMastHeight / 2, 0);
+  addCab(rotatingCrane, 0, turntableHeight + higherMastHeight / 2 + 0.5, cabDisplacementZ + squareSideLength / 2);
+  addJib(rotatingCrane, jibCenterX, turntableHeight + higherMastHeight + squareSideLength / 2, 0);
+  addCounterweight(rotatingCrane, counterweightDisplacementX, turntableHeight + higherMastHeight + squareSideLength / 2 + counterweightDisplacementY, 0);
   addTowerPeak(rotatingCrane, 0, turntableHeight + higherMastHeight + squareSideLength, 0);
-  addRightLoadLine(rotatingCrane, rightLoadLineX, turntableHeight + higherMastHeight + squareSideLength + towerPeakHeight/2, 0);
-  addLeftLoadLine(rotatingCrane, leftLoadLineX, turntableHeight + higherMastHeight + squareSideLength + towerPeakHeight/2, 0);
+  addRightLoadLine(rotatingCrane, rightLoadLineX, turntableHeight + higherMastHeight + squareSideLength + towerPeakHeight / 2, 0);
+  addLeftLoadLine(rotatingCrane, leftLoadLineX, turntableHeight + higherMastHeight + squareSideLength + towerPeakHeight / 2, 0);
 
   parent.add(rotatingCrane);
 
@@ -684,10 +676,10 @@ function createMovingTrolley(parent, x, y, z) {
 
   movingTrolley = new THREE.Object3D();
 
-  addHoist(movingTrolley, 0, -hoistHeight/2, 0);
+  addHoist(movingTrolley, 0, -hoistHeight / 2, 0);
 
   steelCable = new THREE.Object3D();
-  addSteelCable(steelCable, 0, -hoistHeight - steelCableLenght/2, 0);
+  addSteelCable(steelCable, 0, -hoistHeight - steelCableLenght / 2, 0);
 
   movingTrolley.add(steelCable);
 
@@ -710,8 +702,8 @@ function createMovingHook(parent, x, y, z) {
   hook3 = new THREE.Object3D();
   hook4 = new THREE.Object3D();
 
-  var lowerHookY = -(hoistHeight+steelCableLenght+hookBlockHeight+hookHeight+hookHeight/2);
-  var higherHookY = -(hoistHeight+steelCableLenght+hookBlockHeight+hookHeight/2);
+  var lowerHookY = -(hoistHeight + steelCableLenght + hookBlockHeight + hookHeight + hookHeight / 2);
+  var higherHookY = -(hoistHeight + steelCableLenght + hookBlockHeight + hookHeight / 2);
 
   var hook1Pivot = new THREE.Object3D();
   hook1Pivot.position.set(0, lowerHookY, hookDisplacement);
@@ -733,7 +725,7 @@ function createMovingHook(parent, x, y, z) {
   movingHook.add(hook4Pivot);
   createHook(hook4, hook4Pivot, 0, 0, 0);
 
-  addHookBlock(movingHook, 0, -(hoistHeight+steelCableLenght+hookBlockHeight/2), 0);
+  addHookBlock(movingHook, 0, -(hoistHeight + steelCableLenght + hookBlockHeight / 2), 0);
   addHigherHook(movingHook, 0, higherHookY, hookDisplacement);
   addHigherHook(movingHook, 0, higherHookY, -hookDisplacement);
   addHigherHook(movingHook, hookDisplacement, higherHookY, 0);
@@ -1153,7 +1145,6 @@ function onKeyDown(e) {
       updateHUD();
       break;
     case 54: // '6'
-      //TODO activeCamera = cameraMovel;
       changeActiveCamera(cameras.mobile);
       updateHUD();
       break;
@@ -1300,7 +1291,6 @@ function init() {
   window.addEventListener("keyup", onKeyUp);
   window.addEventListener("resize", onResize);
 
-  // TODO: update this
 }
 
 function animate() {
