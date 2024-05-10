@@ -82,7 +82,13 @@ var torusRadius = 2;
 var tubeRadius = 1;
 
 //  radius
-var radius = 3;
+var radiusLoads = 3;
+
+// SpheresDimentions
+var torusSphereRadios = 3;
+var dodecahedronSphereRadios = radiusLoads;
+var icosahedronSphereRadios = radiusLoads;
+var torusKnotSphereRadios = 5;
 
 var objectsOnTheFloor = [];
 
@@ -133,14 +139,12 @@ function createHUDContent(showMore = false, showLess = false) {
   return `
   <div id="title" style="margin-top: -10px;">
   <h2>Key Mappings</h2>
-  ${
-    showMore
+  ${showMore
       ? '<span id="showMore" style="cursor: pointer; font-weight: bold;">show more</span>'
       : ""
-  }
+    }
   </div>
-  ${
-    showMore
+  ${showMore
       ? ""
       : `
   <div id="content" style="margin-top: -10px;">
@@ -159,13 +163,12 @@ function createHUDContent(showMore = false, showLess = false) {
   <p data-key="d">Press D(d): Move claw block down</p>
   <p data-key="r">Press R(r): Close claw</p>
   <p data-key="f">Press F(f): Open claw</p>
-  ${
-    showLess
-      ? '<span id="showLess" style="cursor: pointer; font-weight: bold;">show less</span>'
-      : ""
-  }
+  ${showLess
+        ? '<span id="showLess" style="cursor: pointer; font-weight: bold;">show less</span>'
+        : ""
+      }
   </div>`
-  }
+    }
   <style>
   ${showMore ? "#showMore:hover { color: blue; }" : ""}
   ${showLess ? "#showLess:hover { color: blue; }" : ""}
@@ -195,9 +198,18 @@ function getPositionYRotated(geometry, y) {
   return y + size.z / 2;
 }
 
-function createSphere(object, name = null) {
-  let sphere = new THREE.Sphere();
-  new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
+function createSphere({ object, name = null, radius = null }) {
+  let sphere;
+  if (!radius) {
+    sphere = new THREE.Sphere();
+    new THREE.Box3().setFromObject(object).getBoundingSphere(sphere);
+  }
+  else {
+    let boundingSphere = new THREE.Sphere();
+    new THREE.Box3().setFromObject(object).getBoundingSphere(boundingSphere);
+    sphere = new THREE.Sphere(boundingSphere.center, radius);
+  }
+
 
   //Debug
   // let sphereMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
@@ -207,11 +219,11 @@ function createSphere(object, name = null) {
   // scene.add(sphereMesh);
 
   if (name) {
-    collisionSpheres[name] = sphere;
+    collisionSpheres[name] = { center: sphere.center, radius: sphere.radius };
     collidingObjects[name] = object;
   }
 
-  return sphere;
+  return { center: sphere.center, radius: sphere.radius };
 }
 
 function createContainer(x, y, z) {
@@ -265,7 +277,7 @@ function createContainer(x, y, z) {
   scene.add(container);
   objectsOnTheFloor.push(container);
 
-  createSphere(container, "container");
+  createSphere({ object: container, name: "container" });
 }
 
 function createCube(x, y, z) {
@@ -277,7 +289,7 @@ function createCube(x, y, z) {
   scene.add(cube);
   objectsOnTheFloor.push(cube);
 
-  createSphere(cube, "cube");
+  createSphere({ object: cube, name: "cube" });
 }
 
 function createTorus(x, y, z) {
@@ -290,7 +302,7 @@ function createTorus(x, y, z) {
   scene.add(torus);
   objectsOnTheFloor.push(torus);
 
-  createSphere(torus, "torus");
+  createSphere({ object: torus, name: "torus", radius: torusSphereRadios });
 }
 
 function createTorusKnot(x, y, z) {
@@ -303,31 +315,31 @@ function createTorusKnot(x, y, z) {
   scene.add(torus);
   objectsOnTheFloor.push(torus);
 
-  createSphere(torus, "torusKnot");
+  createSphere({ object: torus, name: "torusKnot", radius: torusKnotSphereRadios });
 }
 
 function createDodecahedron(x, y, z) {
   "use strict";
 
-  var dodecahedronGeometry = new THREE.DodecahedronGeometry(radius);
+  var dodecahedronGeometry = new THREE.DodecahedronGeometry(radiusLoads);
   var dodecahedron = new THREE.Mesh(dodecahedronGeometry, materialDodecahedron);
   dodecahedron.position.set(x, getPositionY(dodecahedronGeometry, y), z);
   scene.add(dodecahedron);
   objectsOnTheFloor.push(dodecahedron);
 
-  createSphere(dodecahedron, "dodecahedron");
+  createSphere({ object: dodecahedron, name: "dodecahedron", radius: dodecahedronSphereRadios });
 }
 
 function createIcosahedron(x, y, z) {
   "use strict";
 
-  var icosahedronGeometry = new THREE.IcosahedronGeometry(radius);
+  var icosahedronGeometry = new THREE.IcosahedronGeometry(radiusLoads);
   var icosahedron = new THREE.Mesh(icosahedronGeometry, materialIcosahedron);
   icosahedron.position.set(x, getPositionY(icosahedronGeometry, y), z);
   scene.add(icosahedron);
   objectsOnTheFloor.push(icosahedron);
 
-  createSphere(icosahedron, "icosahedron");
+  createSphere({ object: icosahedron, name: "icosahedron", radius: icosahedronSphereRadios });
 }
 
 function createParallelpiped(x, y, z) {
@@ -346,7 +358,7 @@ function createParallelpiped(x, y, z) {
   scene.add(parallelpiped);
   objectsOnTheFloor.push(parallelpiped);
 
-  createSphere(parallelpiped, "parallelpiped");
+  createSphere({ object: parallelpiped, name: "parallelpiped" });
 }
 
 function createLoads() {
@@ -380,13 +392,13 @@ function createLoads() {
         }
         break;
       case 3:
-        if (!willCollide(x, y, z, radius)) {
+        if (!willCollide(x, y, z, radiusLoads)) {
           createDodecahedron(x, y, z);
           i++;
         }
         break;
       case 4:
-        if (!willCollide(x, y, z, radius)) {
+        if (!willCollide(x, y, z, radiusLoads)) {
           createIcosahedron(x, y, z);
           i++;
         }
@@ -752,16 +764,20 @@ function updateHighlights() {
 }
 
 function checkCraneCollision() {
-  let newBoundingSphere = createSphere(movingHook);
+  let { center, radius } = createSphere({ object: movingHook });
 
-  // console.log(collisionSpheres)
+  for (let [name, sphere] of Object.entries(collisionSpheres)) {
+    const loadCenter = sphere.center;
+    const loadRadius = sphere.radius;
 
-  for (let [name, boundingSphere] of Object.entries(collisionSpheres)) {
-    // TODO: check if sould use intersectsSphere or radius
-    if (
-      newBoundingSphere.intersectsSphere(boundingSphere) &&
-      name !== "container"
-    ) {
+    const sumRadius = radius + loadRadius;
+    const powSumRadius = sumRadius * sumRadius;
+    const distanceX = center.x - loadCenter.x;
+    const distanceY = center.y - loadCenter.y;
+    const distanceZ = center.z - loadCenter.z;
+    const powDistance = (distanceX * distanceX) + (distanceY * distanceY) + (distanceZ * distanceZ);
+
+    if (powSumRadius >= powDistance && name !== "container") {
       console.log("Collision detected");
       collisionAnimationInProgress = true;
       collidingObject = name;
@@ -964,7 +980,6 @@ function update() {
       case 3: // movimentar o carrinho
         if (movingTrolley.position.x < trolleyMaxX) {
           moveTrolleyForward(delta);
-          // moveObjectForward(delta, object);
           return;
         }
         animationPhase++;
@@ -972,13 +987,11 @@ function update() {
       case 4: // rodar a grua
         if (rotatingCrane.rotation.y < 0) {
           moveCraneAntiClockwise(delta);
-          // moveObjectAntiClockwise(delta, object);
           if (rotatingCrane.rotation.y > 0) animationPhase++;
           return;
         }
         if (rotatingCrane.rotation.y > 0) {
           moveCraneClockwise(delta);
-          // moveObjectClockwise(delta, object);
           if (rotatingCrane.rotation.y < 0) animationPhase++;
           return;
         }
@@ -987,7 +1000,6 @@ function update() {
       case 5: // baixar a garra
         if (movingHook.position.y > hookMaxY * 0.7) {
           moveHookDown(delta);
-          // moveObjectDown(delta, object);
           return;
         }
         animationPhase++;
