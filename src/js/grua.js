@@ -517,10 +517,15 @@ function addLowerHook(obj, x, y, z) {
   obj.add(mesh);
 }
 
-function createLowerCrane(x, y, z) {
+function createCrane(x, y, z) {
   "use strict";
 
   lowerCrane = new THREE.Object3D();
+
+  var cranePivot = new THREE.Object3D();
+  cranePivot.position.set(0, 0, 0);
+  lowerCrane.add(cranePivot);
+  createRotatingCrane(cranePivot, 0, 20 + 6, 0);
 
   addFoundation(lowerCrane, 0, 3, 0);
   addLowerMast(lowerCrane, 0, 6 + 20 / 2, 0);
@@ -532,7 +537,7 @@ function createLowerCrane(x, y, z) {
   lowerCrane.position.z = z;
 }
 
-function createRotatingCrane(x, y, z) {
+function createRotatingCrane(parent, x, y, z) {
   "use strict";
 
   rotatingCrane = new THREE.Object3D();
@@ -546,16 +551,16 @@ function createRotatingCrane(x, y, z) {
   addRightLoadLine(rotatingCrane, 7, 1 + 6 + 2 + 0.811, 0);
   addLeftLoadLine(rotatingCrane, -4, 1 + 6 + 2 + 0.811, 0);
 
-  scene.add(rotatingCrane);
+  parent.add(rotatingCrane);
 
   rotatingCrane.position.x = x;
   rotatingCrane.position.y = y;
   rotatingCrane.position.z = z;
 
-  createMovingTrolley(29, 7, 0);
+  createMovingTrolley(rotatingCrane, 29, 7, 0);
 }
 
-function createMovingTrolley(x, y, z) {
+function createMovingTrolley(parent, x, y, z) {
   "use strict";
 
   movingTrolley = new THREE.Object3D();
@@ -567,22 +572,44 @@ function createMovingTrolley(x, y, z) {
 
   movingTrolley.add(steelCable);
 
-  rotatingCrane.add(movingTrolley);
+  parent.add(movingTrolley);
 
   movingTrolley.position.x = x;
   movingTrolley.position.y = y;
   movingTrolley.position.z = z;
 
-  createMovingHook(0, 0, 0);
+  createMovingHook(movingTrolley, 0, 0, 0);
 }
 
-function createMovingHook(x, y, z) {
+function createMovingHook(parent, x, y, z) {
   "use strict";
 
   movingHook = new THREE.Object3D();
+
+  hook1 = new THREE.Object3D();
   hook2 = new THREE.Object3D();
   hook3 = new THREE.Object3D();
   hook4 = new THREE.Object3D();
+
+  var hook1Pivot = new THREE.Object3D();
+  hook1Pivot.position.set(0, -4.5, 0.75);
+  movingHook.add(hook1Pivot);
+  createHook(hook1, hook1Pivot, 0, 0, 0);
+
+  var hook2Pivot = new THREE.Object3D();
+  hook2Pivot.position.set(0, -4.5, -0.75);
+  movingHook.add(hook2Pivot);
+  createHook(hook2, hook2Pivot, 0, 0, 0);
+
+  var hook3Pivot = new THREE.Object3D();
+  hook3Pivot.position.set(0.75, -4.5, 0);
+  movingHook.add(hook3Pivot);
+  createHook(hook3, hook3Pivot, 0, 0, 0);
+
+  var hook4Pivot = new THREE.Object3D();
+  hook4Pivot.position.set(-0.75, -4.5, 0);
+  movingHook.add(hook4Pivot);
+  createHook(hook4, hook4Pivot, 0, 0, 0);
 
   // -1 - 1 - 1 - 1 - 0.5 in new 0 of y
   addHookBlock(movingHook, 0, -2.5, 0);
@@ -591,16 +618,11 @@ function createMovingHook(x, y, z) {
   addHigherHook(movingHook, 0.75, -3.5, 0);
   addHigherHook(movingHook, -0.75, -3.5, 0);
 
-  movingTrolley.add(movingHook);
+  parent.add(movingHook);
 
   movingHook.position.x = x;
   movingHook.position.y = y;
   movingHook.position.z = z;
-
-  createHook1(0, 0, 0);
-  createHook2(0, 0, 0);
-  createHook3(0, 0, 0);
-  createHook4(0, 0, 0);
 
   var camera = cameras.mobile.camera;
 
@@ -615,60 +637,16 @@ function createMovingHook(x, y, z) {
   movingHook.add(camera);
 }
 
-function createHook1(x, y, z) {
+function createHook(children, parent, x, y, z) {
   "use strict";
 
-  hook1 = new THREE.Object3D();
+  addLowerHook(children, x, y, z);
 
-  addLowerHook(hook1, 0, 0, 0);
+  parent.add(children);
 
-  movingHook.add(hook1);
-
-  hook1.position.x = x;
-  hook1.position.y = y - 4.5;
-  hook1.position.z = z + 0.75;
-}
-
-function createHook2(x, y, z) {
-  "use strict";
-
-  hook2 = new THREE.Object3D();
-
-  addLowerHook(hook2, 0, 0, 0);
-
-  movingHook.add(hook2);
-
-  hook2.position.x = x;
-  hook2.position.y = y - 4.5;
-  hook2.position.z = z - 0.75;
-}
-
-function createHook3(x, y, z) {
-  "use strict";
-
-  hook3 = new THREE.Object3D();
-
-  addLowerHook(hook3, 0, 0, 0);
-
-  movingHook.add(hook3);
-
-  hook3.position.x = x + 0.75;
-  hook3.position.y = y - 4.5;
-  hook3.position.z = z;
-}
-
-function createHook4(x, y, z) {
-  "use strict";
-
-  hook4 = new THREE.Object3D();
-
-  addLowerHook(hook4, 0, 0, 0);
-
-  movingHook.add(hook4);
-
-  hook4.position.x = x - 0.75;
-  hook4.position.y = y - 4.5;
-  hook4.position.z = z;
+  children.position.x = x;
+  children.position.y = y;
+  children.position.z = z;
 }
 
 const hudContainer = document.createElement("div");
@@ -705,7 +683,7 @@ function createHUD() {
       <p data-key="w">Press W(w): Move trolley onwards</p>
       <p data-key="e">Press E(e): Move claw block up</p>
       <p data-key="d">Press D(d): Move claw block down</p>
-      <p data-key="r">Praess R(r): Close claw</p>
+      <p data-key="r">Press R(r): Close claw</p>
       <p data-key="f">Press F(f): Open claw</p>
     </div>
   `;
@@ -864,16 +842,26 @@ function moveHookIn(delta) {
   var angle = Math.PI / 8;
 
   if (hook3.rotation.z > -angle) {
-    var axis1 = new THREE.Vector3(1, 0, 0);
-    var axis2 = new THREE.Vector3(-1, 0, 0);
-    var axis3 = new THREE.Vector3(0, 0, -1);
-    var axis4 = new THREE.Vector3(0, 0, 1);
-    var angle = (Math.PI / 10) * delta;
-
-    hook1.rotateOnWorldAxis(axis1, angle);
-    hook2.rotateOnWorldAxis(axis2, angle);
-    hook3.rotateOnWorldAxis(axis3, angle);
-    hook4.rotateOnWorldAxis(axis4, angle);
+    var rotationMatrix1 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(1, 0, 0),
+      (Math.PI / 10) * delta
+    );
+    var rotationMatrix2 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(-1, 0, 0),
+      (Math.PI / 10) * delta
+    );
+    var rotationMatrix3 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(0, 0, -1),
+      (Math.PI / 10) * delta
+    );
+    var rotationMatrix4 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(0, 0, 1),
+      (Math.PI / 10) * delta
+    );
+    hook1.applyMatrix4(rotationMatrix1);
+    hook2.applyMatrix4(rotationMatrix2);
+    hook3.applyMatrix4(rotationMatrix3);
+    hook4.applyMatrix4(rotationMatrix4);
   }
 }
 
@@ -881,16 +869,26 @@ function moveHookOut(delta) {
   var angle = Math.PI / 8;
 
   if (hook3.rotation.z < angle) {
-    var axis1 = new THREE.Vector3(-1, 0, 0);
-    var axis2 = new THREE.Vector3(1, 0, 0);
-    var axis3 = new THREE.Vector3(0, 0, 1);
-    var axis4 = new THREE.Vector3(0, 0, -1);
-    var angle = (Math.PI / 10) * delta;
-
-    hook1.rotateOnWorldAxis(axis1, angle);
-    hook2.rotateOnWorldAxis(axis2, angle);
-    hook3.rotateOnWorldAxis(axis3, angle);
-    hook4.rotateOnWorldAxis(axis4, angle);
+    var rotationMatrix1 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(-1, 0, 0),
+      (Math.PI / 10) * delta
+    );
+    var rotationMatrix2 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(1, 0, 0),
+      (Math.PI / 10) * delta
+    );
+    var rotationMatrix3 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(0, 0, 1),
+      (Math.PI / 10) * delta
+    );
+    var rotationMatrix4 = new THREE.Matrix4().makeRotationAxis(
+      new THREE.Vector3(0, 0, -1),
+      (Math.PI / 10) * delta
+    );
+    hook1.applyMatrix4(rotationMatrix1);
+    hook2.applyMatrix4(rotationMatrix2);
+    hook3.applyMatrix4(rotationMatrix3);
+    hook4.applyMatrix4(rotationMatrix4);
   }
 }
 
@@ -1011,7 +1009,6 @@ function update() {
       moveHookUp(delta);
       checkCraneCollision();
     }
-
     if (rotatingHook_flagF == true && rotatingHook_flagR == false) {
       moveHookOut(delta);
       checkCraneCollision();
@@ -1155,8 +1152,7 @@ function createScene() {
 
   scene.background = BACKGROUND;
 
-  createLowerCrane(0, 0, 0);
-  createRotatingCrane(0, 6 + 20, 0);
+  createCrane(0, 0, 0);
 
   createContainer(trolleyMaxX, 0, 0);
   createLoads();
