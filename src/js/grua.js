@@ -26,9 +26,6 @@ let rotatingHook_flagF = false;
 const BACKGROUND = new THREE.Color(0xeceae4);
 // const BACKGROUND = new THREE.Color(0xf); //TODO remove this, is just to not hurt the eyes :)
 
-let wireframeToggle = false;
-let previousView = 1;
-
 // Declare materials
 //Grua
 let materialFoundation,
@@ -712,8 +709,6 @@ function createHUD() {
       <p data-key="f">Press F(f): Open claw</p>
     </div>
   `;
-
-  toggleHighlight("1", true);
 }
 
 function toggleHighlight(key, add) {
@@ -741,17 +736,7 @@ function highlightOnKeyDown(key) {
 
 function updateHUD(key) {
   // updates hud based on key
-  if (key == 7) {
-    wireframeToggle = !wireframeToggle;
-    wireframeToggle ? toggleHighlight("7", true) : toggleHighlight("7", false);
-  } else if (/[1-6]/.test(key)) {
-    toggleHighlight(previousView, false);
-    // console.log(key);
-    toggleHighlight(key, true);
-    previousView = key;
-  } else {
-    highlightOnKeyDown(key);
-  }
+  highlightOnKeyDown(key);  
 }
 
 function checkCraneCollision() {
