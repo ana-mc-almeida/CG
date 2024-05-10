@@ -736,7 +736,7 @@ function highlightOnKeyDown(key) {
 
 function updateHUD(key) {
   // updates hud based on key
-  highlightOnKeyDown(key);  
+  highlightOnKeyDown(key);
 }
 
 function checkCraneCollision() {
@@ -989,36 +989,28 @@ function update() {
   } else {
     if (movingTrolley_flagS == true && movingTrolley_flagW == false) {
       moveTrolleyBackward(delta);
-      checkCraneCollision();
     }
     if (movingTrolley_flagS == false && movingTrolley_flagW == true) {
       moveTrolleyForward(delta);
-      checkCraneCollision();
     }
     if (rotatingCrane_flagA == true && rotatingCrane_flagQ == false) {
       moveCraneClockwise(delta);
-      checkCraneCollision();
     }
     if (rotatingCrane_flagA == false && rotatingCrane_flagQ == true) {
       moveCraneAntiClockwise(delta);
-      checkCraneCollision();
     }
     if (movingHook_flagD == true && movingHook_flagE == false) {
       moveHookDown(delta);
-      checkCraneCollision();
     }
     if (movingHook_flagD == false && movingHook_flagE == true) {
       moveHookUp(delta);
-      checkCraneCollision();
     }
 
     if (rotatingHook_flagF == true && rotatingHook_flagR == false) {
       moveHookOut(delta);
-      checkCraneCollision();
     }
     if (rotatingHook_flagF == false && rotatingHook_flagR == true) {
       moveHookIn(delta);
-      checkCraneCollision();
     }
   }
 }
@@ -1198,6 +1190,7 @@ function init() {
 
 function animate() {
   "use strict";
+  checkCraneCollision();
   update();
   render();
 
