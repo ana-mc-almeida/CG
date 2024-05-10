@@ -90,6 +90,68 @@ var dodecahedronSphereRadios = radiusLoads;
 var icosahedronSphereRadios = radiusLoads;
 var torusKnotSphereRadios = 5;
 
+// Foundation Dimensions
+var foundationSize = 6;
+
+// Mast Dimensions
+var lowerMastHeight = 20;
+var squareSideLength = 2;
+var higherMastHeight = 6;
+
+// Turntable Dimensions
+var turntableHeight = 1;
+var turntableRadius = 1;
+
+// Jib Dimensions
+var jibLength = 39;
+var jibCenterX = 11.5;
+
+// Cab Dimensions
+var cabHeight = 3;
+var cabDisplacementZ = 1;
+
+// Counterweight Dimensions
+var counterweightHeight = 4;
+var counterweightDisplacementX = -5;
+var counterweightDisplacementY = -1;
+
+// Loadlines Dimensions
+var rightLoadLineLength = 14.09;
+var leftLoadLineLength = 8.16;
+var rightLoadLineAngle = 0.47 * Math.PI;
+var leftLoadLineLAngle = 0.555 * Math.PI;
+var rightLoadLineX = 7;
+var leftLoadLineX = -4;
+var cablesRadius = 0.1;
+
+// Hoist Dimensions
+var hoistHeight = 1;
+var hoistSideLenght = 2;
+
+// Cable Dimensions
+var steelCableLenght = 1;
+
+// Towerpeak Dimensions
+var towerPeakHeight = 1.633;
+
+// Hook Dimensions
+var hookBlockHeight = 1;
+var hookBlockSideLenght = 2;
+var hookHeight = 1;
+var hookSideLenght = 0.5;
+var hookDisplacement = 0.75;
+var hookMaxY = -27.5;
+var hookMinY = 5;
+var trolleyMaxX = 29;
+var hookMaxX = 29;
+var hookMinX = 5;
+var hookInitialY = 7;
+var maxHookAngle = Math.PI / 8;
+
+// Movement Variables
+var translationSpeed = 8;
+var rotationSpeed = (Math.PI / 10);
+
 var objectsOnTheFloor = [];
 
 var collisionSpheres = {};
@@ -99,8 +161,6 @@ var collisionAnimationInProgress = false;
 var animationPhase = 0;
 var collidingObject = null;
 
-var trolleyMaxX = 29;
-var hookMaxY = -27.5;
 
 function createMaterial(color) {
   return new THREE.MeshBasicMaterial({ color, wireframe: true });
@@ -430,7 +490,7 @@ function willCollide(x, y, z, radius) {
 
 function addFoundation(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(6, 6, 6);
+  geometry = new THREE.BoxGeometry(foundationSize, foundationSize, foundationSize);
   mesh = new THREE.Mesh(geometry, materialFoundation);
   mesh.position.set(x, y, z);
   obj.add(mesh);
@@ -439,7 +499,7 @@ function addFoundation(obj, x, y, z) {
 
 function addLowerMast(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(2, 2, 20);
+  geometry = new THREE.BoxGeometry(squareSideLength, squareSideLength, lowerMastHeight);
   mesh = new THREE.Mesh(geometry, materialLowerMast);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -448,7 +508,7 @@ function addLowerMast(obj, x, y, z) {
 
 function addTurntable(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.CylinderGeometry(2, 2, 1, 32);
+  geometry = new THREE.CylinderGeometry(squareSideLength, squareSideLength, turntableHeight, 32);
   mesh = new THREE.Mesh(geometry, materialTurntable);
   mesh.position.set(x, y, z);
   obj.add(mesh);
@@ -456,7 +516,7 @@ function addTurntable(obj, x, y, z) {
 
 function addHigherMast(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(2, 2, 6);
+  geometry = new THREE.BoxGeometry(squareSideLength, squareSideLength, higherMastHeight);
   mesh = new THREE.Mesh(geometry, materialHigherMast);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -465,7 +525,7 @@ function addHigherMast(obj, x, y, z) {
 
 function addJib(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(2, 2, 39);
+  geometry = new THREE.BoxGeometry(squareSideLength, squareSideLength, jibLength);
   mesh = new THREE.Mesh(geometry, materialJib);
   mesh.position.set(x, y, z);
   mesh.rotation.set(0, Math.PI / 2, 0);
@@ -474,7 +534,7 @@ function addJib(obj, x, y, z) {
 
 function addCab(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(2, 2, 3);
+  geometry = new THREE.BoxGeometry(squareSideLength, squareSideLength, cabHeight);
   mesh = new THREE.Mesh(geometry, materialCab);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -483,7 +543,7 @@ function addCab(obj, x, y, z) {
 
 function addCounterweight(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(2, 2, 4);
+  geometry = new THREE.BoxGeometry(squareSideLength, squareSideLength, counterweightHeight);
   mesh = new THREE.Mesh(geometry, materialCounterWeight);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -505,7 +565,7 @@ function addTowerPeak(obj, x, y, z) {
     0,
     0, // v2
     0,
-    1.633,
+    towerPeakHeight,
     0, // v3 - vertix
   ]);
   const indices = [0, 1, 2, 0, 2, 3, 2, 1, 3, 0, 3, 1];
@@ -518,25 +578,25 @@ function addTowerPeak(obj, x, y, z) {
 
 function addRightLoadLine(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.CylinderGeometry(0.1, 0.1, 14.09, 32);
+  geometry = new THREE.CylinderGeometry(cablesRadius, cablesRadius, rightLoadLineLength, 32);
   mesh = new THREE.Mesh(geometry, materialRightLoadLine);
   mesh.position.set(x, y, z);
-  mesh.rotation.set(0, 0, 0.47 * Math.PI);
+  mesh.rotation.set(0, 0, rightLoadLineAngle);
   obj.add(mesh);
 }
 
 function addLeftLoadLine(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.CylinderGeometry(0.1, 0.1, 8.16, 32);
+  geometry = new THREE.CylinderGeometry(cablesRadius, cablesRadius, leftLoadLineLength, 32);
   mesh = new THREE.Mesh(geometry, materialLeftLoadLine);
   mesh.position.set(x, y, z);
-  mesh.rotation.set(0, 0, 0.555 * Math.PI);
+  mesh.rotation.set(0, 0, leftLoadLineLAngle);
   obj.add(mesh);
 }
 
 function addHoist(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(2, 2, 1);
+  geometry = new THREE.BoxGeometry(squareSideLength, squareSideLength, hoistHeight);
   mesh = new THREE.Mesh(geometry, materialHoist);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -545,7 +605,7 @@ function addHoist(obj, x, y, z) {
 
 function addSteelCable(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.CylinderGeometry(0.1, 0.1, 1, 32); //1 depende de lambda
+  geometry = new THREE.CylinderGeometry(cablesRadius, cablesRadius, steelCableLenght, 32); //1 depende de lambda
   mesh = new THREE.Mesh(geometry, materialSteelCable);
   mesh.position.set(x, y, z);
   obj.add(mesh);
@@ -553,7 +613,7 @@ function addSteelCable(obj, x, y, z) {
 
 function addHookBlock(obj, x, y, z) {
   "use strict";
-  geometry = new THREE.BoxGeometry(2, 2, 1);
+  geometry = new THREE.BoxGeometry(squareSideLength, squareSideLength, hookBlockHeight);
   mesh = new THREE.Mesh(geometry, materialHookBlock);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -562,7 +622,7 @@ function addHookBlock(obj, x, y, z) {
 
 function addHigherHook(obj, x, y, z) {
   "use strict";
-  var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
+  var geometry = new THREE.BoxGeometry(hookSideLenght, hookSideLenght, hookHeight);
   var mesh = new THREE.Mesh(geometry, materialHigherHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -572,7 +632,7 @@ function addHigherHook(obj, x, y, z) {
 
 function addLowerHook(obj, x, y, z) {
   "use strict";
-  var geometry = new THREE.BoxGeometry(0.5, 0.5, 1);
+  var geometry = new THREE.BoxGeometry(hookSideLenght, hookSideLenght, hookHeight);
   var mesh = new THREE.Mesh(geometry, materialLowerHook);
   mesh.position.set(x, y, z);
   mesh.rotation.set(Math.PI / 2, 0, 0);
@@ -587,10 +647,10 @@ function createCrane(x, y, z) {
   var cranePivot = new THREE.Object3D();
   cranePivot.position.set(0, 0, 0);
   lowerCrane.add(cranePivot);
-  createRotatingCrane(cranePivot, 0, 20 + 6, 0);
+  createRotatingCrane(cranePivot, 0, foundationSize + lowerMastHeight, 0);
 
-  addFoundation(lowerCrane, 0, 3, 0);
-  addLowerMast(lowerCrane, 0, 6 + 20 / 2, 0);
+  addFoundation(lowerCrane, 0, foundationSize/2, 0);
+  addLowerMast(lowerCrane, 0, foundationSize + lowerMastHeight/2, 0);
 
   scene.add(lowerCrane);
 
@@ -604,14 +664,14 @@ function createRotatingCrane(parent, x, y, z) {
 
   rotatingCrane = new THREE.Object3D();
 
-  addTurntable(rotatingCrane, 0, 0.5, 0);
-  addHigherMast(rotatingCrane, 0, 1 + 3, 0);
-  addCab(rotatingCrane, 0, 1 + 3 + 0.5, 1 + 1);
-  addJib(rotatingCrane, 11.5, 1 + 6 + 1, 0);
-  addCounterweight(rotatingCrane, -5, 1 + 6 + 1 - 1, 0);
-  addTowerPeak(rotatingCrane, 0, 1 + 6 + 2, 0);
-  addRightLoadLine(rotatingCrane, 7, 1 + 6 + 2 + 0.811, 0);
-  addLeftLoadLine(rotatingCrane, -4, 1 + 6 + 2 + 0.811, 0);
+  addTurntable(rotatingCrane, 0, turntableHeight/2, 0);
+  addHigherMast(rotatingCrane, 0, turntableHeight + higherMastHeight/2, 0);
+  addCab(rotatingCrane, 0, turntableHeight + higherMastHeight/2 + 0.5, cabDisplacementZ + squareSideLength/2);
+  addJib(rotatingCrane, jibCenterX, turntableHeight + higherMastHeight + squareSideLength/2, 0);
+  addCounterweight(rotatingCrane, counterweightDisplacementX, turntableHeight + higherMastHeight + squareSideLength/2 + counterweightDisplacementY, 0);
+  addTowerPeak(rotatingCrane, 0, turntableHeight + higherMastHeight + squareSideLength, 0);
+  addRightLoadLine(rotatingCrane, rightLoadLineX, turntableHeight + higherMastHeight + squareSideLength + towerPeakHeight/2, 0);
+  addLeftLoadLine(rotatingCrane, leftLoadLineX, turntableHeight + higherMastHeight + squareSideLength + towerPeakHeight/2, 0);
 
   parent.add(rotatingCrane);
 
@@ -619,7 +679,7 @@ function createRotatingCrane(parent, x, y, z) {
   rotatingCrane.position.y = y;
   rotatingCrane.position.z = z;
 
-  createMovingTrolley(rotatingCrane, 29, 7, 0);
+  createMovingTrolley(rotatingCrane, hookMaxX, hookInitialY, 0);
 }
 
 function createMovingTrolley(parent, x, y, z) {
@@ -627,10 +687,10 @@ function createMovingTrolley(parent, x, y, z) {
 
   movingTrolley = new THREE.Object3D();
 
-  addHoist(movingTrolley, 0, -0.5, 0);
+  addHoist(movingTrolley, 0, -hoistHeight/2, 0);
 
   steelCable = new THREE.Object3D();
-  addSteelCable(steelCable, 0, -1 - 0.5, 0);
+  addSteelCable(steelCable, 0, -hoistHeight - steelCableLenght/2, 0);
 
   movingTrolley.add(steelCable);
 
@@ -653,32 +713,34 @@ function createMovingHook(parent, x, y, z) {
   hook3 = new THREE.Object3D();
   hook4 = new THREE.Object3D();
 
+  var lowerHookY = -(hoistHeight+steelCableLenght+hookBlockHeight+hookHeight+hookHeight/2);
+  var higherHookY = -(hoistHeight+steelCableLenght+hookBlockHeight+hookHeight/2);
+
   var hook1Pivot = new THREE.Object3D();
-  hook1Pivot.position.set(0, -4.5, 0.75);
+  hook1Pivot.position.set(0, lowerHookY, hookDisplacement);
   movingHook.add(hook1Pivot);
   createHook(hook1, hook1Pivot, 0, 0, 0);
 
   var hook2Pivot = new THREE.Object3D();
-  hook2Pivot.position.set(0, -4.5, -0.75);
+  hook2Pivot.position.set(0, lowerHookY, -hookDisplacement);
   movingHook.add(hook2Pivot);
   createHook(hook2, hook2Pivot, 0, 0, 0);
 
   var hook3Pivot = new THREE.Object3D();
-  hook3Pivot.position.set(0.75, -4.5, 0);
+  hook3Pivot.position.set(hookDisplacement, lowerHookY, 0);
   movingHook.add(hook3Pivot);
   createHook(hook3, hook3Pivot, 0, 0, 0);
 
   var hook4Pivot = new THREE.Object3D();
-  hook4Pivot.position.set(-0.75, -4.5, 0);
+  hook4Pivot.position.set(-hookDisplacement, lowerHookY, 0);
   movingHook.add(hook4Pivot);
   createHook(hook4, hook4Pivot, 0, 0, 0);
 
-  // -1 - 1 - 1 - 1 - 0.5 in new 0 of y
-  addHookBlock(movingHook, 0, -2.5, 0);
-  addHigherHook(movingHook, 0, -3.5, 0.75);
-  addHigherHook(movingHook, 0, -3.5, -0.75);
-  addHigherHook(movingHook, 0.75, -3.5, 0);
-  addHigherHook(movingHook, -0.75, -3.5, 0);
+  addHookBlock(movingHook, 0, -(hoistHeight+steelCableLenght+hookBlockHeight/2), 0);
+  addHigherHook(movingHook, 0, higherHookY, hookDisplacement);
+  addHigherHook(movingHook, 0, higherHookY, -hookDisplacement);
+  addHigherHook(movingHook, hookDisplacement, higherHookY, 0);
+  addHigherHook(movingHook, -hookDisplacement, higherHookY, 0);
 
   parent.add(movingHook);
 
@@ -790,7 +852,7 @@ function checkCraneCollision() {
 
 function moveHookUp(delta) {
   if (movingHook.position.y < 0) {
-    var translationVector = new THREE.Vector3(0, 8 * delta, 0);
+    var translationVector = new THREE.Vector3(0, translationSpeed * delta, 0);
     var translationMatrix = new THREE.Matrix4().makeTranslation(
       translationVector
     );
@@ -809,7 +871,7 @@ function moveHookUp(delta) {
 
     var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(
       0,
-      inverseTranslationVector.y - 8 * delta,
+      inverseTranslationVector.y - translationSpeed * delta,
       0
     );
     steelCable.applyMatrix4(inverseTranslationMatrix);
@@ -821,7 +883,7 @@ function moveHookUp(delta) {
 
 function moveHookDown(delta) {
   if (movingHook.position.y > hookMaxY) {
-    var translationVector = new THREE.Vector3(0, -8 * delta, 0);
+    var translationVector = new THREE.Vector3(0, -translationSpeed * delta, 0);
     var translationMatrix = new THREE.Matrix4().makeTranslation(
       translationVector
     );
@@ -840,7 +902,7 @@ function moveHookDown(delta) {
 
     var inverseTranslationMatrix = new THREE.Matrix4().makeTranslation(
       0,
-      inverseTranslationVector.y + 8 * delta,
+      inverseTranslationVector.y + translationSpeed * delta,
       0
     );
     steelCable.applyMatrix4(inverseTranslationMatrix);
@@ -853,7 +915,7 @@ function moveHookDown(delta) {
 function moveCraneClockwise(delta) {
   var rotationMatrix = new THREE.Matrix4().makeRotationAxis(
     new THREE.Vector3(0, -1, 0),
-    (Math.PI / 10) * delta
+    rotationSpeed * delta
   );
   rotatingCrane.applyMatrix4(rotationMatrix);
 }
@@ -861,7 +923,7 @@ function moveCraneClockwise(delta) {
 function moveCraneAntiClockwise(delta) {
   var rotationMatrix = new THREE.Matrix4().makeRotationAxis(
     new THREE.Vector3(0, 1, 0),
-    (Math.PI / 10) * delta
+    rotationSpeed * delta
   );
   rotatingCrane.applyMatrix4(rotationMatrix);
 }
@@ -869,7 +931,7 @@ function moveCraneAntiClockwise(delta) {
 function moveTrolleyBackward(delta) {
   if (movingTrolley.position.x > 5) {
     var translationMatrix = new THREE.Matrix4().makeTranslation(
-      new THREE.Vector3(-8 * delta, 0, 0)
+      new THREE.Vector3(-translationSpeed * delta, 0, 0)
     );
     movingTrolley.applyMatrix4(translationMatrix);
     return delta;
@@ -880,7 +942,7 @@ function moveTrolleyBackward(delta) {
 function moveTrolleyForward(delta) {
   if (movingTrolley.position.x < 29) {
     var translationMatrix = new THREE.Matrix4().makeTranslation(
-      new THREE.Vector3(8 * delta, 0, 0)
+      new THREE.Vector3(translationSpeed * delta, 0, 0)
     );
     movingTrolley.applyMatrix4(translationMatrix);
     return delta;
@@ -889,24 +951,23 @@ function moveTrolleyForward(delta) {
 }
 
 function moveHookIn(delta) {
-  var angle = Math.PI / 8;
-
-  if (hook3.rotation.z > -angle) {
+  if (hook1.rotation.x < maxHookAngle && hook2.rotation.x > -maxHookAngle &&
+    hook3.rotation.z > -maxHookAngle && hook4.rotation.z < maxHookAngle) {
     var rotationMatrix1 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(1, 0, 0),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     var rotationMatrix2 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(-1, 0, 0),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     var rotationMatrix3 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(0, 0, -1),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     var rotationMatrix4 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(0, 0, 1),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     hook1.applyMatrix4(rotationMatrix1);
     hook2.applyMatrix4(rotationMatrix2);
@@ -916,24 +977,23 @@ function moveHookIn(delta) {
 }
 
 function moveHookOut(delta) {
-  var angle = Math.PI / 8;
-
-  if (hook3.rotation.z < angle) {
+  if (hook1.rotation.x > -maxHookAngle && hook2.rotation.x < maxHookAngle &&
+    hook3.rotation.z < maxHookAngle && hook4.rotation.z > -maxHookAngle) {
     var rotationMatrix1 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(-1, 0, 0),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     var rotationMatrix2 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(1, 0, 0),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     var rotationMatrix3 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(0, 0, 1),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     var rotationMatrix4 = new THREE.Matrix4().makeRotationAxis(
       new THREE.Vector3(0, 0, -1),
-      (Math.PI / 10) * delta
+      rotationSpeed * delta
     );
     hook1.applyMatrix4(rotationMatrix1);
     hook2.applyMatrix4(rotationMatrix2);
@@ -945,8 +1005,6 @@ function moveHookOut(delta) {
 function update() {
   "use strict";
   let delta = clock.getDelta();
-
-  var angle = Math.PI / 8;
 
   if (collisionAnimationInProgress) {
     var object = collidingObjects[collidingObject];
@@ -963,7 +1021,7 @@ function update() {
         animationPhase++;
         break;
       case 1: // fechar a garra
-        if (hook3.rotation.z > -angle) {
+        if (hook3.rotation.z > -maxHookAngle) {
           moveHookIn(delta);
           return;
         }
