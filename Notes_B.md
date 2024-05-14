@@ -44,6 +44,8 @@
 - [x] só ter um render
 - [x] ter o update
 
+- ver se descontaram pelas flags == true
+
 ## ASK
 
 - [x] Resize automático?
