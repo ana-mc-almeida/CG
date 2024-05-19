@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Computação Prática</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+      }
+      button {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Computação Prática</h1>
+    <button onclick="redirectToSrcA()">Ir para Entrega A</button>
+    <button onclick="redirectToSrcB()">Ir para Entrega B</button>
+    <button onclick="redirectToSrcC()">Ir para Entrega C</button>
+
+    <script>
+      function redirectToSrcA() {
+        window.open("Entrega A.pdf", "_blank");
+      }
+
+      function redirectToSrcB() {
+        window.open("src/index.html", "_blank");
+      }
+
+      function redirectToSrcC() {
+        window.open("src_C/index.html", "_blank");
+      }
+    </script>
+  </body>
+</html>
