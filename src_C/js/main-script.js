@@ -100,6 +100,33 @@ function createScene() {
     createThirdRing(0, 0, 0);
 }
 
+//////////////////////
+/* CREATE CAMERA(S) */
+//////////////////////
+function createCamera() {
+    'use strict';
+
+    // TODO - Implement the camera
+    // This is just a test camera
+    camera = new THREE.PerspectiveCamera(70,
+        window.innerWidth / window.innerHeight,
+        1,
+        1000);
+    camera.position.x = 15;
+    camera.position.y = 0;
+    camera.position.z = 15;
+    camera.lookAt(scene.position);
+}
+
+
+/////////////////////
+/* CREATE LIGHT(S) */
+/////////////////////
+
+////////////////////////
+/* CREATE OBJECT3D(S) */
+////////////////////////
+
 function createBaseCylinder(x, y, z) {
     'use strict';
 
@@ -151,33 +178,6 @@ function createThirdRing(x, y, z) {
 
     thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, materialThirdRing);
 }
-
-//////////////////////
-/* CREATE CAMERA(S) */
-//////////////////////
-function createCamera() {
-    'use strict';
-
-    // TODO - Implement the camera
-    // This is just a test camera
-    camera = new THREE.PerspectiveCamera(70,
-        window.innerWidth / window.innerHeight,
-        1,
-        1000);
-    camera.position.x = 15;
-    camera.position.y = 0;
-    camera.position.z = 15;
-    camera.lookAt(scene.position);
-}
-
-
-/////////////////////
-/* CREATE LIGHT(S) */
-/////////////////////
-
-////////////////////////
-/* CREATE OBJECT3D(S) */
-////////////////////////
 
 //////////////////////
 /* CHECK COLLISIONS */
