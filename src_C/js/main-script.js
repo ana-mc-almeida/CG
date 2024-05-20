@@ -10,6 +10,8 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 let clock = new THREE.Clock();
 
 var scene, camera, renderer;
+const NAMED_MESHES = []; 
+let activeMaterial = 'basic'; // starts as basic, may change afterwards
 
 /////////////
 /* Colours */
@@ -22,10 +24,6 @@ var redColor = 0xff0000,
 ///////////////
 /* Materials */
 ///////////////
-var materialBaseCylinder,
-    materialFirstRing,
-    materialSecondRing,
-    materialThirdRing;
 
 /////////////
 /* Objects */
@@ -74,16 +72,28 @@ var firstRingHorizontalSpeed = 4,
 ////////////////////////
 /* CREATE MATERIAL(S) */
 ////////////////////////
-function createMaterial(color) {
-    return new THREE.MeshBasicMaterial({ color, wireframe: true });
-}
 
-const materials = [
-    (materialBaseCylinder = createMaterial(yellowColor)),
-    (materialFirstRing = createMaterial(blueColor)),
-    (materialSecondRing = createMaterial(redColor)),
-    (materialThirdRing = createMaterial(greenColor)),
-]
+/**
+ * registering it in NAMED_MESHES to allow dynamic behavior such as material switching.
+ *
+ * This should not be used for buffer scene elements, as they are not dynamic.
+ * @param {string} name - the mesh's name, per GEOMETRY and MATERIAL_PARAMS
+ * @param {THREE.Object3D} parent - the parent to which the props will be added
+ * @returns {THREE.Mesh} - the newly created mesh
+ */
+function createMesh(name, color, geometry) {
+  const meshMaterials = {
+    basic: new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide }),
+    gouraud: new THREE.MeshLambertMaterial({ color, side: THREE.DoubleSide }),
+    phong: new THREE.MeshPhongMaterial({  color, side: THREE.DoubleSide }),
+    cartoon: new THREE.MeshToonMaterial({  color, side: THREE.DoubleSide }),
+    normal: new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
+  };
+  const mesh = new THREE.Mesh(geometry, meshMaterials[activeMaterial]);
+  Object.assign(mesh.userData, { name, meshMaterials });
+  NAMED_MESHES.push(mesh);
+  return mesh;
+}
 
 /////////////////////
 /* CREATE SCENE(S) */
@@ -135,12 +145,12 @@ function createBaseCylinder(x, y, z) {
         baseCylinderRadius,
         baseCylinderHeight
     );
-    baseCylinder = new THREE.Mesh(baseCylinderGeometry, materialBaseCylinder);
+    baseCylinder = createMesh('ring', yellowColor, baseCylinderGeometry);
     baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
     scene.add(baseCylinder);
 }
 
-function createRing(x, y, z, innerRadius, outerRadius, height, material) {
+function createRing(x, y, z, innerRadius, outerRadius, height, color) {
     let shape = new THREE.Shape();
     shape.absarc(0, 0, outerRadius, 0, Math.PI * 2, false);
 
@@ -154,7 +164,7 @@ function createRing(x, y, z, innerRadius, outerRadius, height, material) {
     };
 
     let ringGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    let ring = new THREE.Mesh(ringGeometry, material);
+    let ring = createMesh('ring', color, ringGeometry);
     ring.position.set(x, y + height, z);
     ring.rotation.x = Math.PI / 2;
     scene.add(ring);
@@ -164,19 +174,19 @@ function createRing(x, y, z, innerRadius, outerRadius, height, material) {
 function createFirstRing(x, y, z) {
     'use strict';
 
-    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, materialFirstRing);
+    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, blueColor);
 }
 
 function createSecondRing(x, y, z) {
     'use strict';
 
-    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, materialSecondRing);
+    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, redColor);
 }
 
 function createThirdRing(x, y, z) {
     'use strict';
 
-    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, materialThirdRing);
+    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, greenColor);
 }
 
 //////////////////////
