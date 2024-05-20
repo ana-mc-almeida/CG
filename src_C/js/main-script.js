@@ -1,8 +1,8 @@
-import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { VRButton } from 'three/addons/webxr/VRButton.js';
-import * as Stats from 'three/addons/libs/stats.module.js';
-import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { VRButton } from "three/addons/webxr/VRButton.js";
+import * as Stats from "three/addons/libs/stats.module.js";
+import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
 //////////////////////
 /* GLOBAL VARIABLES */
@@ -10,16 +10,17 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 let clock = new THREE.Clock();
 
 var scene, camera, renderer;
-const NAMED_MESHES = []; 
-let activeMaterial = 'basic'; // starts as basic, may change afterwards
+const NAMED_MESHES = [];
+let activeMaterial = "basic"; // starts as basic, may change afterwards
+let activeMaterialChanged = false; // starts as basic, may change afterwards
 
 /////////////
 /* Colours */
 /////////////
 var redColor = 0xff0000,
-    greenColor = 0x00ff00,
-    blueColor = 0x0000ff,
-    yellowColor = 0xffff00;
+  greenColor = 0x00ff00,
+  blueColor = 0x0000ff,
+  yellowColor = 0xffff00;
 
 ///////////////
 /* Materials */
@@ -29,45 +30,45 @@ var redColor = 0xff0000,
 /* Objects */
 /////////////
 var baseCylinder, // FIXME - not sure if this is really needed
-    firstRing,
-    secondRing,
-    thirdRing;
+  firstRing,
+  secondRing,
+  thirdRing;
 
 ///////////
 /* Sizes */
 ///////////
 var baseCylinderRadius = 1,
-    baseCylinderHeight = 10;
+  baseCylinderHeight = 10;
 var firstRingInnerRadius = baseCylinderRadius,
-    firstRingOuterRadius = 3,
-    firstRingHeight = 2;
+  firstRingOuterRadius = 3,
+  firstRingHeight = 2;
 var secondRingInnerRadius = firstRingOuterRadius,
-    secondRingOuterRadius = 5,
-    secondRingHeight = firstRingHeight;
+  secondRingOuterRadius = 5,
+  secondRingHeight = firstRingHeight;
 var thirdRingInnerRadius = secondRingOuterRadius,
-    thirdRingOuterRadius = 7,
-    thirdRingHeight = secondRingHeight;
+  thirdRingOuterRadius = 7,
+  thirdRingHeight = secondRingHeight;
 
 ///////////////
 /* Movements */
 ///////////////
 var moveFirstRing = true,
-    firstRingIsGoingUp = true,
-    moveSecondRing = true,
-    secondRingIsGoingUp = true,
-    moveThirdRing = true,
-    thirdRingIsGoingUp = true;
+  firstRingIsGoingUp = true,
+  moveSecondRing = true,
+  secondRingIsGoingUp = true,
+  moveThirdRing = true,
+  thirdRingIsGoingUp = true;
 
 ///////////
 /* Speed */
 ///////////
 var firstRingHorizontalSpeed = 4,
-    secondRingHorizontalSpeed = 3,
-    thirdRingHorizontalSpeed = 2,
-    baseCylinderVerticalSpeed = 1,
-    firstRingVerticalSpeed = 1,
-    secondRingVerticalSpeed = 1,
-    thirdRingVerticalSpeed = 1;
+  secondRingHorizontalSpeed = 3,
+  thirdRingHorizontalSpeed = 2,
+  baseCylinderVerticalSpeed = 1,
+  firstRingVerticalSpeed = 1,
+  secondRingVerticalSpeed = 1,
+  thirdRingVerticalSpeed = 1;
 
 ////////////////////////
 /* CREATE MATERIAL(S) */
@@ -85,8 +86,8 @@ function createMesh(name, color, geometry) {
   const meshMaterials = {
     basic: new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide }),
     gouraud: new THREE.MeshLambertMaterial({ color, side: THREE.DoubleSide }),
-    phong: new THREE.MeshPhongMaterial({  color, side: THREE.DoubleSide }),
-    cartoon: new THREE.MeshToonMaterial({  color, side: THREE.DoubleSide }),
+    phong: new THREE.MeshPhongMaterial({ color, side: THREE.DoubleSide }),
+    cartoon: new THREE.MeshToonMaterial({ color, side: THREE.DoubleSide }),
     normal: new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
   };
   const mesh = new THREE.Mesh(geometry, meshMaterials[activeMaterial]);
@@ -99,35 +100,36 @@ function createMesh(name, color, geometry) {
 /* CREATE SCENE(S) */
 /////////////////////
 function createScene() {
-    'use strict';
+  "use strict";
 
-    scene = new THREE.Scene();
-    scene.add(new THREE.AxesHelper(10));
+  scene = new THREE.Scene();
+  scene.add(new THREE.AxesHelper(10));
 
-    createBaseCylinder(0, 0, 0);
-    createFirstRing(0, 0, 0);
-    createSecondRing(0, 0, 0);
-    createThirdRing(0, 0, 0);
+  createBaseCylinder(0, 0, 0);
+  createFirstRing(0, 0, 0);
+  createSecondRing(0, 0, 0);
+  createThirdRing(0, 0, 0);
 }
 
 //////////////////////
 /* CREATE CAMERA(S) */
 //////////////////////
 function createCamera() {
-    'use strict';
+  "use strict";
 
-    // TODO - Implement the camera
-    // This is just a test camera
-    camera = new THREE.PerspectiveCamera(70,
-        window.innerWidth / window.innerHeight,
-        1,
-        1000);
-    camera.position.x = 15;
-    camera.position.y = 0;
-    camera.position.z = 15;
-    camera.lookAt(scene.position);
+  // TODO - Implement the camera
+  // This is just a test camera
+  camera = new THREE.PerspectiveCamera(
+    70,
+    window.innerWidth / window.innerHeight,
+    1,
+    1000
+  );
+  camera.position.x = 15;
+  camera.position.y = 0;
+  camera.position.z = 15;
+  camera.lookAt(scene.position);
 }
-
 
 /////////////////////
 /* CREATE LIGHT(S) */
@@ -138,233 +140,304 @@ function createCamera() {
 ////////////////////////
 
 function createBaseCylinder(x, y, z) {
-    'use strict';
+  "use strict";
 
-    var baseCylinderGeometry = new THREE.CylinderGeometry(
-        baseCylinderRadius,
-        baseCylinderRadius,
-        baseCylinderHeight
-    );
-    baseCylinder = createMesh('ring', yellowColor, baseCylinderGeometry);
-    baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
-    scene.add(baseCylinder);
+  var baseCylinderGeometry = new THREE.CylinderGeometry(
+    baseCylinderRadius,
+    baseCylinderRadius,
+    baseCylinderHeight
+  );
+  baseCylinder = createMesh("ring", yellowColor, baseCylinderGeometry);
+  baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
+  scene.add(baseCylinder);
 }
 
 function createRing(x, y, z, innerRadius, outerRadius, height, color) {
-    let shape = new THREE.Shape();
-    shape.absarc(0, 0, outerRadius, 0, Math.PI * 2, false);
+  let shape = new THREE.Shape();
+  shape.absarc(0, 0, outerRadius, 0, Math.PI * 2, false);
 
-    let holePath = new THREE.Path();
-    holePath.absarc(0, 0, innerRadius, 0, Math.PI * 2, false);
-    shape.holes.push(holePath);
+  let holePath = new THREE.Path();
+  holePath.absarc(0, 0, innerRadius, 0, Math.PI * 2, false);
+  shape.holes.push(holePath);
 
-    let extrudeSettings = {
-        depth: height,
-        bevelEnabled: false
-    };
+  let extrudeSettings = {
+    depth: height,
+    bevelEnabled: false,
+  };
 
-    let ringGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
-    let ring = createMesh('ring', color, ringGeometry);
-    ring.position.set(x, y + height, z);
-    ring.rotation.x = Math.PI / 2;
-    scene.add(ring);
-    return ring;
+  let ringGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+  let ring = createMesh("ring", color, ringGeometry);
+  ring.position.set(x, y + height, z);
+  ring.rotation.x = Math.PI / 2;
+  scene.add(ring);
+  return ring;
 }
 
 function createFirstRing(x, y, z) {
-    'use strict';
+  "use strict";
 
-    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, blueColor);
+  firstRing = createRing(
+    x,
+    y,
+    z,
+    firstRingInnerRadius,
+    firstRingOuterRadius,
+    firstRingHeight,
+    blueColor
+  );
 }
 
 function createSecondRing(x, y, z) {
-    'use strict';
+  "use strict";
 
-    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, redColor);
+  secondRing = createRing(
+    x,
+    y,
+    z,
+    secondRingInnerRadius,
+    secondRingOuterRadius,
+    secondRingHeight,
+    redColor
+  );
 }
 
 function createThirdRing(x, y, z) {
-    'use strict';
+  "use strict";
 
-    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, greenColor);
+  thirdRing = createRing(
+    x,
+    y,
+    z,
+    thirdRingInnerRadius,
+    thirdRingOuterRadius,
+    thirdRingHeight,
+    greenColor
+  );
 }
 
 //////////////////////
 /* CHECK COLLISIONS */
 //////////////////////
 function checkCollisions() {
-    'use strict';
-
+  "use strict";
 }
 
 ///////////////////////
 /* HANDLE COLLISIONS */
 ///////////////////////
 function handleCollisions() {
-    'use strict';
-
+  "use strict";
 }
 
 ////////////
 /* UPDATE */
 ////////////
 function update() {
-    'use strict';
+  "use strict";
 
-    let delta = clock.getDelta();
+  let delta = clock.getDelta();
 
-    moveRings(delta);
+  changeMesh();
+  moveRings(delta);
 
-    rotateObjects(delta);
+  rotateObjects(delta);
 }
 
 function moveRings(delta) {
-    if (moveFirstRing) {
-        if (firstRingIsGoingUp) {
-            firstRingIsGoingUp = moveRingUp(firstRing, firstRingHorizontalSpeed, delta);
-        }
-        else {
-            firstRingIsGoingUp = !moveRingDown(firstRing, firstRingHorizontalSpeed, delta, firstRingHeight);
-        }
+  if (moveFirstRing) {
+    if (firstRingIsGoingUp) {
+      firstRingIsGoingUp = moveRingUp(
+        firstRing,
+        firstRingHorizontalSpeed,
+        delta
+      );
+    } else {
+      firstRingIsGoingUp = !moveRingDown(
+        firstRing,
+        firstRingHorizontalSpeed,
+        delta,
+        firstRingHeight
+      );
     }
+  }
 
-    if (moveSecondRing) {
-        if (secondRingIsGoingUp) {
-            secondRingIsGoingUp = moveRingUp(secondRing, secondRingHorizontalSpeed, delta);
-        }
-        else {
-            secondRingIsGoingUp = !moveRingDown(secondRing, secondRingHorizontalSpeed, delta, secondRingHeight);
-        }
+  if (moveSecondRing) {
+    if (secondRingIsGoingUp) {
+      secondRingIsGoingUp = moveRingUp(
+        secondRing,
+        secondRingHorizontalSpeed,
+        delta
+      );
+    } else {
+      secondRingIsGoingUp = !moveRingDown(
+        secondRing,
+        secondRingHorizontalSpeed,
+        delta,
+        secondRingHeight
+      );
     }
+  }
 
-    if (moveThirdRing) {
-        if (thirdRingIsGoingUp) {
-            thirdRingIsGoingUp = moveRingUp(thirdRing, thirdRingHorizontalSpeed, delta);
-        }
-        else {
-            thirdRingIsGoingUp = !moveRingDown(thirdRing, thirdRingHorizontalSpeed, delta, thirdRingHeight);
-        }
+  if (moveThirdRing) {
+    if (thirdRingIsGoingUp) {
+      thirdRingIsGoingUp = moveRingUp(
+        thirdRing,
+        thirdRingHorizontalSpeed,
+        delta
+      );
+    } else {
+      thirdRingIsGoingUp = !moveRingDown(
+        thirdRing,
+        thirdRingHorizontalSpeed,
+        delta,
+        thirdRingHeight
+      );
     }
+  }
+}
+
+function changeMesh() {
+  if (activeMaterialChanged) {
+    NAMED_MESHES.forEach(
+      (mesh) => (mesh.material = mesh.userData.meshMaterials[activeMaterial])
+    );
+  }
+}
+
+function changeMeshHandler(material) {
+  activeMaterial = material;
+  activeMaterialChanged = true;
 }
 
 function rotateObjects(delta) {
-    // Rotate base cylinder
-    rotateObjectY(baseCylinder, baseCylinderVerticalSpeed, delta);
+  // Rotate base cylinder
+  rotateObjectY(baseCylinder, baseCylinderVerticalSpeed, delta);
 
-    // The rings are rotated in the Z axis 
-    // because when they are created they are rotated in the X axis
-    // Rotate first ring
-    rotateObjectZ(firstRing, firstRingVerticalSpeed, delta);
-    // Rotate second ring
-    rotateObjectZ(secondRing, secondRingVerticalSpeed, delta);
-    // Rotate third ring
-    rotateObjectZ(thirdRing, thirdRingVerticalSpeed, delta);
+  // The rings are rotated in the Z axis
+  // because when they are created they are rotated in the X axis
+  // Rotate first ring
+  rotateObjectZ(firstRing, firstRingVerticalSpeed, delta);
+  // Rotate second ring
+  rotateObjectZ(secondRing, secondRingVerticalSpeed, delta);
+  // Rotate third ring
+  rotateObjectZ(thirdRing, thirdRingVerticalSpeed, delta);
 }
 
 function moveRingUp(ring, speed, delta) {
-    if (ring.position.y >= baseCylinderHeight) {
-        return false
-    }
-    else {
-        ring.position.y += delta * speed;
-        return true;
-    }
+  if (ring.position.y >= baseCylinderHeight) {
+    return false;
+  } else {
+    ring.position.y += delta * speed;
+    return true;
+  }
 }
 
 function moveRingDown(ring, speed, delta, height) {
-    if (ring.position.y <= 0 + height) {
-        return false
-    }
-    else {
-        ring.position.y -= delta * speed;
-        return true;
-    }
+  if (ring.position.y <= 0 + height) {
+    return false;
+  } else {
+    ring.position.y -= delta * speed;
+    return true;
+  }
 }
 
 function rotateObjectY(object, speed, delta) {
-    object.rotation.y += delta * speed;
+  object.rotation.y += delta * speed;
 }
 
 function rotateObjectZ(object, speed, delta) {
-    object.rotation.z += delta * speed;
+  object.rotation.z += delta * speed;
 }
 
 /////////////
 /* DISPLAY */
 /////////////
 function render() {
-    'use strict';
+  "use strict";
 
-    renderer.render(scene, camera);
+  renderer.render(scene, camera);
 }
 
 ////////////////////////////////
 /* INITIALIZE ANIMATION CYCLE */
 ////////////////////////////////
 function init() {
-    'use strict';
+  "use strict";
 
-    renderer = new THREE.WebGLRenderer({
-        antialias: true
-    });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
+  renderer = new THREE.WebGLRenderer({
+    antialias: true,
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.body.appendChild(renderer.domElement);
 
-    createScene();
-    createCamera();
+  createScene();
+  createCamera();
 
-    window.addEventListener("keydown", onKeyDown);
-
+  window.addEventListener("keydown", onKeyDown);
 }
 
 /////////////////////
 /* ANIMATION CYCLE */
 /////////////////////
 function animate() {
-    'use strict';
+  "use strict";
 
-    checkCollisions();
-    handleCollisions();
-    update();
-    render();
+  checkCollisions();
+  handleCollisions();
+  update();
+  render();
 
-    requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
 }
 
 ////////////////////////////
 /* RESIZE WINDOW CALLBACK */
 ////////////////////////////
 function onResize() {
-    'use strict';
-
+  "use strict";
 }
 
 ///////////////////////
 /* KEY DOWN CALLBACK */
 ///////////////////////
 function onKeyDown(e) {
-    'use strict';
+  "use strict";
 
-    switch (e.keyCode) {
-        case 49: // 1
-            moveFirstRing = !moveFirstRing;
-            break;
-        case 50: // 2
-            moveSecondRing = !moveSecondRing;
-            break;
-        case 51: // 3
-            moveThirdRing = !moveThirdRing;
-            break;
-    }
+  switch (e.keyCode) {
+    case 49: // 1
+      moveFirstRing = !moveFirstRing;
+      break;
+    case 50: // 2
+      moveSecondRing = !moveSecondRing;
+      break;
+    case 51: // 3
+      moveThirdRing = !moveThirdRing;
+      break;
+    case 81 || 113: // 'q' 'Q'
+      changeMeshHandler("gouraud");
+      break;
+    case 87 || 119: // 'w' 'W'
+      changeMeshHandler("phong");
+      break;
+    case 69 || 101: // 'e' 'E'
+      changeMeshHandler("cartoon");
+      break;
+    case 82 || 114: // 'r' 'R'
+      changeMeshHandler("normal");
+      break;
+    case 83 || 115: // 's' 'S' //TODO REMOVE THIS
+      changeMeshHandler("basic");
+      break;
+  }
 }
 
 ///////////////////////
 /* KEY UP CALLBACK */
 ///////////////////////
 function onKeyUp(e) {
-    'use strict';
+  "use strict";
 
-    // FIXME - Check if this is needed (i don't think so)
+  // FIXME - Check if this is needed (i don't think so)
 }
 
 init();
