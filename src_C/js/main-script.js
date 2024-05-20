@@ -27,7 +27,7 @@ var materialBaseCylinder,
 /////////////
 /* Objects */
 /////////////
-var baseCylinder;
+var baseCylinder; // FIXME - not sure if this is really needed
 
 ///////////
 /* Sizes */
@@ -59,7 +59,6 @@ const materials = [
     (materialThirdRing = createMaterial(greenColor)),
 ]
 
-
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
@@ -78,7 +77,11 @@ function createScene() {
 function createBaseCylinder(x, y, z) {
     'use strict';
 
-    var baseCylinderGeometry = new THREE.CylinderGeometry(baseCylinderRadius, baseCylinderRadius, baseCylinderHeight);
+    var baseCylinderGeometry = new THREE.CylinderGeometry(
+        baseCylinderRadius,
+        baseCylinderRadius,
+        baseCylinderHeight
+    );
     baseCylinder = new THREE.Mesh(baseCylinderGeometry, materialBaseCylinder);
     baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
     scene.add(baseCylinder);
@@ -109,7 +112,6 @@ function createFirstRing(x, y, z) {
 
     createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, materialFirstRing);
 }
-
 
 function createSecondRing(x, y, z) {
     'use strict';
