@@ -7,6 +7,8 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 //////////////////////
 /* GLOBAL VARIABLES */
 //////////////////////
+let clock = new THREE.Clock();
+
 var scene, camera, renderer;
 
 /////////////
@@ -14,7 +16,8 @@ var scene, camera, renderer;
 /////////////
 var redColor = 0xff0000,
     greenColor = 0x00ff00,
-    blueColor = 0x0000ff;
+    blueColor = 0x0000ff,
+    yellowColor = 0xffff00;
 
 ///////////////
 /* Materials */
@@ -27,7 +30,10 @@ var materialBaseCylinder,
 /////////////
 /* Objects */
 /////////////
-var baseCylinder; // FIXME - not sure if this is really needed
+var baseCylinder, // FIXME - not sure if this is really needed
+    firstRing,
+    secondRing,
+    thirdRing;
 
 ///////////
 /* Sizes */
@@ -44,6 +50,26 @@ var thirdRingInnerRadius = secondRingOuterRadius,
     thirdRingOuterRadius = 7,
     thirdRingHeight = secondRingHeight;
 
+///////////////
+/* Movements */
+///////////////
+var moveFirstRing = true,
+    firstRingIsGoingUp = true,
+    moveSecondRing = true,
+    secondRingIsGoingUp = true,
+    moveThirdRing = true,
+    thirdRingIsGoingUp = true;
+
+///////////
+/* Speed */
+///////////
+var firstRingHorizontalSpeed = 4,
+    secondRingHorizontalSpeed = 3,
+    thirdRingHorizontalSpeed = 2,
+    baseCylinderVerticalSpeed = 1,
+    firstRingVerticalSpeed = 1,
+    secondRingVerticalSpeed = 1,
+    thirdRingVerticalSpeed = 1;
 
 ////////////////////////
 /* CREATE MATERIAL(S) */
@@ -53,7 +79,7 @@ function createMaterial(color) {
 }
 
 const materials = [
-    (materialBaseCylinder = createMaterial(redColor)),
+    (materialBaseCylinder = createMaterial(yellowColor)),
     (materialFirstRing = createMaterial(blueColor)),
     (materialSecondRing = createMaterial(redColor)),
     (materialThirdRing = createMaterial(greenColor)),
@@ -105,24 +131,25 @@ function createRing(x, y, z, innerRadius, outerRadius, height, material) {
     ring.position.set(x, y + height, z);
     ring.rotation.x = Math.PI / 2;
     scene.add(ring);
+    return ring;
 }
 
 function createFirstRing(x, y, z) {
     'use strict';
 
-    createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, materialFirstRing);
+    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, materialFirstRing);
 }
 
 function createSecondRing(x, y, z) {
     'use strict';
 
-    createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, materialSecondRing);
+    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, materialSecondRing);
 }
 
 function createThirdRing(x, y, z) {
     'use strict';
 
-    createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, materialThirdRing);
+    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, materialThirdRing);
 }
 
 //////////////////////
@@ -137,8 +164,8 @@ function createCamera() {
         window.innerWidth / window.innerHeight,
         1,
         1000);
-    camera.position.x = 10;
-    camera.position.y = 10;
+    camera.position.x = 15;
+    camera.position.y = 0;
     camera.position.z = 15;
     camera.lookAt(scene.position);
 }
@@ -174,6 +201,82 @@ function handleCollisions() {
 function update() {
     'use strict';
 
+    let delta = clock.getDelta();
+
+    moveRings(delta);
+
+    rotateObjects(delta);
+}
+
+function moveRings(delta) {
+    if (moveFirstRing) {
+        if (firstRingIsGoingUp) {
+            firstRingIsGoingUp = moveRingUp(firstRing, firstRingHorizontalSpeed, delta);
+        }
+        else {
+            firstRingIsGoingUp = !moveRingDown(firstRing, firstRingHorizontalSpeed, delta, firstRingHeight);
+        }
+    }
+
+    if (moveSecondRing) {
+        if (secondRingIsGoingUp) {
+            secondRingIsGoingUp = moveRingUp(secondRing, secondRingHorizontalSpeed, delta);
+        }
+        else {
+            secondRingIsGoingUp = !moveRingDown(secondRing, secondRingHorizontalSpeed, delta, secondRingHeight);
+        }
+    }
+
+    if (moveThirdRing) {
+        if (thirdRingIsGoingUp) {
+            thirdRingIsGoingUp = moveRingUp(thirdRing, thirdRingHorizontalSpeed, delta);
+        }
+        else {
+            thirdRingIsGoingUp = !moveRingDown(thirdRing, thirdRingHorizontalSpeed, delta, thirdRingHeight);
+        }
+    }
+}
+
+function rotateObjects(delta) {
+    // Rotate base cylinder
+    rotateObjectY(baseCylinder, baseCylinderVerticalSpeed, delta);
+
+    // The rings are rotated in the Z axis 
+    // because when they are created they are rotated in the X axis
+    // Rotate first ring
+    rotateObjectZ(firstRing, firstRingVerticalSpeed, delta);
+    // Rotate second ring
+    rotateObjectZ(secondRing, secondRingVerticalSpeed, delta);
+    // Rotate third ring
+    rotateObjectZ(thirdRing, thirdRingVerticalSpeed, delta);
+}
+
+function moveRingUp(ring, speed, delta) {
+    if (ring.position.y >= baseCylinderHeight) {
+        return false
+    }
+    else {
+        ring.position.y += delta * speed;
+        return true;
+    }
+}
+
+function moveRingDown(ring, speed, delta, height) {
+    if (ring.position.y <= 0 + height) {
+        return false
+    }
+    else {
+        ring.position.y -= delta * speed;
+        return true;
+    }
+}
+
+function rotateObjectY(object, speed, delta) {
+    object.rotation.y += delta * speed;
+}
+
+function rotateObjectZ(object, speed, delta) {
+    object.rotation.z += delta * speed;
 }
 
 /////////////
@@ -199,6 +302,9 @@ function init() {
 
     createScene();
     createCamera();
+
+    window.addEventListener("keydown", onKeyDown);
+
 }
 
 /////////////////////
@@ -229,6 +335,17 @@ function onResize() {
 function onKeyDown(e) {
     'use strict';
 
+    switch (e.keyCode) {
+        case 49: // 1
+            moveFirstRing = !moveFirstRing;
+            break;
+        case 50: // 2
+            moveSecondRing = !moveSecondRing;
+            break;
+        case 51: // 3
+            moveThirdRing = !moveThirdRing;
+            break;
+    }
 }
 
 ///////////////////////
@@ -236,6 +353,8 @@ function onKeyDown(e) {
 ///////////////////////
 function onKeyUp(e) {
     'use strict';
+
+    // FIXME - Check if this is needed (i don't think so)
 }
 
 init();
