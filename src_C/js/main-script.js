@@ -4,13 +4,38 @@ import { VRButton } from "three/addons/webxr/VRButton.js";
 import * as Stats from "three/addons/libs/stats.module.js";
 import { GUI } from "three/addons/libs/lil-gui.module.min.js";
 
+
+
+//////////////////////
+/* GLOBAL CONSTANTS */
+//////////////////////
+
+const ORBITAL_CAMERA = createPerspectiveCamera({
+  fov: 80,
+  near: 1,
+  far: 1000,
+  x: -10,
+  y: 20,
+  z: -10,
+});
+const FIXED_CAMERA = createPerspectiveCamera({
+  fov: 60,
+  near: 1,
+  far: 1500,
+  x: 15,
+  y: 15,
+  z: 10,
+});
+
 //////////////////////
 /* GLOBAL VARIABLES */
 //////////////////////
 let clock = new THREE.Clock();
 
 var scene, camera, renderer;
+let activeCamera = FIXED_CAMERA; // starts as the fixed camera, may change afterwards
 const NAMED_MESHES = [];
+let updateProjectionMatrix = false;
 let activeMaterial = "basic"; // starts as basic, may change afterwards
 let activeMaterialChanged = false; // starts as basic, may change afterwards
 
@@ -114,21 +139,40 @@ function createScene() {
 //////////////////////
 /* CREATE CAMERA(S) */
 //////////////////////
-function createCamera() {
-  "use strict";
+function createCameras() {
+  const controls = new OrbitControls(ORBITAL_CAMERA, renderer.domElement);
+  controls.target.set(0, 0, 0);
+  controls.keys = {
+    LEFT: 72, // h
+    UP: 75, // k
+    RIGHT: 76, // l
+    BOTTOM: 74, // j
+  };
+  controls.update();
+}
 
-  // TODO - Implement the camera
-  // This is just a test camera
-  camera = new THREE.PerspectiveCamera(
-    70,
-    window.innerWidth / window.innerHeight,
-    1,
-    1000
-  );
-  camera.position.x = 15;
-  camera.position.y = 0;
-  camera.position.z = 15;
-  camera.lookAt(scene.position);
+function createPerspectiveCamera({
+  fov,
+  near,
+  far,
+  x = 0,
+  y = 0,
+  z = 0,
+  atX = 0,
+  atY = 0,
+  atZ = 0,
+}) {
+  const aspect = window.innerWidth / window.innerHeight;
+
+  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.set(x, y, z);
+  camera.lookAt(atX, atY, atZ);
+  return camera;
+}
+
+function refreshCameraParameters(camera) {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 }
 
 /////////////////////
@@ -241,6 +285,18 @@ function update() {
   moveRings(delta);
 
   rotateObjects(delta);
+
+  if (updateProjectionMatrix) {
+    const isXrPresenting = renderer.xr.isPresenting;
+    renderer.xr.isPresenting = false;
+    updateProjectionMatrix = false;
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    if (window.innerHeight > 0 && window.innerWidth > 0) {
+      refreshCameraParameters(isXrPresenting ? renderer.xr.getCamera() : activeCamera);
+    }
+    renderer.xr.isPresenting = isXrPresenting;
+  }
 }
 
 function moveRings(delta) {
@@ -355,7 +411,7 @@ function rotateObjectZ(object, speed, delta) {
 function render() {
   "use strict";
 
-  renderer.render(scene, camera);
+  renderer.render(scene, activeCamera);
 }
 
 ////////////////////////////////
@@ -367,13 +423,18 @@ function init() {
   renderer = new THREE.WebGLRenderer({
     antialias: true,
   });
+  renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
 
+  renderer.xr.enabled = true;
+  document.body.appendChild(VRButton.createButton(renderer));
+
   createScene();
-  createCamera();
+  createCameras();
 
   window.addEventListener("keydown", onKeyDown);
+  window.addEventListener('resize', onResize);
 }
 
 /////////////////////
@@ -387,14 +448,14 @@ function animate() {
   update();
   render();
 
-  requestAnimationFrame(animate);
+  renderer.setAnimationLoop(animate);
 }
 
 ////////////////////////////
 /* RESIZE WINDOW CALLBACK */
 ////////////////////////////
 function onResize() {
-  "use strict";
+  updateProjectionMatrix = true;
 }
 
 ///////////////////////
@@ -439,6 +500,7 @@ function onKeyUp(e) {
 
   // FIXME - Check if this is needed (i don't think so)
 }
+
 
 init();
 animate();
