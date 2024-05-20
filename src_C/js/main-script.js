@@ -9,6 +9,57 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 //////////////////////
 var scene, camera, renderer;
 
+/////////////
+/* Colours */
+/////////////
+var redColor = 0xff0000,
+    greenColor = 0x00ff00,
+    blueColor = 0x0000ff;
+
+///////////////
+/* Materials */
+///////////////
+var materialBaseCylinder,
+    materialFirstRing,
+    materialSecondRing,
+    materialThirdRing;
+
+/////////////
+/* Objects */
+/////////////
+var baseCylinder;
+
+///////////
+/* Sizes */
+///////////
+var baseCylinderRadius = 1,
+    baseCylinderHeight = 10;
+var firstRingInnerRadius = baseCylinderRadius,
+    firstRingOuterRadius = 3,
+    firstRingHeight = 2;
+var secondRingInnerRadius = firstRingOuterRadius,
+    secondRingOuterRadius = 5,
+    secondRingHeight = firstRingHeight;
+var thirdRingInnerRadius = secondRingOuterRadius,
+    thirdRingOuterRadius = 7,
+    thirdRingHeight = secondRingHeight;
+
+
+////////////////////////
+/* CREATE MATERIAL(S) */
+////////////////////////
+function createMaterial(color) {
+    return new THREE.MeshBasicMaterial({ color, wireframe: true });
+}
+
+const materials = [
+    (materialBaseCylinder = createMaterial(redColor)),
+    (materialFirstRing = createMaterial(blueColor)),
+    (materialSecondRing = createMaterial(redColor)),
+    (materialThirdRing = createMaterial(greenColor)),
+]
+
+
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
@@ -17,6 +68,59 @@ function createScene() {
 
     scene = new THREE.Scene();
     scene.add(new THREE.AxesHelper(10));
+
+    createBaseCylinder(0, 0, 0);
+    createFirstRing(0, 0, 0);
+    createSecondRing(0, 0, 0);
+    createThirdRing(0, 0, 0);
+}
+
+function createBaseCylinder(x, y, z) {
+    'use strict';
+
+    var baseCylinderGeometry = new THREE.CylinderGeometry(baseCylinderRadius, baseCylinderRadius, baseCylinderHeight);
+    baseCylinder = new THREE.Mesh(baseCylinderGeometry, materialBaseCylinder);
+    baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
+    scene.add(baseCylinder);
+}
+
+function createRing(x, y, z, innerRadius, outerRadius, height, material) {
+    let shape = new THREE.Shape();
+    shape.absarc(0, 0, outerRadius, 0, Math.PI * 2, false);
+
+    let holePath = new THREE.Path();
+    holePath.absarc(0, 0, innerRadius, 0, Math.PI * 2, false);
+    shape.holes.push(holePath);
+
+    let extrudeSettings = {
+        depth: height,
+        bevelEnabled: false
+    };
+
+    let ringGeometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    let ring = new THREE.Mesh(ringGeometry, material);
+    ring.position.set(x, y + height, z);
+    ring.rotation.x = Math.PI / 2;
+    scene.add(ring);
+}
+
+function createFirstRing(x, y, z) {
+    'use strict';
+
+    createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, materialFirstRing);
+}
+
+
+function createSecondRing(x, y, z) {
+    'use strict';
+
+    createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, materialSecondRing);
+}
+
+function createThirdRing(x, y, z) {
+    'use strict';
+
+    createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, materialThirdRing);
 }
 
 //////////////////////
@@ -31,9 +135,9 @@ function createCamera() {
         window.innerWidth / window.innerHeight,
         1,
         1000);
-    camera.position.x = 50;
-    camera.position.y = 50;
-    camera.position.z = 50;
+    camera.position.x = 10;
+    camera.position.y = 10;
+    camera.position.z = 15;
     camera.lookAt(scene.position);
 }
 
