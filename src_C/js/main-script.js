@@ -12,7 +12,7 @@ import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 /////////////////////
 /* CREATE SCENE(S) */
 /////////////////////
-function createScene(){
+function createScene() {
     'use strict';
 
 }
@@ -33,7 +33,7 @@ function createScene(){
 //////////////////////
 /* CHECK COLLISIONS */
 //////////////////////
-function checkCollisions(){
+function checkCollisions() {
     'use strict';
 
 }
@@ -41,7 +41,7 @@ function checkCollisions(){
 ///////////////////////
 /* HANDLE COLLISIONS */
 ///////////////////////
-function handleCollisions(){
+function handleCollisions() {
     'use strict';
 
 }
@@ -49,7 +49,7 @@ function handleCollisions(){
 ////////////
 /* UPDATE */
 ////////////
-function update(){
+function update() {
     'use strict';
 
 }
@@ -81,7 +81,7 @@ function animate() {
 ////////////////////////////
 /* RESIZE WINDOW CALLBACK */
 ////////////////////////////
-function onResize() { 
+function onResize() {
     'use strict';
 
 }
@@ -97,7 +97,7 @@ function onKeyDown(e) {
 ///////////////////////
 /* KEY UP CALLBACK */
 ///////////////////////
-function onKeyUp(e){
+function onKeyUp(e) {
     'use strict';
 }
 
