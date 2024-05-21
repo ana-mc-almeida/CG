@@ -189,7 +189,7 @@ function createCamera() {
         1,
         1000);
     camera.position.x = 0;
-    camera.position.y = 0;
+    camera.position.y = 20;
     camera.position.z = 20;
     camera.lookAt(scene.position);
 }
@@ -279,8 +279,26 @@ function createParametrics(ring, innerRadius, outerRadius, height, parametricFun
 
         surface.position.set(x, z, -cubeSize / 2);
         ring.add(surface);
-        console.log("Added surface ", i, " to ring with angle ", ring.rotation.z);
         ring.rotation.z += (Math.PI / 4);
+        giveParametricGeometryValues(surface);
+    }
+
+}
+
+function giveParametricGeometryValues(surface) {
+    const object = surface;
+    const speed = Math.random() * 5 + 1;
+    const rotation = Math.random() * 3;
+    switch (Math.floor(rotation)) {
+        case 0:
+            parametricGeometries.push({ object, speed, rotation: 'x' });
+            break;
+        case 1:
+            parametricGeometries.push({ object, speed, rotation: 'y' });
+            break;
+        case 2:
+            parametricGeometries.push({ object, speed, rotation: 'z' });
+            break;
     }
 
 }
@@ -355,6 +373,17 @@ function rotateObjects(delta) {
     rotateObjectZ(secondRing, secondRingVerticalSpeed, delta);
     // Rotate third ring
     rotateObjectZ(thirdRing, thirdRingVerticalSpeed, delta);
+
+    // Rotate parametric figures
+    for (let i = 0; i < parametricGeometries.length; i++) {
+        const parametricFigure = parametricGeometries[i];
+        if (parametricGeometries[i].rotation === 'x')
+            rotateObjectX(parametricFigure.object, parametricFigure.speed, delta);
+        else if (parametricGeometries[i].rotation === 'y')
+            rotateObjectY(parametricFigure.object, parametricFigure.speed, delta);
+        else if (parametricGeometries[i].rotation === 'z')
+            rotateObjectZ(parametricGeometries[i].object, parametricFigure.speed, delta);
+    }
 }
 
 function moveRingUp(ring, speed, delta) {
@@ -383,6 +412,10 @@ function rotateObjectY(object, speed, delta) {
 
 function rotateObjectZ(object, speed, delta) {
     object.rotation.z += delta * speed;
+}
+
+function rotateObjectX(object, speed, delta) {
+    object.rotation.x += delta * speed;
 }
 
 /////////////
