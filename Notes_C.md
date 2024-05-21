@@ -7,6 +7,7 @@
 ## TODOS
 
 - Enunciado
+
   - [x] 1. Criar o carrossel - Ana
   - [ ] 2. Skydome - Mafalda
   - [ ] 3. Figuras Paramétricas - Ana
@@ -15,3 +16,14 @@
   - [ ] 6. Luzes pontuais - Alice
   - [ ] 7. Malhas - Alice
   - [ ] 8. Câmara - Alice
+
+## Notas do Professor
+
+- Figuras paramétricas:
+  - tamanho e orientação aleatória figuras paramétricas
+  - ordem as parametricas aleatoria
+  - usar a mesma mesh para todas as figuras
+- camara VR tem de estar no topo do cilidro
+  - o stor acha que é mais fácil baixar toda a cena
+- luzes mobius
+  - separadas de forma regular
