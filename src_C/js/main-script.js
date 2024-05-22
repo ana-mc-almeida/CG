@@ -251,8 +251,8 @@ function createCamera() {
         window.innerWidth / window.innerHeight,
         1,
         1000);
-    camera.position.x = 20;
-    camera.position.y = 5;
+    camera.position.x = 8;
+    camera.position.y = 17;
     camera.position.z = 10;
     camera.lookAt(scene.position);
 }
@@ -321,18 +321,19 @@ function createThirdRing(x, y, z) {
     createParametrics(thirdRing, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, parametricFunctions);
 }
 
-function createParametrics(ring, innerRadius, outerRadius, height, parametricFunctions) {
+function createParametrics(ring, innerRadius, outerRadius) {
     var numberOfParametricFunctions = parametricFunctions.length;
 
     const radius = innerRadius + (outerRadius - innerRadius) / 2;
+
+    const orderArray = generateRandomParametricOrder(numberOfParametricFunctions);
 
     for (var i = 0; i < numberOfParametricFunctions; i++) {
         const angle = i * (Math.PI / 4);
         const x = radius * Math.cos(angle);
         const z = radius * Math.sin(angle);
-        // const x = (2 / 3) * radius
 
-        const parametricFunction = parametricFunctions[i];
+        const parametricFunction = parametricFunctions[orderArray[i]];
 
         const geometry = new ParametricGeometry(parametricFunction, 10, 10);
         const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
@@ -349,6 +350,19 @@ function createParametrics(ring, innerRadius, outerRadius, height, parametricFun
         giveParametricGeometryValues(surface);
     }
 
+}
+
+function generateRandomParametricOrder(numberOfParametricFunctions) {
+    let order = [];
+    let i = 0;
+    while (i < numberOfParametricFunctions) {
+        const random = Math.floor(Math.random() * numberOfParametricFunctions);
+        if (order.indexOf(random) === -1) {
+            order.push(random);
+            i++;
+        }
+    }
+    return order;
 }
 
 function getFigureHeight(surface) {
