@@ -46,7 +46,12 @@ let activeMaterialChanged = false; // starts as basic, may change afterwards
 var redColor = 0xff0000,
     greenColor = 0x00ff00,
     blueColor = 0x0000ff,
-    yellowColor = 0xffff00;
+    yellowColor = 0xffff00,
+    lightBrownColor = 0xCA9747,
+    goldenColor = 0xB17E2D,
+    darkRedColor = 0x990000,
+    lightBejeColor = 0xfff2cc,
+    lightRedColor = 0xb02929;
 
 ///////////////
 /* Materials */
@@ -445,7 +450,7 @@ function createBaseCylinder(x, y, z) {
         baseCylinderRadius,
         baseCylinderHeight
     );
-    baseCylinder = createMesh("ring", yellowColor, baseCylinderGeometry);
+    baseCylinder = createMesh("ring", goldenColor, baseCylinderGeometry);
     baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
     scene.add(baseCylinder);
 }
@@ -474,21 +479,21 @@ function createRing(x, y, z, innerRadius, outerRadius, height, color) {
 function createFirstRing(x, y, z) {
     'use strict';
 
-    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, blueColor);
+    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, lightRedColor);
     createParametrics(firstRing, firstRingInnerRadius, firstRingOuterRadius, secondRingHeight, parametricFunctions);
 }
 
 function createSecondRing(x, y, z) {
     'use strict';
 
-    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, redColor);
+    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, lightBejeColor);
     createParametrics(secondRing, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, parametricFunctions);
 }
 
 function createThirdRing(x, y, z) {
     'use strict';
 
-    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, greenColor);
+    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, darkRedColor);
     createParametrics(thirdRing, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, parametricFunctions);
 }
 
@@ -507,7 +512,7 @@ function createParametrics(ring, innerRadius, outerRadius) {
         const parametricFunction = parametricFunctions[orderArray[i]];
 
         const geometry = new ParametricGeometry(parametricFunction, 10, 10);
-        const surface = createMesh("parametric", null, geometry) // FIXME - use some color
+        const surface = createMesh("parametric", lightBrownColor, geometry) // FIXME - use some color
 
         const scaleValue = 0.5;
         surface.scale.set(scaleValue, scaleValue, scaleValue);
@@ -573,7 +578,7 @@ function createMobiusStrip(x, y, z) {
     let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
     mobiusGeometry.setAttribute('position', positionAttribute);
     mobiusGeometry.computeVertexNormals();
-    let mobius = createMesh("ring", greenColor, mobiusGeometry);
+    let mobius = createMesh("mobius", darkRedColor, mobiusGeometry);
     mobius.position.set(x, y, z);
     mobius.rotation.x = Math.PI / 2;
     mobius.scale.set(1.5, 1.5, 1.2);
@@ -590,12 +595,15 @@ function createSkydome(x, y, z) {
     }
 
     const skyTexture = textureLoader.load(texturePath);
-    const geometry = new THREE.SphereGeometry(20, 32, 32, Math.PI / 2, Math.PI * 2, 0, Math.PI / 2);
+    const skydomeGeometry = new THREE.SphereGeometry(20, 32, 32, Math.PI / 2, Math.PI * 2, 0, Math.PI / 2);
     const material = new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide }); //TODO: OneSide
-    const skydome = new THREE.Mesh(geometry, material);
+    const skydome = new THREE.Mesh(skydomeGeometry, material);
+
+    //scene.add(skydome);
+    //skydome.position.set(x, y, z);
 
     const planeGeometry = new THREE.CircleGeometry(20, 32);
-    const planeMaterial = new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.DoubleSide });
+    const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x323232, side: THREE.DoubleSide });
     const bottomCover = new THREE.Mesh(planeGeometry, planeMaterial);
 
     bottomCover.rotation.x = Math.PI / 2;
@@ -606,9 +614,6 @@ function createSkydome(x, y, z) {
 
     scene.add(skydomeGroup);
     skydomeGroup.position.set(x, y, z);
-
-    //scene.add(skydome);
-    //skydome.position.set(x, y, z);
 }
 
 //////////////////////
