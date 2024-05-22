@@ -33,6 +33,7 @@ const FIXED_CAMERA = createPerspectiveCamera({
 let clock = new THREE.Clock();
 
 var scene, camera, renderer;
+var directionalLight;
 let activeCamera = FIXED_CAMERA; // starts as the fixed camera, may change afterwards
 const NAMED_MESHES = [];
 let updateProjectionMatrix = false;
@@ -94,6 +95,90 @@ var firstRingHorizontalSpeed = 4,
     firstRingVerticalSpeed = 1,
     secondRingVerticalSpeed = 1,
     thirdRingVerticalSpeed = 1;
+
+////////////
+/* Mobius */
+////////////
+const mobiusVertices = [
+    { x: 4.0, y: 0.0, z: 0.0 },
+    { x: 3.516094359758206, y: 1.8453886773954822, z: 0.23931566428755777 },
+    { x: 1.796641794161053, y: 0.9429503548671292, z: -0.23931566428755777 },
+    { x: 4.0, y: 0.0, z: 0.0 },
+    { x: 1.796641794161053, y: 0.9429503548671292, z: -0.23931566428755777 },
+    { x: 2.0, y: 0.0, z: -0.0 },
+    { x: 3.516094359758206, y: 1.8453886773954822, z: 0.23931566428755777 },
+    { x: 2.207190593147734, y: 3.19766762075188, z: 0.46472317204376856 },
+    { x: 1.201197887239201, y: 1.740235574610058, z: -0.46472317204376856 },
+    { x: 3.516094359758206, y: 1.8453886773954822, z: 0.23931566428755777 },
+    { x: 1.201197887239201, y: 1.740235574610058, z: -0.46472317204376856 },
+    { x: 1.796641794161053, y: 0.9429503548671292, z: -0.23931566428755777 },
+    { x: 2.207190593147734, y: 3.19766762075188, z: 0.46472317204376856 },
+    { x: 0.4518330414859416, y: 3.7211798843613875, z: 0.6631226582407952 },
+    { x: 0.2713870400459964, y: 2.235073360226936, z: -0.6631226582407952 },
+    { x: 2.207190593147734, y: 3.19766762075188, z: 0.46472317204376856 },
+    { x: 0.2713870400459964, y: 2.235073360226936, z: -0.6631226582407952 },
+    { x: 1.201197887239201, y: 1.740235574610058, z: -0.46472317204376856 },
+    { x: 0.4518330414859416, y: 3.7211798843613875, z: 0.6631226582407952 },
+    { x: -1.265253196475055, y: 3.3361984931468514, z: 0.8229838658936564 },
+    { x: -0.8623761257801589, y: 2.2738989629656374, z: -0.8229838658936564 },
+    { x: 0.4518330414859416, y: 3.7211798843613875, z: 0.6631226582407952 },
+    { x: -0.8623761257801589, y: 2.2738989629656374, z: -0.8229838658936564 },
+    { x: 0.2713870400459964, y: 2.235073360226936, z: -0.6631226582407952 },
+    { x: -1.265253196475055, y: 3.3361984931468514, z: 0.8229838658936564 },
+    { x: -2.510957813818641, y: 2.2245145100432087, z: 0.9350162426854148 },
+    { x: -1.9801066752079663, y: 1.7542214394015625, z: -0.9350162426854148 },
+    { x: -1.265253196475055, y: 3.3361984931468514, z: 0.8229838658936564 },
+    { x: -1.9801066752079663, y: 1.7542214394015625, z: -0.9350162426854148 },
+    { x: -0.8623761257801589, y: 2.2738989629656374, z: -0.8229838658936564 },
+    { x: -2.510957813818641, y: 2.2245145100432087, z: 0.9350162426854148 },
+    { x: -3.0298595556717625, y: 0.7467933085689926, z: 0.992708874098054 },
+    { x: -2.7957913488845496, y: 0.6891006771563535, z: -0.992708874098054 },
+    { x: -2.510957813818641, y: 2.2245145100432087, z: 0.9350162426854148 },
+    { x: -2.7957913488845496, y: 0.6891006771563535, z: -0.992708874098054 },
+    { x: -1.9801066752079663, y: 1.7542214394015625, z: -0.9350162426854148 },
+    { x: -3.0298595556717625, y: 0.7467933085689926, z: 0.992708874098054 },
+    { x: -2.7957913488845505, y: -0.6891006771563528, z: 0.992708874098054 },
+    { x: -3.0298595556717625, y: -0.7467933085689917, z: -0.992708874098054 },
+    { x: -3.0298595556717625, y: 0.7467933085689926, z: 0.992708874098054 },
+    { x: -3.0298595556717625, y: -0.7467933085689917, z: -0.992708874098054 },
+    { x: -2.7957913488845496, y: 0.6891006771563535, z: -0.992708874098054 },
+    { x: -2.7957913488845505, y: -0.6891006771563528, z: 0.992708874098054 },
+    { x: -1.980106675207966, y: -1.7542214394015627, z: 0.9350162426854148 },
+    { x: -2.51095781381864, y: -2.224514510043209, z: -0.9350162426854148 },
+    { x: -2.7957913488845505, y: -0.6891006771563528, z: 0.992708874098054 },
+    { x: -2.51095781381864, y: -2.224514510043209, z: -0.9350162426854148 },
+    { x: -3.0298595556717625, y: -0.7467933085689917, z: -0.992708874098054 },
+    { x: -1.980106675207966, y: -1.7542214394015627, z: 0.9350162426854148 },
+    { x: -0.8623761257801594, y: -2.2738989629656374, z: 0.8229838658936565 },
+    { x: -1.265253196475056, y: -3.336198493146851, z: -0.8229838658936565 },
+    { x: -1.980106675207966, y: -1.7542214394015627, z: 0.9350162426854148 },
+    { x: -1.265253196475056, y: -3.336198493146851, z: -0.8229838658936565 },
+    { x: -2.51095781381864, y: -2.224514510043209, z: -0.9350162426854148 },
+    { x: -0.8623761257801594, y: -2.2738989629656374, z: 0.8229838658936565 },
+    { x: 0.27138704004599684, y: -2.235073360226936, z: 0.6631226582407952 },
+    { x: 0.45183304148594233, y: -3.7211798843613875, z: -0.6631226582407952 },
+    { x: -0.8623761257801594, y: -2.2738989629656374, z: 0.8229838658936565 },
+    { x: 0.45183304148594233, y: -3.7211798843613875, z: -0.6631226582407952 },
+    { x: -1.265253196475056, y: -3.336198493146851, z: -0.8229838658936565 },
+    { x: 0.27138704004599684, y: -2.235073360226936, z: 0.6631226582407952 },
+    { x: 1.2011978872392006, y: -1.7402355746100584, z: 0.4647231720437687 },
+    { x: 2.207190593147733, y: -3.197667620751881, z: -0.4647231720437687 },
+    { x: 0.27138704004599684, y: -2.235073360226936, z: 0.6631226582407952 },
+    { x: 2.207190593147733, y: -3.197667620751881, z: -0.4647231720437687 },
+    { x: 0.45183304148594233, y: -3.7211798843613875, z: -0.6631226582407952 },
+    { x: 1.2011978872392006, y: -1.7402355746100584, z: 0.4647231720437687 },
+    { x: 1.7966417941610533, y: -0.9429503548671289, z: 0.23931566428755768 },
+    { x: 3.5160943597582066, y: -1.8453886773954815, z: -0.23931566428755768 },
+    { x: 1.2011978872392006, y: -1.7402355746100584, z: 0.4647231720437687 },
+    { x: 3.5160943597582066, y: -1.8453886773954815, z: -0.23931566428755768 },
+    { x: 2.207190593147733, y: -3.197667620751881, z: -0.4647231720437687 },
+    { x: 1.7966417941610533, y: -0.9429503548671289, z: 0.23931566428755768 },
+    { x: 2.0, y: -4.898587196589413e-16, z: 1.2246467991473532e-16 },
+    { x: 4.0, y: -9.797174393178826e-16, z: -1.2246467991473532e-16 },
+    { x: 1.7966417941610533, y: -0.9429503548671289, z: 0.23931566428755768 },
+    { x: 4.0, y: -9.797174393178826e-16, z: -1.2246467991473532e-16 },
+    { x: 3.5160943597582066, y: -1.8453886773954815, z: -0.23931566428755768 },
+];
 
 //////////////////////////
 /* Parametric Geometry */
@@ -271,6 +356,10 @@ function createScene() {
     createFirstRing(0, 0, 0);
     createSecondRing(0, 0, 0);
     createThirdRing(0, 0, 0);
+    createMobiusStrip(0, 12, 0);
+    createAmbientLight();
+    createDirectionalLight();
+    createSkydome(0, 0, 0);
 }
 
 //////////////////////
@@ -331,6 +420,18 @@ function refreshCameraParameters(camera) {
 /////////////////////
 /* CREATE LIGHT(S) */
 /////////////////////
+function createAmbientLight() {
+    var ambientLight = new THREE.AmbientLight(0xff6d00, 0.7);
+    scene.add(ambientLight);
+}
+
+function createDirectionalLight() {
+    directionalLight = new THREE.DirectionalLight(0xffffff, 2);
+    directionalLight.position.set(15, 15, 15);
+    directionalLight.target.position.set(0, 0, 0);
+    scene.add(directionalLight);
+    scene.add(directionalLight.target);
+}
 
 ////////////////////////
 /* CREATE OBJECT3D(S) */
@@ -460,6 +561,54 @@ function giveParametricGeometryValues(surface) {
             break;
     }
 
+}
+
+function createMobiusStrip(x, y, z) {
+    "use strict";
+    var mobiusGeometry = new THREE.BufferGeometry();
+    let positions = [];
+    for (let i = 0; i < mobiusVertices.length; i++) {
+        positions.push(mobiusVertices[i].x, mobiusVertices[i].y, mobiusVertices[i].z);
+    }
+    let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
+    mobiusGeometry.setAttribute('position', positionAttribute);
+    mobiusGeometry.computeVertexNormals();
+    let mobius = createMesh("ring", greenColor, mobiusGeometry);
+    mobius.position.set(x, y, z);
+    mobius.rotation.x = Math.PI / 2;
+    mobius.scale.set(1.5, 1.5, 1.2);
+    scene.add(mobius);
+}
+
+function createSkydome(x, y, z) {
+    const textureLoader = new THREE.TextureLoader();
+    let texturePath;
+    if (window.location.pathname.includes('/src_C/')) {
+        texturePath = '/src_C/js/stillframe.png';  // Path if running from src_C directory
+    } else {
+        texturePath = '/js/stillframe.png';        // Path if running from main directory
+    }
+
+    const skyTexture = textureLoader.load(texturePath);
+    const geometry = new THREE.SphereGeometry(20, 32, 32, Math.PI / 2, Math.PI * 2, 0, Math.PI / 2);
+    const material = new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.BackSide }); //TODO: OneSide
+    const skydome = new THREE.Mesh(geometry, material);
+
+    const planeGeometry = new THREE.CircleGeometry(20, 32);
+    const planeMaterial = new THREE.MeshBasicMaterial({ map: skyTexture, side: THREE.DoubleSide });
+    const bottomCover = new THREE.Mesh(planeGeometry, planeMaterial);
+
+    bottomCover.rotation.x = Math.PI / 2;
+
+    const skydomeGroup = new THREE.Group();
+    skydomeGroup.add(skydome);
+    skydomeGroup.add(bottomCover);
+
+    scene.add(skydomeGroup);
+    skydomeGroup.position.set(x, y, z);
+
+    //scene.add(skydome);
+    //skydome.position.set(x, y, z);
 }
 
 //////////////////////
@@ -624,6 +773,10 @@ function rotateObjectX(object, speed, delta) {
     object.rotation.x += delta * speed;
 }
 
+function toggleDirectionalLight() {
+    directionalLight.visible = !directionalLight.visible;
+}
+
 /////////////
 /* DISPLAY */
 /////////////
@@ -693,6 +846,9 @@ function onKeyDown(e) {
         case 51: // 3
             moveThirdRing = !moveThirdRing;
             break;
+        case 68 || 100: // 'd' 'D'
+            toggleDirectionalLight();
+            break;s
         case 81 || 113: // 'q' 'Q'
             changeMeshHandler("gouraud");
             break;
