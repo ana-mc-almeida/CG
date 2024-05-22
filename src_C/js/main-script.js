@@ -635,7 +635,7 @@ function createMobiusStrip(x, y, z) {
     let positionAttribute = new THREE.Float32BufferAttribute(positions, 3);
     mobiusGeometry.setAttribute('position', positionAttribute);
     mobiusGeometry.computeVertexNormals();
-    let mobius = createMesh("mobius", darkRedColor, mobiusGeometry);
+    let mobius = createMesh("mobius", pastelVioletColor, mobiusGeometry);
     mobius.position.set(x, y, z);
     mobius.rotation.x = Math.PI / 2;
     mobius.scale.set(1.5, 1.5, 1.2);
