@@ -406,8 +406,7 @@ function createParametrics(ring, innerRadius, outerRadius) {
         const parametricFunction = parametricFunctions[orderArray[i]];
 
         const geometry = new ParametricGeometry(parametricFunction, 10, 10);
-        const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
-        const surface = new THREE.Mesh(geometry, material);
+        const surface = createMesh("parametric", null, geometry) // FIXME - use some color
 
         const scaleValue = 0.5;
         surface.scale.set(scaleValue, scaleValue, scaleValue);
