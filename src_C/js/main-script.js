@@ -79,71 +79,134 @@ var firstRingHorizontalSpeed = 4,
 var numberOfParametricFunctions = 8;
 // FIXME - Implement better parametric functions
 // TODO - Maybe move this to a separate file
-var parametricFunctions = [
-    // Superfície paramétrica 1: Paraboloide hiperbólico
-    function (u, v, target) {
-        const x = Math.cos(u * Math.PI * 2) * Math.sin(v * Math.PI);
-        const y = Math.sin(u * Math.PI * 2) * Math.sin(v * Math.PI);
-        const z = Math.cos(v * Math.PI);
-        target.set(x, y, z)
-    },
-    // Superfície paramétrica 2: Hiperbolóide de uma folha
-    function (u, v, target) {
-        const x = Math.cos(u * Math.PI * 2);
-        const y = Math.sin(u * Math.PI * 2);
-        const z = v * 2 - 1; // v vai de 0 a 1, então mapeamos para -1 a 1
-        target.set(x, y, z);
-    },
-    // Superfície paramétrica 3: Cilindro helicoidal
-    function (u, v, target) {
-        const radius = 1 - v;
-        const x = radius * Math.cos(u * Math.PI * 2);
-        const y = radius * Math.sin(u * Math.PI * 2);
-        const z = v * 2 - 1;
-        target.set(x, y, z);
-    },
-    // Superfície paramétrica 4: Elipsóide
-    function (u, v, target) {
-        const x = v * Math.cos(u * Math.PI * 2);
-        const y = v * Math.sin(u * Math.PI * 2);
-        const z = v * v;
-        target.set(x, y, z);
-    },
-    // Superfície paramétrica 5: Cone
-    function (u, v, target) {
-        const a = 1;
-        const b = 1;
-        const c = 1;
-        const x = a * Math.cosh(v) * Math.cos(u * Math.PI * 2);
-        const y = b * Math.cosh(v) * Math.sin(u * Math.PI * 2);
-        const z = c * Math.sinh(v);
-        target.set(x, y, z);
-    },
-    // Superfície paramétrica 6: Faixa de Möbius
-    function (u, v, target) {
-        const a = 1;
-        const b = 0.1;
-        const x = a * Math.cos(u * Math.PI * 2);
-        const y = a * Math.sin(u * Math.PI * 2);
-        const z = b * u;
-        target.set(x, y, z);
-    },
-    // Superfície paramétrica 7: Catenoide
-    function (u, v, target) {
-        const x = u;
-        const y = v * Math.sin(u);
-        const z = v * Math.cos(u);
-        target.set(x, y, z);
-    },
-    // Superfície paramétrica 8: Plano torcido
-    function (u, v, target) {
-        const R = 1; // Raio maior
-        const r = 0.3; // Raio menor
-        const x = (R + r * Math.cos(v * Math.PI * 2)) * Math.cos(u * Math.PI * 2);
-        const y = (R + r * Math.cos(v * Math.PI * 2)) * Math.sin(u * Math.PI * 2);
-        const z = r * Math.sin(v * Math.PI * 2);
-        target.set(x, y, z);
+
+
+var hyperbolicParaboloid = function (u, v, target) {
+    const a = 1, b = 1, c = 1
+
+    u = u * 2 - 1
+    v = v * 2 - 1
+
+    const x = a * u;
+    const y = b * v;
+    const z = c * (u * u - v * v);
+
+    target.set(x, y, z);
+}
+
+var OneSheetHyperboloid = function (u, v, target) {
+    const a = 1, b = 1, c = 0.5
+
+    u = u * 2 * Math.PI
+    v = v * 2 - 1
+
+    const x = a * Math.cosh(v) * Math.cos(u);
+    const y = b * Math.cosh(v) * Math.sin(u);
+    const z = c * Math.sinh(v);
+
+    target.set(x, y, z);
+}
+
+var ellipsoid = function (u, v, target) {
+    let a = 1, b = 0.5, c = 1;
+
+    u = u * 2 * Math.PI;
+    v = v * 2 * Math.PI
+
+    var x = a * Math.cos(u) * Math.sin(v);
+    var y = b * Math.sin(u) * Math.sin(v);
+    var z = c * Math.cos(v);
+
+    target.set(x, y, z);
+}
+
+var mobiusStrip = function (u, v, target) {
+    u = u - 0.5;
+    v = 2 * Math.PI * v;
+
+    let x, y, z;
+
+    let a = 2;
+    let maxVal = a + 0.5;
+
+    x = (Math.cos(v) * (a + u * Math.cos(v / 2))) / maxVal;
+    y = (Math.sin(v) * (a + u * Math.cos(v / 2))) / maxVal;
+    z = (u * Math.sin(v / 2)) / maxVal;
+
+    target.set(x, y, z);
+}
+
+var klein = function (u, v, target) {
+    u *= Math.PI;
+    v *= 2 * Math.PI;
+
+    u = u * 2;
+    let x, y, z;
+    if (u < Math.PI) {
+
+        x = (3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(u) * Math.cos(v)) / 6;
+        z = (- 8 * Math.sin(u) - 2 * (1 - Math.cos(u) / 2) * Math.sin(u) * Math.cos(v)) / 8;
+
+    } else {
+
+        x = (3 * Math.cos(u) * (1 + Math.sin(u)) + (2 * (1 - Math.cos(u) / 2)) * Math.cos(v + Math.PI)) / 6;
+        z = - 8 * Math.sin(u) / 8;
+
     }
+
+    y = (- 2 * (1 - Math.cos(u) / 2) * Math.sin(v)) / 2;
+
+    target.set(x, y, z)
+}
+
+var apple = function (u, v, target) {
+    const normalize = 7.8;
+    u = u * 2 * Math.PI;
+    v = (v * 2 * Math.PI) - Math.PI;
+    let x = (Math.cos(u) * (4 + 3.8 * Math.cos(v))) / normalize;
+    let y = (Math.sin(u) * (4 + 3.8 * Math.cos(v))) / normalize;
+    let z = ((Math.cos(v) + Math.sin(v) - 1) * (1 + Math.sin(v)) * Math.log(1 - Math.PI * v / 10) + 7.5 * Math.sin(v)) / normalize;
+    target.set(x, y, z);
+}
+
+var spring = function (u, v, target) {
+    u = u * 6 * -Math.PI;
+    v = (v * 2 * Math.PI) - Math.PI;
+    let r1 = 0.3, r2 = 0.3, periodlength = 1.2, cycles = 3;
+
+    let x = Math.tanh((1 - r1 * Math.cos(v)) * Math.cos(u));
+    let y = Math.tanh((1 - r1 * Math.cos(v)) * Math.sin(u));
+    let z = Math.tanh(r2 * (Math.sin(v) + periodlength * u / Math.PI));
+    target.set(x, y, z)
+}
+
+var scherk = function (u, v, target) {
+    u = (u * 2 * Math.PI) - Math.PI;
+    v = (v * 2 * Math.PI) - Math.PI;
+    let x = Math.cos(u);
+    let y = Math.cos(v);
+    let z = Math.sin(u) * Math.sin(v);
+    target.set(x, y, z)
+}
+
+
+var parametricFunctions = [
+    // Superfície paramétrica 1
+    hyperbolicParaboloid,
+    // Superfície paramétrica 2
+    OneSheetHyperboloid,
+    // Superfície paramétrica 3
+    ellipsoid,
+    // Superfície paramétrica 4
+    mobiusStrip,
+    // Superfície paramétrica 5
+    spring,
+    // Superfície paramétrica 6
+    klein,
+    // Superfície paramétrica 7
+    apple,
+    // Superfície paramétrica 8
+    scherk,
 ];
 var parametricGeometries = [];
 
@@ -188,9 +251,9 @@ function createCamera() {
         window.innerWidth / window.innerHeight,
         1,
         1000);
-    camera.position.x = 0;
-    camera.position.y = 20;
-    camera.position.z = 20;
+    camera.position.x = 20;
+    camera.position.y = 5;
+    camera.position.z = 10;
     camera.lookAt(scene.position);
 }
 
@@ -269,20 +332,33 @@ function createParametrics(ring, innerRadius, outerRadius, height, parametricFun
         const z = radius * Math.sin(angle);
         // const x = (2 / 3) * radius
 
-        // const parametricFunction = parametricFunctions[i];
+        const parametricFunction = parametricFunctions[i];
 
-        // const geometry = new ParametricGeometry(parametricFunction, 1, 8);
-        const cubeSize = 1;
-        const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+        const geometry = new ParametricGeometry(parametricFunction, 10, 10);
         const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
         const surface = new THREE.Mesh(geometry, material);
 
-        surface.position.set(x, z, -cubeSize / 2);
+        const scaleValue = 0.5;
+        surface.scale.set(scaleValue, scaleValue, scaleValue);
+
+        const height = getFigureHeight(surface);
+        const minHeight = 0.3
+        surface.position.set(x, z, -height * scaleValue / 2 - minHeight);
         ring.add(surface);
         ring.rotation.z += (Math.PI / 4);
         giveParametricGeometryValues(surface);
     }
 
+}
+
+function getFigureHeight(surface) {
+    const geometry = surface.geometry
+    var size = new THREE.Vector3();
+
+    geometry.computeBoundingBox();
+    geometry.boundingBox.getSize(size);
+
+    return Math.max(size.x, size.y, size.z);
 }
 
 function giveParametricGeometryValues(surface) {
