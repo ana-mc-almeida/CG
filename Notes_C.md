@@ -9,9 +9,13 @@
 - Enunciado
   - [x] 1. Criar o carrossel - Ana
   - [ ] 2. Skydome - Mafalda
-  - [ ] 3. Figuras Paramétricas - Ana
+  - [x] 3. Figuras Paramétricas - Ana
   - [ ] 4. Iluminação - Mafalda
   - [ ] 5. Fita de Möbius - Mafalda
   - [ ] 6. Luzes pontuais - Alice
   - [ ] 7. Malhas - Alice
   - [ ] 8. Câmara - Alice
+
+## ASK
+
+- [ ] As velocidades também é suposto serem aleatórias?
