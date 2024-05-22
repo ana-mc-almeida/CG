@@ -373,21 +373,21 @@ function createRing(x, y, z, innerRadius, outerRadius, height, color) {
 function createFirstRing(x, y, z) {
     'use strict';
 
-    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, materialFirstRing);
+    firstRing = createRing(x, y, z, firstRingInnerRadius, firstRingOuterRadius, firstRingHeight, blueColor);
     createParametrics(firstRing, firstRingInnerRadius, firstRingOuterRadius, secondRingHeight, parametricFunctions);
 }
 
 function createSecondRing(x, y, z) {
     'use strict';
 
-    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, materialSecondRing);
+    secondRing = createRing(x, y, z, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, redColor);
     createParametrics(secondRing, secondRingInnerRadius, secondRingOuterRadius, secondRingHeight, parametricFunctions);
 }
 
 function createThirdRing(x, y, z) {
     'use strict';
 
-    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, materialThirdRing);
+    thirdRing = createRing(x, y, z, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, greenColor);
     createParametrics(thirdRing, thirdRingInnerRadius, thirdRingOuterRadius, thirdRingHeight, parametricFunctions);
 }
 
