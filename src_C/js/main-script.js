@@ -589,9 +589,9 @@ function createSkydome(x, y, z) {
     const textureLoader = new THREE.TextureLoader();
     let texturePath;
     if (window.location.pathname.includes('/src_C/')) {
-        texturePath = '/src_C/js/stillframe.png';  // Path if running from src_C directory
+        texturePath = '/src_C/js/frame.png';  // Path if running from src_C directory
     } else {
-        texturePath = '/js/stillframe.png';        // Path if running from main directory
+        texturePath = '/js/frame.png';        // Path if running from main directory
     }
 
     const skyTexture = textureLoader.load(texturePath);
@@ -603,7 +603,7 @@ function createSkydome(x, y, z) {
     //skydome.position.set(x, y, z);
 
     const planeGeometry = new THREE.CircleGeometry(20, 32);
-    const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x323232, side: THREE.DoubleSide });
+    const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.DoubleSide });
     const bottomCover = new THREE.Mesh(planeGeometry, planeMaterial);
 
     bottomCover.rotation.x = Math.PI / 2;
