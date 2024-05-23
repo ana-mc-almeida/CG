@@ -380,7 +380,7 @@ function createScene() {
   "use strict";
 
   scene = new THREE.Scene();
-  scene.add(new THREE.AxesHelper(10));
+  //scene.add(new THREE.AxesHelper(10));
 
   createBaseCylinder(0, 0 +offsetVR, 0);
   createFirstRing(0, 0 + offsetVR, 0);
