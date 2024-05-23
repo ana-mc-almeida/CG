@@ -997,6 +997,9 @@ function onKeyDown(e) {
     case 80 || 115: // 'p' 'P'
       togglePointlight();
       break;
+    case 84 || 116: // 't' 'T'
+      changeMeshHandler("basic");
+      break;
     // EXTRA
     case 79 || 111: // 'o' 'O'
       changeActiveCamera(ORBITAL_CAMERA);
