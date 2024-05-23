@@ -10,20 +10,22 @@ import { ParametricGeometries } from "three/addons/geometries/ParametricGeometri
 /* GLOBAL CONSTANTS */
 //////////////////////
 
+const offsetVR = -10;
+
 const ORBITAL_CAMERA = createPerspectiveCamera({
   fov: 80,
   near: 1,
   far: 1000,
   x: -10,
-  y: 20,
+  y: 10,
   z: -10,
 });
 const FIXED_CAMERA = createPerspectiveCamera({
-  fov: 90,
+  fov: 70,
   near: 1,
   far: 1500,
-  x: 10,
-  y: 10,
+  x: 15,
+  y: 8,
   z: 10,
 });
 
@@ -36,11 +38,12 @@ var scene, camera, renderer;
 var directionalLight;
 var spotlights = [];
 var pointLights = [];
-let activeCamera = ORBITAL_CAMERA; // starts as the fixed camera, may change afterwards
+let activeCamera = FIXED_CAMERA; // starts as the fixed camera, may change afterwards
 const NAMED_MESHES = [];
 let updateProjectionMatrix = false;
 let activeMaterial = "cartoon"; // starts as basic, may change afterwards
 let activeMaterialChanged = false; // starts as basic, may change afterwards
+
 
 /////////////
 /* Colours */
@@ -379,14 +382,14 @@ function createScene() {
   scene = new THREE.Scene();
   scene.add(new THREE.AxesHelper(10));
 
-  createBaseCylinder(0, 0, 0);
-  createFirstRing(0, 0, 0);
-  createSecondRing(0, 0, 0);
-  createThirdRing(0, 0, 0);
-  createMobiusStrip(0, 12, 0);
+  createBaseCylinder(0, 0 +offsetVR, 0);
+  createFirstRing(0, 0 + offsetVR, 0);
+  createSecondRing(0, 0 + offsetVR, 0);
+  createThirdRing(0, 0 + offsetVR, 0);
+  createMobiusStrip(0, 12 + offsetVR, 0);
   createAmbientLight();
   createDirectionalLight();
-  createSkydome(0, 0, 0);
+  createSkydome(0, 0 + offsetVR, 0);
 }
 
 //////////////////////
@@ -414,7 +417,7 @@ function createPerspectiveCamera({
   y = 0,
   z = 0,
   atX = 0,
-  atY = 5,
+  atY = 0,
   atZ = 0,
 }) {
   const aspect = window.innerWidth / window.innerHeight;
@@ -461,6 +464,7 @@ function createBaseCylinder(x, y, z) {
   baseCylinder = createMesh("ring", pastelRedColor, baseCylinderGeometry);
   baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
   scene.add(baseCylinder);
+
 }
 
 function createRing(x, y, z, innerRadius, outerRadius, height, color) {
@@ -641,7 +645,6 @@ function createMobiusStrip(x, y, z) {
   "use strict";
   var mobiusGeometry = new THREE.BufferGeometry();
   let positions = [];
-  console.log(mobiusVertices.length);
   for (let i = 0; i < mobiusVertices.length; i++) {
     positions.push(
       mobiusVertices[i].x,
@@ -658,19 +661,16 @@ function createMobiusStrip(x, y, z) {
   mobius.scale.set(1.5, 1.5, 1.2);
 
   const numLights = 8;
-  const lightDistance = 0.1;
 
   for (let i = 0; i < numLights; i++) {
-    const angle = (i / numLights) * Math.PI * 2; // Position lights evenly around the Möbius strip
-    const lightX = Math.cos(angle) * 0.5;
-    const lightY = Math.sin(angle) * 0.5;
-    const lightZ = i % 2 === 0 ? -lightDistance : lightDistance; // Change between Mobius strip sides
-
     const light = new THREE.PointLight(0xffffff, 2);
-    light.position.set(lightX, lightY, lightZ);
+    const angle = (i / numLights) * Math.PI * 2; // Position lights evenly around the Möbius strip
+
+    light.position.set(Math.cos(angle) * 3, Math.sin(angle) * 3,0);
     pointLights.push(light);
     mobius.add(light);
   }
+
   scene.add(mobius);
 }
 
@@ -857,7 +857,7 @@ function rotateObjects(delta) {
 }
 
 function moveRingUp(ring, speed, delta) {
-  if (ring.position.y >= baseCylinderHeight) {
+  if (ring.position.y >= baseCylinderHeight + offsetVR) {
     return false;
   } else {
     ring.position.y += delta * speed;
@@ -866,7 +866,7 @@ function moveRingUp(ring, speed, delta) {
 }
 
 function moveRingDown(ring, speed, delta, height) {
-  if (ring.position.y <= 0 + height) {
+  if (ring.position.y <= offsetVR + height) {
     return false;
   } else {
     ring.position.y -= delta * speed;
@@ -891,20 +891,27 @@ function toggleDirectionalLight() {
 }
 
 function toggleSpotlight() {
-  spotlights.forEach((spotlight) => {spotlight.visible = !spotlight.visible;});
+  spotlights.forEach((spotlight) => {
+    spotlight.visible = !spotlight.visible;
+  });
 }
 
 function togglePointlight() {
-  pointLights.forEach((pointlight) => {pointlight.visible = !pointlight.visible;});
+  pointLights.forEach((pointlight) => {
+    pointlight.visible = !pointlight.visible;
+  });
 }
 
+function changeActiveCamera(cameraDescriptor) {
+  refreshCameraParameters(cameraDescriptor);
+  activeCamera = cameraDescriptor;
+}
 
 /////////////
 /* DISPLAY */
 /////////////
 function render() {
   "use strict";
-
   renderer.render(scene, activeCamera);
 }
 
@@ -929,6 +936,7 @@ function init() {
 
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("resize", onResize);
+
 }
 
 /////////////////////
@@ -989,16 +997,11 @@ function onKeyDown(e) {
     case 80 || 115: // 'p' 'P'
       togglePointlight();
       break;
+    // EXTRA
+    case 79 || 111: // 'o' 'O'
+      changeActiveCamera(ORBITAL_CAMERA);
+      break;
   }
-}
-
-///////////////////////
-/* KEY UP CALLBACK */
-///////////////////////
-function onKeyUp(e) {
-  "use strict";
-
-  // FIXME - Check if this is needed (i don't think so)
 }
 
 init();
