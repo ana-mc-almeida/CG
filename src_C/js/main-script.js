@@ -34,6 +34,8 @@ let clock = new THREE.Clock();
 
 var scene, camera, renderer;
 var directionalLight;
+var spotlights = [];
+var pointLights = [];
 let activeCamera = ORBITAL_CAMERA; // starts as the fixed camera, may change afterwards
 const NAMED_MESHES = [];
 let updateProjectionMatrix = false;
@@ -581,14 +583,15 @@ function createParametrics(ring, innerRadius, outerRadius) {
     ring.add(surface);
     ring.rotation.z += Math.PI / 4;
 
-     const spotlight = new THREE.SpotLight(0xffffff, 1.5); 
-     spotlight.position.set(x, z, (-height * scaleValue) / 2 - minHeight); 
-     spotlight.target.position.set(x, z, (-height * scaleValue) / 2 + minHeight); 
-     spotlight.angle = Math.PI / 2; 
-     spotlight.penumbra = 0.5; 
-     spotlight.castShadow = true; 
-     ring.add(spotlight);
-     ring.add(spotlight.target);
+    const spotlight = new THREE.SpotLight(0xffffff, 1.5);
+    spotlight.position.set(x, z, (-height * scaleValue) / 2 - minHeight);
+    spotlight.target.position.set(x, z, (-height * scaleValue) / 2 + minHeight);
+    spotlight.angle = Math.PI / 2;
+    spotlight.penumbra = 0.5;
+    spotlight.castShadow = true;
+    spotlights.push(spotlight);
+    ring.add(spotlight);
+    ring.add(spotlight.target);
 
     giveParametricGeometryValues(surface);
   }
@@ -653,6 +656,21 @@ function createMobiusStrip(x, y, z) {
   mobius.position.set(x, y, z);
   mobius.rotation.x = Math.PI / 2;
   mobius.scale.set(1.5, 1.5, 1.2);
+
+  const numLights = 8;
+  const lightDistance = 0.1;
+
+  for (let i = 0; i < numLights; i++) {
+    const angle = (i / numLights) * Math.PI * 2; // Position lights evenly around the Möbius strip
+    const lightX = Math.cos(angle) * 0.5;
+    const lightY = Math.sin(angle) * 0.5;
+    const lightZ = i % 2 === 0 ? -lightDistance : lightDistance; // Change between Mobius strip sides
+
+    const light = new THREE.PointLight(0xffffff, 2);
+    light.position.set(lightX, lightY, lightZ);
+    pointLights.push(light);
+    mobius.add(light);
+  }
   scene.add(mobius);
 }
 
@@ -872,6 +890,15 @@ function toggleDirectionalLight() {
   directionalLight.visible = !directionalLight.visible;
 }
 
+function toggleSpotlight() {
+  spotlights.forEach((spotlight) => {spotlight.visible = !spotlight.visible;});
+}
+
+function togglePointlight() {
+  pointLights.forEach((pointlight) => {pointlight.visible = !pointlight.visible;});
+}
+
+
 /////////////
 /* DISPLAY */
 /////////////
@@ -956,8 +983,11 @@ function onKeyDown(e) {
     case 82 || 114: // 'r' 'R'
       changeMeshHandler("normal");
       break;
-    case 83 || 115: // 's' 'S' //TODO REMOVE THIS
-      changeMeshHandler("basic");
+    case 83 || 115: // 's' 'S'
+      toggleSpotlight();
+      break;
+    case 80 || 115: // 'p' 'P'
+      togglePointlight();
       break;
   }
 }
