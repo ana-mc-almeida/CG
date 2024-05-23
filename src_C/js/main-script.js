@@ -44,7 +44,6 @@ let updateProjectionMatrix = false;
 let activeMaterial = "cartoon"; // starts as basic, may change afterwards
 let activeMaterialChanged = false; // starts as basic, may change afterwards
 
-
 /////////////
 /* Colours */
 /////////////
@@ -382,7 +381,7 @@ function createScene() {
   scene = new THREE.Scene();
   //scene.add(new THREE.AxesHelper(10));
 
-  createBaseCylinder(0, 0 +offsetVR, 0);
+  createBaseCylinder(0, 0 + offsetVR, 0);
   createFirstRing(0, 0 + offsetVR, 0);
   createSecondRing(0, 0 + offsetVR, 0);
   createThirdRing(0, 0 + offsetVR, 0);
@@ -464,7 +463,6 @@ function createBaseCylinder(x, y, z) {
   baseCylinder = createMesh("ring", pastelRedColor, baseCylinderGeometry);
   baseCylinder.position.set(x, y + baseCylinderHeight / 2, z);
   scene.add(baseCylinder);
-
 }
 
 function createRing(x, y, z, innerRadius, outerRadius, height, color) {
@@ -574,9 +572,10 @@ function createParametrics(ring, innerRadius, outerRadius) {
     const z = radius * Math.sin(angle);
 
     const parametricFunction = parametricFunctions[orderArray[i]];
+    const parametricColor = parametricsColors[orderArray[i]];
 
     const geometry = new ParametricGeometry(parametricFunction, 10, 10);
-    const surface = createMesh("parametric", parametricsColors[i], geometry); // FIXME - use some color
+    const surface = createMesh("parametric", parametricColor, geometry);
 
     const scaleValue = 0.5;
     surface.scale.set(scaleValue, scaleValue, scaleValue);
@@ -666,7 +665,7 @@ function createMobiusStrip(x, y, z) {
     const light = new THREE.PointLight(0xffffff, 2);
     const angle = (i / numLights) * Math.PI * 2; // Position lights evenly around the Möbius strip
 
-    light.position.set(Math.cos(angle) * 3, Math.sin(angle) * 3,0);
+    light.position.set(Math.cos(angle) * 3, Math.sin(angle) * 3, 0);
     pointLights.push(light);
     mobius.add(light);
   }
@@ -936,7 +935,6 @@ function init() {
 
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("resize", onResize);
-
 }
 
 /////////////////////
