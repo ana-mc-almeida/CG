@@ -20,6 +20,9 @@
 ## ASK
 
 - [ ] As velocidades também é suposto serem aleatórias?
+- [ ] As meshes dos botoes W e Q estão certas? É suposto haver mais diferenças? Thank you 
+- [ ] As luzes das paramétricas estão ceertas? Suposto ter mais intensidade?
+- [ ] suposto o skydome também alterar de malha?
 
 ## Notas do Professor
 
