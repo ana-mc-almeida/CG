@@ -24,8 +24,8 @@ const FIXED_CAMERA = createPerspectiveCamera({
   fov: 70,
   near: 1,
   far: 1500,
-  x: 15,
-  y: 8,
+  x: 20,
+  y: 0.5,
   z: 10,
 });
 
