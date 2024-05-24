@@ -698,24 +698,8 @@ function createSkydome(x, y, z) {
   }); //TODO: OneSide
   const skydome = new THREE.Mesh(skydomeGeometry, material);
 
-  //scene.add(skydome);
-  //skydome.position.set(x, y, z);
-
-  const planeGeometry = new THREE.CircleGeometry(20, 32);
-  const planeMaterial = new THREE.MeshBasicMaterial({
-    color: 0x000000,
-    side: THREE.DoubleSide,
-  });
-  const bottomCover = new THREE.Mesh(planeGeometry, planeMaterial);
-
-  bottomCover.rotation.x = Math.PI / 2;
-
-  const skydomeGroup = new THREE.Group();
-  skydomeGroup.add(skydome);
-  skydomeGroup.add(bottomCover);
-
-  scene.add(skydomeGroup);
-  skydomeGroup.position.set(x, y, z);
+  scene.add(skydome);
+  skydome.position.set(x, y, z);
 }
 
 //////////////////////
