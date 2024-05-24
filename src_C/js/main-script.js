@@ -385,7 +385,7 @@ function createScene() {
   createFirstRing(0, 0 + offsetVR, 0);
   createSecondRing(0, 0 + offsetVR, 0);
   createThirdRing(0, 0 + offsetVR, 0);
-  createMobiusStrip(0, 12 + offsetVR, 0);
+  createMobiusStrip(0, 13 + offsetVR, 0);
   createAmbientLight();
   createDirectionalLight();
   createSkydome(0, 0 + offsetVR, 0);
@@ -684,7 +684,7 @@ function createSkydome(x, y, z) {
 
   const skyTexture = textureLoader.load(texturePath);
   const skydomeGeometry = new THREE.SphereGeometry(
-    20,
+    25,
     32,
     32,
     Math.PI / 2,
