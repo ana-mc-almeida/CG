@@ -68,7 +68,7 @@ var redColor = 0x950000,
 /////////////
 /* Objects */
 /////////////
-var baseCylinder, // FIXME - not sure if this is really needed
+var baseCylinder,
   firstRing,
   secondRing,
   thirdRing;
@@ -195,10 +195,6 @@ const mobiusVertices = [
 //////////////////////////
 /* Parametric Geometry */
 //////////////////////////
-var numberOfParametricFunctions = 8;
-// FIXME - Implement better parametric functions
-// TODO - Maybe move this to a separate file
-
 var hyperbolicParaboloid = function (u, v, target) {
   const a = 1,
     b = 1,
@@ -396,14 +392,14 @@ function createScene() {
 //////////////////////
 
 function createCameras() {
-  "use strict"; // FIXME
+  "use strict";
   const controls = new OrbitControls(ORBITAL_CAMERA, renderer.domElement);
   controls.target.set(0, 0, 0);
   controls.keys = {
-    LEFT: 72, // h
-    UP: 75, // k
-    RIGHT: 76, // l
-    BOTTOM: 74, // j
+    LEFT: 72,
+    UP: 75,
+    RIGHT: 76,
+    BOTTOM: 74,
   };
   controls.update();
 }
@@ -695,7 +691,7 @@ function createSkydome(x, y, z) {
   const material = new THREE.MeshBasicMaterial({
     map: skyTexture,
     side: THREE.BackSide,
-  }); //TODO: OneSide
+  });
   const skydome = new THREE.Mesh(skydomeGeometry, material);
 
   scene.add(skydome);
